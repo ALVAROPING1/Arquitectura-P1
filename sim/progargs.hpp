@@ -24,12 +24,12 @@ namespace Fluid {
 
       ArgumentParser (ArgumentParser const&) = delete; // Can't copy file stream
       ArgumentParser& operator=(ArgumentParser const&) = delete;
-      ArgumentParser (ArgumentParser && other)
+      ArgumentParser (ArgumentParser && other) noexcept
         : error_{std::exchange(other.error_, 0)}
         , nts_{std::exchange(other.nts_, 0)}
         , inputfile_{std::move(other.inputfile_)}
         , outputfile_{std::move(other.outputfile_)} {}
-      ArgumentParser& operator=(ArgumentParser && other) {
+      ArgumentParser& operator=(ArgumentParser && other) noexcept {
         error_ = std::exchange(other.error_, 0);
         nts_ = std::exchange(other.nts_, 0);
         inputfile_ = std::move(other.inputfile_);

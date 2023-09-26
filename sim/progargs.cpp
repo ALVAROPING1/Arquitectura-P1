@@ -27,7 +27,6 @@ namespace Fluid {
     openFiles(args);
   }
 
-  
   void ArgumentParser::openFiles(std::span<gsl::zstring> args) {
     inputfile_.open(args[2]);
     outputfile_.open(args[3]);

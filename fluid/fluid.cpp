@@ -8,6 +8,7 @@
 
 int main (int argc, char **argv) {
   Fluid::ArgumentParser argp{{argv, static_cast<std::size_t>(argc)}};
-  if (!argp)
+  if (!argp) {
     return argp.error();
+  }
 }
