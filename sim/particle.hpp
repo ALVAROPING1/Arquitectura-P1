@@ -11,6 +11,7 @@ namespace Fluid {
         Vector3<double> position = Vector3<double> {0,0,0};        
         Vector3<double> acceleration = Vector3<double> {0,9.8,0};
         double density = 0;
+        double masa = 0;
 
         Particle() = default;
         Particle(double x, double y, double z) : position{x,y,z} {};
