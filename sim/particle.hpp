@@ -12,8 +12,8 @@ namespace Fluid {
         Vector3<double> acceleration = Vector3<double> {0,9.8,0};
         double density = 0;
 
-        Particle() {};
-        Particle(double x, double y, double z) : position.x{x}, position.y{y}, position.z{z} {};
+        Particle() = default;
+        Particle(double x, double y, double z) : position{x,y,z} {};
         
         friend std::ostream& operator<<(std::ostream &out, Particle const &c){
             return out << "Partícula n: " << c.id << "\nPosition: " << c.position << "\nAcceleration: " << c.acceleration; 
