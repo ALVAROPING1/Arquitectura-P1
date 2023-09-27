@@ -2,14 +2,14 @@
 #define VECTOR3_HPP
 
 namespace Fluid {
-    
-    class Vector {
+    template<class T>
+    class Vector3 {
     public:
-        double x = 0;
-        double y = 0;
-        double z = 0;
+        T x = 0;
+        T y = 0;
+        T z = 0;
 
-        Vector(double c1, double c2, double c3) : x{c1}, y{c2}, z{c3} {};
+        Vector(T c1, T c2, T c3) : x{c1}, y{c2}, z{c3} {};
         
         friend std::ostream & operator <<(std::ofstream &out,Vector){
             return out << "(" << "x: " << x << ",y: " << y << ",z: " << z << ")";
