@@ -3,22 +3,19 @@
 #define __FILE_IO
 
 #include <fstream>
-#include "progargs.hpp"
-
 
 namespace Fluid {
-    class FileIO {
+  class FileIO {
     public:
-        template <typename String> 
-        constexpr FileIO(String input_name, String output_name): 
-            input_file(input_name), output_file(output_name)
-        {}
+      template <typename String>
+      constexpr FileIO(String input_name, String output_name)
+        : input_file(input_name), output_file(output_name) { }
 
     private:
-        int error_;
-        std::ifstream input_file;
-        std::ofstream output_file;
-    };
-}
+      int error_;
+      std::ifstream input_file;
+      std::ofstream output_file;
+  };
+}  // namespace Fluid
 
 #endif

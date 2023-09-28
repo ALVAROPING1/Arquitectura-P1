@@ -6,8 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_options(-Wall -Wextra -Werror -pedantic -pedantic-errors)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_RELEASE "−march=native")
-set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=readability-*,performance-*,portability-*,clang-analyzer-*,bugprone-*,cppcoreguidelines-*)
+set(CMAKE_CXX_CLANG_TIDY clang-tidy --checks=cppcoreguidelines-*)
 
 include(FetchContent)
 

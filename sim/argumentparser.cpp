@@ -1,10 +1,11 @@
+#include "argumentparser.hpp"
+
 #include <iostream>
-#include "progargs.hpp"
 
 namespace Fluid {
 
   ArgumentParser::ArgumentParser(std::span<gsl::zstring> args) : error_{0} {
-    const auto size = args.size() - 1;
+    auto const size = args.size() - 1;
     if (size != 3) {
       error_ = -1;
       std::cerr << "Error: Invalid number of arguments: " << size << ".\n";
@@ -12,13 +13,11 @@ namespace Fluid {
     }
     try {
       nts_ = std::stoi(args[1]);
-    } catch (std::invalid_argument const&) {
+    } catch (std::invalid_argument const &) {
       error_ = -1;
       std::cerr << "Error: time steps must be numeric.\n";
       return;
-    } catch (std::out_of_range const&) {
-      nts_ = -1;
-    }
+    } catch (std::out_of_range const &) { nts_ = -1; }
     if (nts_ < 0) {
       error_ = -2;
       std::cerr << "Error: Invalid number of time steps.\n";
@@ -39,4 +38,4 @@ namespace Fluid {
     }
   }
 
-}
+}  // namespace Fluid
