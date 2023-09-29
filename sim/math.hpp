@@ -13,11 +13,11 @@ namespace Fluid::Math {
         return Fluid::Constants::rho*pow(ppm,3);
     }
 
-    std::array<int,3> calc_particle_block(const Fluid::Particle &p, const std::array<int,3> &block_min_position, const std::array<int,3> &size_block_grid){
+    std::array<int,3> calc_particle_block(const std::array<int,3> &particle_pos, const std::array<int,3> &block_min_position, const std::array<int,3> &size_block_grid){
         std::array<int,3> indexes {
-            (p.x - block_min_position[0])/size_block_grid[0],
-            (p.y - block_min_position[1])/size_block_grid[1],
-            (p.y - block_min_position[2])/size_block_grid[2]
+            (particle_pos[0] - block_min_position[0])/size_block_grid[0],
+            (particle_pos[1] - block_min_position[1])/size_block_grid[1],
+            (particle_pos[2] - block_min_position[2])/size_block_grid[2]
         };
 
         return indexes;
