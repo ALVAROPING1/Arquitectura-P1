@@ -2,6 +2,7 @@
 #define VECTOR3_HPP
 
 #include <ostream>
+#include <array>
 
 namespace Fluid {
     template<class T>
@@ -13,6 +14,8 @@ namespace Fluid {
         friend std::ostream & operator <<(std::ostream &out,Vector3 const &c){
             return out << "(" << "x: " << c.x << ",y: " << c.y << ",z: " << c.z << ")";
         }
+
+        std::array<T,3> to_array() { return std::array<T,3> { x,y,z }; }
 
         constexpr Vector3 operator+(const Vector3 &other) const {
             return Vector3{x+other.x,y+other.y,z+other.z};
