@@ -1,15 +1,23 @@
 #ifndef __CONSTANTS_HPP
 #define __CONSTANTS_HPP
 
-namespace Fluid::Constants {
-  constexpr float  r  = 1.695f;   // Multiplicador de radio
-  constexpr float rho = 10e3f;    // Densidad de fluido
-  constexpr float p_s = 3.0f;     // Presión de rigidez
-  constexpr float s_c = 3.0e4f;   // Colisiones de rigidez
-  constexpr float d_v = 128.0f;   // Amortiguamiento
-  constexpr float mu  = 0.4f;     // Viscosidad
-  constexpr float d_p = 2.0e-4f;  // Tamaño de partícula
-  constexpr float dt  = 10e-3;    // Paso de tiempo
-}
+#include "vector3.hpp"
 
-#endif//__CONSTANTS_HPP
+namespace Fluid::Constants {
+  // Constantes escalares de la simulación.
+  constexpr double r{1.695};     // Multiplicador de radio
+  constexpr double rho{10e3};    // Densidad de fluido
+  constexpr double p_s{3.0};     // Presión de rigidez
+  constexpr double s_c{3.0e4};   // Colisiones de rigidez
+  constexpr double d_v{128.0};   // Amortiguamiento
+  constexpr double mu{0.4};      // Viscosidad
+  constexpr double d_p{2.0e-4};  // Tamaño de partícula
+  constexpr double dt{10e-3};    // Paso de tiempo
+
+  // Constantes vectoriales de la simulación.
+  constexpr Vector3<double> g{0.0, 9.8, 0.0};             // Aceleración externa
+  constexpr Vector3<double> b_min{0.065, 0.1, 0.065};     // Límite superior de recinto
+  constexpr Vector3<double> b_max{-0.065, -0.08, -0.065}; // Límite inferior de recinto
+}  // namespace Fluid::Constants
+
+#endif  //__CONSTANTS_HPP

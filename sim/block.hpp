@@ -3,37 +3,42 @@
 #ifndef __SIM_BLOCK_HPP
 #define __SIM_BLOCK_HPP
 
+#include "particle.hpp"
+
 #include <ostream>
 #include <utility>
 #include <vector>
-#include "particle.hpp"
 
 namespace Fluid {
 
   class Block {
     public:
-      Block(std::size_t estimated_amount) {particles_.reserve(estimated_amount);} ;
-      void add(Particle particle) {particles_.push_back(particle);};
-      void clear() {particles_.clear();};
-      Particle operator[](std::size_t i) const { return particles_[i]; }
+      Block(std::size_t estimated_amount) { particles_.reserve(estimated_amount); };
 
-      auto begin() const { return particles_.begin(); }
-      auto end() const { return particles_.end(); }
-      auto begin() { return particles_.begin(); }
-      auto end() { return particles_.end(); }
+      // Usamos semántica de movimientos mejor, así no es necesario hacer la copia
+      constexpr void add(Particle && particle) { particles_.emplace_back(particle); };
 
-      friend std::ostream& operator<<(std::ostream& out, Block const& block) {
+      void clear() { particles_.clear(); };
+
+      constexpr Particle operator[](std::size_t i) const { return particles_[i]; }
+
+      constexpr auto begin() const { return particles_.begin(); }
+
+      constexpr auto end() const { return particles_.end(); }
+
+      constexpr auto begin() { return particles_.begin(); }
+
+      constexpr auto end() { return particles_.end(); }
+
+      friend std::ostream & operator<<(std::ostream & out, Block const & block) {
         out << "Block[";
-        for (auto p: block) {
-          out << p;
-        }
+        for (auto p : block) { out << p; }
         return out << "]";
       }
 
     private:
       std::vector<Particle> particles_{};
-
   };
 
-}
-#endif//__SIM_PROGARGS_HPP
+}  // namespace Fluid
+#endif  //__SIM_PROGARGS_HPP

@@ -1,29 +1,38 @@
-#ifndef VECTOR3_HPP
-#define VECTOR3_HPP
+#ifndef __VECTOR3_HPP
+#define __VECTOR3_HPP
 
-#include <ostream>
 #include <array>
+#include <ostream>
+#include <type_traits>
 
 namespace Fluid {
-    template<class T>
-    struct Vector3 {
-        T x{}, y{}, z{};
+  template <class T>
+    requires(std::is_arithmetic<T>::value)
+  struct Vector3 {
+      T x{}, y{}, z{};
 
-        Vector3(T c1, T c2, T c3) : x{c1}, y{c2}, z{c3} {};
-        
-        friend std::ostream & operator <<(std::ostream &out,Vector3 const &c){
-            return out << "(" << "x: " << c.x << ",y: " << c.y << ",z: " << c.z << ")";
-        }
+      friend std::ostream & operator<<(std::ostream & out, Vector3 const & c) {
+        return out << "("
+                   << "x: " << c.x << ",y: " << c.y << ",z: " << c.z << ")";
+      }
 
-        std::array<T,3> to_array() { return std::array<T,3> { x,y,z }; }
+      std::array<T, 3> to_array() { return std::array<T, 3>{x, y, z}; }
 
-        constexpr Vector3 operator+(const Vector3 &other) const {
-            return Vector3{x+other.x,y+other.y,z+other.z};
-        };
-        constexpr Vector3 operator-(const Vector3 &other) const {
-            return Vector3{x-other.x,y-other.y,z-other.z};
-        };
-    };
-}
+      constexpr Vector3 operator+(Vector3 const & other) const {
+        return Vector3{x + other.x, y + other.y, z + other.z};
+      };
 
-#endif
+      constexpr Vector3 operator-(Vector3 const & other) const {
+        return Vector3{x - other.x, y - other.y, z - other.z};
+      };
+
+      // XXX: Adri léete la memoria y busca que operadores se pueden necesitar
+      //      Tipo, producto escalar, producto por escalar...
+      //      Si necesitas hacer que sea posible: escalar * vector.
+      //      Defínelo así:
+      //
+      //      friend Vector3 operator*(T scalar, Vector3 const& other) {
+  };
+}  // namespace Fluid
+
+#endif  //__VECTOR3_HPP
