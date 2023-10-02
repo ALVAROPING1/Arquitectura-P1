@@ -16,6 +16,7 @@ namespace Fluid {
                    << "x: " << c.x << ",y: " << c.y << ",z: " << c.z << ")";
       }
 
+      // XXX: Adri ¿¿¿pa qué te sirve el Vector3 si usas std::array???
       std::array<T, 3> to_array() { return std::array<T, 3>{x, y, z}; }
 
       constexpr Vector3 operator+(Vector3 const & other) const {
@@ -30,6 +31,7 @@ namespace Fluid {
       //      Tipo, producto escalar, producto por escalar...
       //      Si necesitas hacer que sea posible: escalar * vector.
       //      Defínelo así:
+      //      O defínelo fuera
       //
       //      friend Vector3 operator*(T scalar, Vector3 const& other) {
   };
