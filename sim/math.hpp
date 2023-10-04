@@ -35,9 +35,9 @@ namespace Fluid::Math {
                                                std::array<T, 3> const & block_min_position,
                                                std::array<T, 3> const & size_block_grid) {
     std::array<int, 3> indexes{
-        static_cast<int>((particle_pos[0] - block_min_position[0]) / size_block_grid[0]),
-        static_cast<int>((particle_pos[1] - block_min_position[1]) / size_block_grid[1]),
-        static_cast<int>((particle_pos[2] - block_min_position[2]) / size_block_grid[2]),
+      static_cast<int>((particle_pos[0] - block_min_position[0]) / size_block_grid[0]),
+      static_cast<int>((particle_pos[1] - block_min_position[1]) / size_block_grid[1]),
+      static_cast<int>((particle_pos[2] - block_min_position[2]) / size_block_grid[2]),
     };
 
     return indexes;
