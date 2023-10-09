@@ -1,7 +1,7 @@
 // Representación de un bloque
 
-#ifndef __SIM_BLOCK_HPP
-#define __SIM_BLOCK_HPP
+#ifndef SIM_BLOCK_HPP
+#define SIM_BLOCK_HPP
 
 #include "particle.hpp"
 
@@ -27,9 +27,9 @@ namespace Fluid {
 
       constexpr Particle operator[](std::size_t i) const { return particles_[i]; }
 
-      constexpr auto begin() const { return particles_.begin(); }
+      [[nodiscard]] constexpr auto begin() const { return particles_.begin(); }
 
-      constexpr auto end() const { return particles_.end(); }
+      [[nodiscard]] constexpr auto end() const { return particles_.end(); }
 
       constexpr auto begin() { return particles_.begin(); }
 
@@ -37,10 +37,10 @@ namespace Fluid {
 
       friend std::ostream & operator<<(std::ostream & out, Block const & block) {
         out << "Block[";
-        for (auto p : block) { out << p; }
+        for (auto particle : block) { out << particle; }
         return out << "]";
       }
   };
 
 }  // namespace Fluid
-#endif  //__SIM_PROGARGS_HPP
+#endif  // SIM_PROGARGS_HPP

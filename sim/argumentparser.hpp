@@ -1,7 +1,7 @@
 // Tratamiento de argumentos para los parámetros de main()
 
-#ifndef __SIM_PROGARGS_HPP
-#define __SIM_PROGARGS_HPP
+#ifndef SIM_PROGARGS_HPP
+#define SIM_PROGARGS_HPP
 
 #include "fileio.hpp"
 #include "io.hpp"
@@ -43,4 +43,4 @@ namespace Fluid {
   };
 
 }  // namespace Fluid
-#endif  //__SIM_PROGARGS_HPP
+#endif  // SIM_PROGARGS_HPP

@@ -61,4 +61,4 @@ namespace Fluid::Math {
 
 }  // namespace Fluid::Math
 
-#endif
+#endif  // MATH_HPP

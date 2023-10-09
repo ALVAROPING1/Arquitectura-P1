@@ -5,11 +5,14 @@
 #include "vector3.hpp"
 
 namespace Fluid {
+
+  constexpr int ALIGN_VALUE = 128;
+
   // FIXME: Pensar más detenidamente el valor de alineamiento.
   //        Se podría separar a otro struct
   //
   // No toques esto.
-  struct alignas(128) Particle {
+  struct alignas(ALIGN_VALUE) Particle {
       // Parámetros que no cambian
       int id{};
       double density{};
@@ -21,19 +24,17 @@ namespace Fluid {
       Vector3<double> hv = Vector3<double>{0, 0, 0};
       Vector3<double> v  = Vector3<double>{0, 0, 0};
 
-      Particle () = default;
+      Particle() = default;
+
       constexpr Particle(Vector3<float> const & pp, Vector3<float> const & phv,
                          Vector3<float> const & pv, int id)
-        : id{id}
-        , density{0.0}
-        , p{static_cast<Vector3<double>>(pp)}
-        , hv{static_cast<Vector3<double>>(phv)}
-        , v{static_cast<Vector3<double>>(pv)} {}
+        : id{id}, p{static_cast<Vector3<double>>(pp)}, hv{static_cast<Vector3<double>>(phv)},
+          v{static_cast<Vector3<double>>(pv)} { }
 
       // Operator '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {
-        return out << "Particle n: " << c.id << "\n\tPosition: " << c.p
-                   << "\n\tVelocity: " << c.v << "\n";
+        return out << "Particle n: " << c.id << "\n\tPosition: " << c.p << "\n\tVelocity: " << c.v
+                   << "\n";
       }
 
       // TODO: Añade funciones para modificar el estado de la partícula.
@@ -42,4 +43,4 @@ namespace Fluid {
   };
 
 }  // namespace Fluid
-#endif
+#endif  // PARTICLE_HPP

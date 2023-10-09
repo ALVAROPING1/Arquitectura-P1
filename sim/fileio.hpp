@@ -1,6 +1,6 @@
 // define the file input and output
-#ifndef __FILE_IO
-#define __FILE_IO
+#ifndef FILE_IO_HPP
+#define FILE_IO_HPP
 
 #include "grid.hpp"
 
@@ -20,7 +20,7 @@ namespace Fluid {
   class FileIO {
     public:
       template <FileNameType S1, FileNameType S2>
-      void open (S1 input_name, S2 output_name) {
+      void open(S1 input_name, S2 output_name) {
         input_file_.open(input_name, std::ios::binary);
         if (not input_file_) {
           error_ = -3;
@@ -34,14 +34,16 @@ namespace Fluid {
         load_header();
       }
 
-      constexpr int error () const { return error_; }
-      constexpr operator bool () const { return error_ == 0; }
+      constexpr int error() const { return error_; }
+
+      constexpr operator bool() const { return error_ == 0; }
 
       void load(Grid & grid);
       void dump(Grid const & grid);
 
-      constexpr double ppm () const { return ppm_; }
-      constexpr std::size_t np () const { return np_; }
+      constexpr double ppm() const { return ppm_; }
+
+      constexpr std::size_t np() const { return np_; }
 
     private:
       int error_{};
@@ -54,4 +56,4 @@ namespace Fluid {
   };
 }  // namespace Fluid
 
-#endif
+#endif  // FILE_IO_HPP

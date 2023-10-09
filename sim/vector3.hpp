@@ -1,5 +1,5 @@
-#ifndef __VECTOR3_HPP
-#define __VECTOR3_HPP
+#ifndef VECTOR3_HPP
+#define VECTOR3_HPP
 
 #include <array>
 #include <ostream>
@@ -22,7 +22,7 @@ namespace Fluid {
         return Vector3{x - other.x, y - other.y, z - other.z};
       };
 
-      template<typename U>
+      template <typename U>
       constexpr Vector3 operator/(U div) const {
         return Vector3{x / div, y / div, z / div};
       }
@@ -31,12 +31,11 @@ namespace Fluid {
         return Vector3{x / other.x, y / other.y, z / other.z};
       }
 
-      template<typename U>
-      constexpr explicit operator Vector3<U> () const {
+      template <typename U>
+      constexpr explicit operator Vector3<U>() const {
         return Vector3<U>{static_cast<U>(x), static_cast<U>(y), static_cast<U>(z)};
       }
-
   };
 }  // namespace Fluid
 
-#endif  //__VECTOR3_HPP
+#endif  // VECTOR3_HPP

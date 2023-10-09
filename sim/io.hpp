@@ -1,5 +1,5 @@
-#ifndef __IO_HPP
-#define __IO_HPP
+#ifndef IO_HPP
+#define IO_HPP
 
 #include <iostream>
 
@@ -13,7 +13,7 @@ namespace Fluid::IO {
   template <typename... Args>
   constexpr void put(std::ostream & out, Args... args);
 
-  constexpr void put(std::ostream &) { }
+  constexpr void put(std::ostream & /*unused*/) { }
 
   template <typename Arg, typename... Args>
     requires Printable<Arg>
@@ -75,4 +75,4 @@ namespace Fluid::IO {
 
 }  // namespace Fluid::IO
 
-#endif  //__IO_HPP
+#endif  // IO_HPP
