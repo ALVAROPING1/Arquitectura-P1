@@ -12,8 +12,7 @@ namespace Fluid {
   struct alignas(128) Particle {
       // Parámetros que no cambian
       int id{};
-      double density{};  // XXX: Densidad creo que no es necesario. Luego lo vemos
-      double mass{};     // XXX: Masa creo que no es necesario. Luego lo vemos
+      double density{};
 
       // Parámetros que cambian en cada iteración.
       // Es preferible en este caso nombres más cortos para que sea más fácil
@@ -22,9 +21,14 @@ namespace Fluid {
       Vector3<double> hv = Vector3<double>{0, 0, 0};
       Vector3<double> v  = Vector3<double>{0, 0, 0};
 
-      // XXX: Implementa mejor este constructor, no cambies los parámetros
-      constexpr Particle(Vector3<float> const & p, Vector3<float> const & hv,
-                         Vector3<float> const & v, int id);
+      Particle () = default;
+      constexpr Particle(Vector3<float> const & pp, Vector3<float> const & phv,
+                         Vector3<float> const & pv, int id)
+        : id{id}
+        , density{0.0}
+        , p{static_cast<Vector3<double>>(pp)}
+        , hv{static_cast<Vector3<double>>(phv)}
+        , v{static_cast<Vector3<double>>(pv)} {}
 
       // Operator '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {
@@ -38,5 +42,4 @@ namespace Fluid {
   };
 
 }  // namespace Fluid
-
 #endif

@@ -19,50 +19,38 @@ namespace Fluid {
 
   class FileIO {
     public:
-      // FIXME: Para que no se abra el archivo de salida, no uses listas de
-      //        inicialización. Usa input_file_.open(input_name) y después
-      //        comprueba su estatus.
       template <FileNameType S1, FileNameType S2>
-      constexpr FileIO(S1 input_name, S2 output_name)
-        : input_file_(input_name), output_file_(output_name) { }
-
-      // bool operator to check if the files opened succesfully
-      // XXX: operator bool no debería jamás devolver un entero, solo puede
-      //      devolver un bool.
-      //      El operador que me estabas sobreescribiendo era el operator!, no
-      //      operator bool. Mejor llamarlo status y que devuelva el valor.
-      //
-      // XXX: Si el número de partículas es 0 o negativo, devuelve el código de
-      //      error -5.
-      //
-      // FIXME: Si el archivo de entrada no se puede abrir y tampoco el de
-      //        salida, se debe devolver -3 (primero se prueba el de salida)
-      //
-      // FIXME: Si no hay error, devuelve 0.
-      //
-      // FIXME: Haz que calcule el error_ en el constructor. Error no tiene
-      // valor por defecto
-      int status() {
-        if (!input_file_) {
+      void open (S1 input_name, S2 output_name) {
+        input_file_.open(input_name, std::ios::binary);
+        if (not input_file_) {
           error_ = -3;
-        } else if (!output_file_) {
-          error_ = -4;
-        } else {
-          error_ = 1;
+          return;
         }
-        return error_;
+        output_file_.open(output_name, std::ios::binary);
+        if (not output_file_) {
+          error_ = -4;
+          return;
+        }
+        load_header();
       }
 
-      // XXX: Funciones a implementar, deserializar los datos para cargarlos y
-      //      serializarlos para volcarlos en el archivo.
+      constexpr int error () const { return error_; }
+      constexpr operator bool () const { return error_ == 0; }
 
       void load(Grid & grid);
       void dump(Grid const & grid);
 
+      constexpr double ppm () const { return ppm_; }
+      constexpr std::size_t np () const { return np_; }
+
     private:
-      int error_{};     // XXX: error_ no tiene valor por defecto
+      int error_{};
       std::ifstream input_file_;
       std::ofstream output_file_;
+      int np_{};
+      double ppm_{};
+
+      void load_header();
   };
 }  // namespace Fluid
 

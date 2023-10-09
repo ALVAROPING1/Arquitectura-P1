@@ -3,11 +3,9 @@
 
 #include <array>
 #include <ostream>
-#include <type_traits>
 
 namespace Fluid {
   template <class T>
-    requires(std::is_arithmetic<T>::value)
   struct Vector3 {
       T x{}, y{}, z{};
 
@@ -15,9 +13,6 @@ namespace Fluid {
         return out << "("
                    << "x: " << c.x << ",y: " << c.y << ",z: " << c.z << ")";
       }
-
-      // XXX: Adri ¿¿¿pa qué te sirve el Vector3 si usas std::array???
-      std::array<T, 3> to_array() { return std::array<T, 3>{x, y, z}; }
 
       constexpr Vector3 operator+(Vector3 const & other) const {
         return Vector3{x + other.x, y + other.y, z + other.z};
@@ -27,13 +22,20 @@ namespace Fluid {
         return Vector3{x - other.x, y - other.y, z - other.z};
       };
 
-      // XXX: Adri léete la memoria y busca que operadores se pueden necesitar
-      //      Tipo, producto escalar, producto por escalar...
-      //      Si necesitas hacer que sea posible: escalar * vector.
-      //      Defínelo así:
-      //      O defínelo fuera
-      //
-      //      friend Vector3 operator*(T scalar, Vector3 const& other) {
+      template<typename U>
+      constexpr Vector3 operator/(U div) const {
+        return Vector3{x / div, y / div, z / div};
+      }
+
+      constexpr Vector3 operator/(Vector3 const & other) const {
+        return Vector3{x / other.x, y / other.y, z / other.z};
+      }
+
+      template<typename U>
+      constexpr explicit operator Vector3<U> () const {
+        return Vector3<U>{static_cast<U>(x), static_cast<U>(y), static_cast<U>(z)};
+      }
+
   };
 }  // namespace Fluid
 

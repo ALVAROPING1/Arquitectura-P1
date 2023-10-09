@@ -3,11 +3,12 @@
 #ifndef __SIM_PROGARGS_HPP
 #define __SIM_PROGARGS_HPP
 
-#include <fstream>
+#include "fileio.hpp"
+#include "io.hpp"
+
 #include <gsl/gsl>
+#include <iostream>
 #include <span>
-#include <string>
-#include <utility>
 
 namespace Fluid {
 
@@ -15,37 +16,30 @@ namespace Fluid {
     public:
       ArgumentParser(std::span<gsl::zstring> args);
 
-      constexpr explicit operator bool() const { return error_ != 0; }
+      constexpr explicit operator bool() const { return error_ == 0; }
 
-      constexpr int error() const { return error_; };
+      constexpr int error() const { return error_; }
 
-      ~ArgumentParser() {
-        if (inputfile_.is_open()) { inputfile_.close(); }
-        if (outputfile_.is_open()) { outputfile_.close(); }
-      }
+      constexpr int step_count() const { return nts_; }
 
-      ArgumentParser(ArgumentParser const &)             = delete;  // Can't copy file stream
-      ArgumentParser & operator=(ArgumentParser const &) = delete;
-
-      ArgumentParser(ArgumentParser && other) noexcept
-        : error_{std::exchange(other.error_, 0)}, nts_{std::exchange(other.nts_, 0)},
-          inputfile_{std::move(other.inputfile_)}, outputfile_{std::move(other.outputfile_)} { }
-
-      ArgumentParser & operator=(ArgumentParser && other) noexcept {
-        error_      = std::exchange(other.error_, 0);
-        nts_        = std::exchange(other.nts_, 0);
-        inputfile_  = std::move(other.inputfile_);
-        outputfile_ = std::move(other.outputfile_);
-        return *this;
-      }
+      FileIO & file() { return file_; }
 
     private:
       int error_;
       int nts_;
-      std::ifstream inputfile_;
-      std::ofstream outputfile_;
-
+      FileIO file_;
       void openFiles(std::span<gsl::zstring> args);
+
+      template <typename... Args>
+      constexpr void error(int code, Args... args) {
+        error_ = code;
+        IO::put_line(std::cerr, args...);
+      }
+
+      template <typename... Args>
+      constexpr void check(int code, Args... args) {
+        if (error_ == code) { IO::put_line(std::cerr, args...); }
+      }
   };
 
 }  // namespace Fluid

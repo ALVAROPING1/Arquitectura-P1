@@ -5,6 +5,7 @@
 
 #include "particle.hpp"
 
+#include <iostream>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -12,11 +13,15 @@
 namespace Fluid {
 
   class Block {
+      std::vector<Particle> particles_{};
+
     public:
-      Block(std::size_t estimated_amount) { particles_.reserve(estimated_amount); };
+      constexpr explicit Block(std::size_t estimated_amount) {
+        particles_.reserve(estimated_amount);
+      };
 
       // Usamos semántica de movimientos mejor, así no es necesario hacer la copia
-      constexpr void add(Particle && particle) { particles_.emplace_back(particle); };
+      void add(Particle const & particle) { particles_.push_back(particle); }
 
       void clear() { particles_.clear(); };
 
@@ -35,9 +40,6 @@ namespace Fluid {
         for (auto p : block) { out << p; }
         return out << "]";
       }
-
-    private:
-      std::vector<Particle> particles_{};
   };
 
 }  // namespace Fluid
