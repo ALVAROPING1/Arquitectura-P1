@@ -22,6 +22,25 @@ namespace Fluid {
         return Vector3{x - other.x, y - other.y, z - other.z};
       };
 
+      constexpr Vector3 operator+=(Vector3 const & other) {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        return *this;
+      };
+
+      constexpr Vector3 operator-=(Vector3 const & other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        return *this;
+      };
+
+      template <typename U>
+      constexpr Vector3 operator*(U mul) const {
+        return Vector3{x * mul, y * mul, z * mul};
+      }
+
       template <typename U>
       constexpr Vector3 operator/(U div) const {
         return Vector3{x / div, y / div, z / div};
@@ -35,6 +54,8 @@ namespace Fluid {
       constexpr explicit operator Vector3<U>() const {
         return Vector3<U>{static_cast<U>(x), static_cast<U>(y), static_cast<U>(z)};
       }
+
+      constexpr T square_norm() const { return x * x + y * y + z * z; }
   };
 }  // namespace Fluid
 

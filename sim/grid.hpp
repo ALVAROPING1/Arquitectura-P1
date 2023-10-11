@@ -58,10 +58,11 @@ namespace Fluid {
 
       /// Ejecuta una iteración (paso) de la simulación.
       void step() {
-        // increment_densities();
-        // transfer_accelerations();
+        particle_repositioning();
+        increment_densities();
+        transfer_accelerations();
         wall_interactions();
-        // particle_movement();
+        particle_movement();
         wall_collisions();
         swap_buffers();
       }
@@ -89,7 +90,7 @@ namespace Fluid {
 
       // NOLINTNEXTLINE (readability-make-member-function-const)
       constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
-        return block_vec[idx.y * count_.x * count_.z + idx.x * count_.z + idx.z];
+        return block_vec[idx.x * count_.y * count_.z + idx.y * count_.z + idx.z];
       }
 
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
@@ -172,8 +173,8 @@ namespace Fluid {
       constexpr void wall_iterate() {
         Vector3<std::size_t> idx{0, 0, 0};
         C::set(idx)               = (Side == 0 ? 0 : Side * C::get(count_) - 1);
-        const std::size_t count_A = A::get(count_);
-        const std::size_t count_B = B::get(count_);
+        std::size_t const count_A = A::get(count_);
+        std::size_t const count_B = B::get(count_);
         for (; A::get(idx) < count_A; ++A::set(idx)) {
           for (B::set(idx) = 0; B::get(idx) < count_B; ++B::set(idx)) {
             Block & block = index(idx, front());
@@ -191,6 +192,55 @@ namespace Fluid {
         wall_iterate<0, Axis_Y, Axis_Z, Axis_X, Proc>();
         wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc>();
       }
+
+      std::vector<Vector3<std::size_t>> adjacent_blocks(Vector3<std::size_t> block);
+
+      [[nodiscard]] std::vector<Vector3<std::size_t>> iter_blocks() const {
+        std::vector<Vector3<std::size_t>> out{};
+        out.reserve(count_.x * count_.y * count_.z);
+        for (std::size_t i{0}; i < count_.x; ++i) {
+          for (std::size_t j{0}; j < count_.y; ++i) {
+            for (std::size_t k{0}; k < count_.z; ++i) { out.push_back({i, j, k}); }
+          }
+        }
+        return out;
+      }
+
+      template <typename F>
+      constexpr void iter_pairs(F f)
+        requires std::invocable<F, Particle &, Particle &>
+      {
+        for (auto block1 : iter_blocks()) {
+          for (auto block2 : adjacent_blocks(block1)) {
+            for (auto & particle1 : index(block1, front())) {
+              for (auto & particle2 : index(block2, front())) { f(particle1, particle2); }
+            }
+          }
+          Block & block = index(block1, front());
+          for (std::size_t i{}; i < block.size(); ++i) {
+            for (std::size_t j{i + 1}; j < block.size(); ++j) { f(block[i], block[j]); }
+          }
+        }
+      }
+
+      void particle_repositioning();
+      void _increment_densities(Particle & particle1, Particle & particle2);
+
+      void increment_densities() {
+        iter_pairs([this](Particle & particle1, Particle & particle2) {
+          _increment_densities(particle1, particle2);
+        });
+      }
+
+      void _transfer_accelerations(Particle & particle1, Particle & particle2);
+
+      void transfer_accelerations() {
+        iter_pairs([this](Particle & particle1, Particle & particle2) {
+          _transfer_accelerations(particle1, particle2);
+        });
+      }
+
+      void particle_movement();
   };
 
 }  // namespace Fluid

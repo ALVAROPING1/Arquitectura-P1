@@ -20,7 +20,7 @@ namespace Fluid {
       // Es preferible en este caso nombres más cortos para que sea más fácil
       // escribir las fórmulas.
       Vector3<double> p{0, 0, 0};
-      double rho{0};
+      double density{0};
       Vector3<double> hv{0, 0, 0};
       Vector3<double> v{0, 0, 0};
       Vector3<double> a{0, 0, 0};

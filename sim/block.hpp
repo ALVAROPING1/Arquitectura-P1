@@ -25,7 +25,11 @@ namespace Fluid {
 
       void clear() { particles_.clear(); };
 
-      constexpr Particle operator[](std::size_t i) const { return particles_[i]; }
+      constexpr Particle & operator[](std::size_t i) { return particles_[i]; }
+
+      constexpr Particle const & operator[](std::size_t i) const { return particles_[i]; }
+
+      [[nodiscard]] constexpr std::size_t size() const { return particles_.size(); }
 
       [[nodiscard]] constexpr auto begin() const { return particles_.begin(); }
 
