@@ -4,7 +4,7 @@
 
 namespace Fluid {
 
-  ArgumentParser::ArgumentParser(std::span<gsl::zstring> args) : error_{0} {
+  ArgumentParser::ArgumentParser(std::span<gsl::zstring> args) {
     auto const size = args.size() - 1;
     if (size != 3) {
       error(-1, "Error: Invalid number of arguments: ", size, ".");

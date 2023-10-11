@@ -10,6 +10,8 @@
 
 namespace Fluid::Math {
 
+  /*
+
   constexpr double calc_particle_mass(double ppm) {
     return Fluid::Constants::rho * pow(ppm, 3);
   }
@@ -58,6 +60,7 @@ namespace Fluid::Math {
     return Vector3<double>{(vmax.x - vmin.x) / n_bloques.x, (vmax.y - vmin.y) / n_bloques.y,
                            (vmax.z - vmin.z) / n_bloques.z};
   }
+  */
 
 }  // namespace Fluid::Math
 

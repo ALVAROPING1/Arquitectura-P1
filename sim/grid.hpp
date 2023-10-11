@@ -7,8 +7,9 @@
 #include "particle.hpp"
 #include "vector3.hpp"
 
-#include <array>
 #include <vector>
+#include <tuple>
+#include <utility>
 
 namespace Fluid {
 
@@ -16,18 +17,16 @@ namespace Fluid {
       using block_vector = std::vector<Block>;
 
       // TODO: solucionar errores de clang-tidy
-      [[maybe_unused]] std::size_t const pc_;
-      [[maybe_unused]] double const ppm_;
-      [[maybe_unused]] double const h_;
-      [[maybe_unused]] double const m_;
+      [[maybe_unused]] std::size_t pc_;
+      [[maybe_unused]] double ppm_;
+      [[maybe_unused]] double h_;
+      [[maybe_unused]] double m_;
       int id_{};
 
-      Vector3<std::size_t> const count_;
-      Vector3<double> const sizes_;
+      Vector3<std::size_t> count_;
+      Vector3<double> sizes_;
 
-      std::array<block_vector, 2> blocks_;
-      block_vector & front_{blocks_[0]};
-      block_vector & back_{blocks_[1]};
+      std::pair<block_vector, block_vector> blocks_;
 
     public:
       /// Construye una nueva malla vacía.
@@ -41,8 +40,8 @@ namespace Fluid {
           sizes_{(Constants::b_max - Constants::b_min) / static_cast<Vector3<double>>(count_)} {
         std::size_t const count  = count_.x * count_.y * count_.z;
         std::size_t const approx = 2 * pc / count;
-        blocks_[0].resize(count, Block{approx});
-        blocks_[1].resize(count, Block{approx});
+        blocks_.first.resize(count, Block{approx});
+        blocks_.second.resize(count, Block{approx});
       }
 
       /// Añade una partícula a la malla.
@@ -53,7 +52,7 @@ namespace Fluid {
       /// @param v
       /// La velocidad de la partícula
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
-        Particle particle{p, hv, v, id_++};
+        Particle const particle{p, hv, v, id_++};
         index(particle.p).add(particle);
       }
 
@@ -67,13 +66,21 @@ namespace Fluid {
       [[nodiscard]] std::vector<Particle> get_all() const;
 
     private:
-      constexpr void swap_buffers() { std::swap(front_, back_); }
+      constexpr void swap_buffers() {
+        block_vector temp{std::move(blocks_.first)};
+        blocks_.first = std::move(blocks_.second);
+        blocks_.second = std::move(temp);
+      }
 
+      [[nodiscard]] constexpr block_vector & front() { return blocks_.first; }
+      [[nodiscard]] constexpr block_vector const& front() const { return blocks_.first; }
+      [[nodiscard]] constexpr block_vector & back() { return blocks_.second; }
+      [[nodiscard]] constexpr block_vector const& back() const { return blocks_.second; }
     protected:
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
       /// @param pos
       /// La posición de la partícula
-      constexpr Block & index(Vector3<double> /*unused*/) { return front_[0]; }
+      constexpr Block & index(Vector3<double> /*unused*/) { return front()[0]; }
   };
 
 }  // namespace Fluid
