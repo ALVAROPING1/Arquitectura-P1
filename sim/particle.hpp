@@ -15,14 +15,15 @@ namespace Fluid {
   struct alignas(ALIGN_VALUE) Particle {
       // Parámetros que no cambian
       int id{};
-      double density{};
 
       // Parámetros que cambian en cada iteración.
       // Es preferible en este caso nombres más cortos para que sea más fácil
       // escribir las fórmulas.
-      Vector3<double> p  = Vector3<double>{0, 0, 0};
-      Vector3<double> hv = Vector3<double>{0, 0, 0};
-      Vector3<double> v  = Vector3<double>{0, 0, 0};
+      Vector3<double> p{0, 0, 0};
+      double rho{0};
+      Vector3<double> hv{0, 0, 0};
+      Vector3<double> v{0, 0, 0};
+      Vector3<double> a{0, 0, 0};
 
       Particle() = default;
 

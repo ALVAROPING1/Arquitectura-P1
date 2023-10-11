@@ -10,7 +10,7 @@ namespace Fluid::Constants {
   constexpr double r{1.695};     // Multiplicador de radio
   constexpr double rho{10e3};    // Densidad de fluido
   constexpr double p_s{3.0};     // Presión de rigidez
-  constexpr double s_c{3.0e4};   // Colisiones de rigidez
+  constexpr double c_s{3.0e4};   // Colisiones de rigidez
   constexpr double d_v{128.0};   // Amortiguamiento
   constexpr double mu{0.4};      // Viscosidad
   constexpr double d_p{2.0e-4};  // Tamaño de partícula

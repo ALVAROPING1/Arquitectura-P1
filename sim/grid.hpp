@@ -60,15 +60,19 @@ namespace Fluid {
       void step() {
         // increment_densities();
         // transfer_accelerations();
-        // wall_interactions();
+        wall_interactions();
         // particle_movement();
-        // wall_collisions();
+        wall_collisions();
         swap_buffers();
       }
 
       [[nodiscard]] std::vector<Particle> get_all() const;
 
     private:
+      constexpr void wall_interactions() { wall_action<interact_particle>(); }
+
+      constexpr void wall_collisions() { wall_action<collide_particle>(); }
+
       constexpr void swap_buffers() {
         block_vector temp{std::move(blocks_.first)};
         blocks_.first  = std::move(blocks_.second);
@@ -94,6 +98,98 @@ namespace Fluid {
       constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
         return index(static_cast<Vector3<std::size_t>>((pos - Constants::b_min) / sizes_),
                      block_vec);
+      }
+
+      struct Axis_X {
+          template <typename T>
+          constexpr static T & set(Vector3<T> & v) {
+            return v.x;
+          }
+
+          template <typename T>
+          constexpr static T const & get(Vector3<T> const & v) {
+            return v.x;
+          }
+      };
+
+      struct Axis_Y {
+          template <typename T>
+          constexpr static T & set(Vector3<T> & v) {
+            return v.y;
+          }
+
+          template <typename T>
+          constexpr static T const & get(Vector3<T> const & v) {
+            return v.y;
+          }
+      };
+
+      struct Axis_Z {
+          template <typename T>
+          constexpr static T & set(Vector3<T> & v) {
+            return v.z;
+          }
+
+          template <typename T>
+          constexpr static T const & get(Vector3<T> const & v) {
+            return v.z;
+          }
+      };
+
+      struct interact_particle {
+          template <int Side, typename Axis>
+          constexpr static void run(Particle & particle) {
+            constexpr double epsilon = 1.0e-10;
+            // NOLINTBEGIN (readability-identifier-length) Mathematical equation
+            double const w        = Axis::get(particle.p) + Axis::get(particle.hv) * Constants::dt;
+            Axis::set(particle.p) = w;
+            double const dw       = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
+                                                                : Axis::get(Constants::b_max) - w);
+            // NOLINTEND (readability-identifier-length)
+            if (dw > epsilon) {
+              Axis::set(particle.a) +=
+                  (Side == 0 ? +1.0 : -1.0) *
+                  (Constants::c_s * dw - Constants::d_v * Axis::get(particle.v));
+            }
+          }
+      };
+
+      struct collide_particle {
+          template <int Side, typename Axis>
+          constexpr static void run(Particle & particle) {
+            double const d_w = (Side == 0 ? Axis::get(particle.p) - Axis::get(Constants::b_min)
+                                          : Axis::get(Constants::b_max) - Axis::get(particle.p));
+            if (d_w < 0) {
+              Axis::set(particle.p)   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
+                                                   : Axis::get(Constants::b_max) + d_w);
+              Axis::set(particle.v)  *= -1;
+              Axis::set(particle.hv) *= -1;
+            }
+          }
+      };
+
+      template <int Side, typename A, typename B, typename C, typename Proc>
+      constexpr void wall_iterate() {
+        Vector3<std::size_t> idx{0, 0, 0};
+        C::set(idx)               = (Side == 0 ? 0 : Side * C::get(count_) - 1);
+        const std::size_t count_A = A::get(count_);
+        const std::size_t count_B = B::get(count_);
+        for (; A::get(idx) < count_A; ++A::set(idx)) {
+          for (B::set(idx) = 0; B::get(idx) < count_B; ++B::set(idx)) {
+            Block & block = index(idx, front());
+            for (auto & particle : block) { Proc::template run<Side, C>(particle); }
+          }
+        }
+      }
+
+      template <typename Proc>
+      constexpr void wall_action() {
+        wall_iterate<0, Axis_X, Axis_Y, Axis_Z, Proc>();
+        wall_iterate<1, Axis_X, Axis_Y, Axis_Z, Proc>();
+        wall_iterate<0, Axis_X, Axis_Z, Axis_Y, Proc>();
+        wall_iterate<1, Axis_X, Axis_Z, Axis_Y, Proc>();
+        wall_iterate<0, Axis_Y, Axis_Z, Axis_X, Proc>();
+        wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc>();
       }
   };
 
