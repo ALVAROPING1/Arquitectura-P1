@@ -11,8 +11,8 @@ namespace Fluid {
   constexpr int particle_count_error = -5;
 
   template <typename T>
-  void read(std::istream & in, Vector3<T> & result) {
-    IO::read(in, result.x, result.y, result.z);
+  bool read(std::istream & in, Vector3<T> & result) {
+    return IO::read(in, result.x, result.y, result.z);
   }
 
   template <typename T>
@@ -25,13 +25,11 @@ namespace Fluid {
     Vector3<float> hvel;
     Vector3<float> vel;
     int idx = 0;
-    for (; input_file_; ++idx) {
-      IO::read(input_file_, pos, hvel, vel);
-      grid.add(pos, hvel, vel);
-    }
+    for (; IO::read(input_file_, pos, hvel, vel); ++idx) { grid.add(pos, hvel, vel); }
     if (idx != np_) {
       error_ = particle_count_error;
-      IO::put_line(std::cerr, "Error: Number of particles mismatch. Header: ", np_, "Found: ", idx);
+      IO::put_line(std::cerr, "Error: Number of particles mismatch. Header: ", np_,
+                   " Found: ", idx);
     }
   }
 

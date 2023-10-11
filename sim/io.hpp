@@ -31,24 +31,23 @@ namespace Fluid::IO {
 
   // Función general
   template <typename... Args>
-  void read(std::istream & in, Args &... args);
+  bool read(std::istream & in, Args &... args);
 
   // Paso recursivo
   template <typename T, typename... Args>
-  void read(std::istream & in, T & result, Args &... args);
+  bool read(std::istream & in, T & result, Args &... args);
 
   // Casos base
   template <typename T>
     requires std::is_arithmetic<T>::value
-  void read(std::istream & in, T & result) {
+  bool read(std::istream & in, T & result) {
     // NOLINTNEXTLINE (cppcoreguidelines-pro-type-reinterpret-cast)
-    in.read(reinterpret_cast<char *>(&result), sizeof(T));
+    return static_cast<bool>(in.read(reinterpret_cast<char *>(&result), sizeof(T)));
   }
 
   template <typename T, typename... Args>
-  void read(std::istream & in, T & result, Args &... args) {
-    read(in, result);
-    read(in, args...);
+  bool read(std::istream & in, T & result, Args &... args) {
+    return read(in, result) && read(in, args...);
   }
 
   // Función general
