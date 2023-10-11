@@ -55,7 +55,7 @@ namespace Fluid {
         return Vector3<U>{static_cast<U>(x), static_cast<U>(y), static_cast<U>(z)};
       }
 
-      constexpr T square_norm() const { return x * x + y * y + z * z; }
+      [[nodiscard]] constexpr T square_norm() const { return x * x + y * y + z * z; }
   };
 }  // namespace Fluid
 

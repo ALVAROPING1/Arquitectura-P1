@@ -58,7 +58,7 @@ namespace Fluid {
 
       /// Ejecuta una iteración (paso) de la simulación.
       void step() {
-        particle_repositioning();
+        // particle_repositioning();
         increment_densities();
         transfer_accelerations();
         wall_interactions();
@@ -199,8 +199,8 @@ namespace Fluid {
         std::vector<Vector3<std::size_t>> out{};
         out.reserve(count_.x * count_.y * count_.z);
         for (std::size_t i{0}; i < count_.x; ++i) {
-          for (std::size_t j{0}; j < count_.y; ++i) {
-            for (std::size_t k{0}; k < count_.z; ++i) { out.push_back({i, j, k}); }
+          for (std::size_t j{0}; j < count_.y; ++j) {
+            for (std::size_t k{0}; k < count_.z; ++k) { out.push_back({i, j, k}); }
           }
         }
         return out;

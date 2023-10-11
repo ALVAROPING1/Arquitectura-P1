@@ -47,8 +47,8 @@ namespace Fluid {
     constexpr int const3{6};
     constexpr int const4{9};
 
-    Vector3<double> distance{particle1.p - particle2.p};
-    double norm{distance.square_norm()};
+    Vector3<double> const distance{particle1.p - particle2.p};
+    double const norm{distance.square_norm()};
     if (norm >= std::pow(h_, 2)) { return; }
     double density{std::pow(h_, 2) - norm};
     density = (density * density * density + std::pow(h_, const3)) * const1 /
@@ -64,10 +64,10 @@ namespace Fluid {
     constexpr double const3{2.0};
     constexpr int const4{6};
 
-    Vector3<double> distance{particle1.p - particle2.p};
-    double norm{distance.square_norm()};
-    double dist_ij{std::sqrt(std::max(norm, const1))};
-    Vector3<double> acceleration{
+    Vector3<double> const distance{particle1.p - particle2.p};
+    double const norm{distance.square_norm()};
+    double const dist_ij{std::sqrt(std::max(norm, const1))};
+    Vector3<double> const acceleration{
         // Trash format, but that's the formula we were given without meaning of individual parts
         (distance * (3 * Constants::p_s) / const3 * std::pow(h_ - dist_ij, 2) / dist_ij *
              (particle1.density + particle2.density - 2 * Constants::rho) +
