@@ -70,10 +70,6 @@ namespace Fluid {
       [[nodiscard]] std::vector<Particle> get_all() const;
 
     private:
-      constexpr void wall_interactions() { wall_action<interact_particle>(); }
-
-      constexpr void wall_collisions() { wall_action<collide_particle>(); }
-
       constexpr void swap_buffers() {
         block_vector temp{std::move(blocks_.first)};
         blocks_.first  = std::move(blocks_.second);
@@ -241,6 +237,10 @@ namespace Fluid {
       }
 
       void particle_movement();
+
+      constexpr void wall_interactions() { wall_action<interact_particle>(); }
+
+      constexpr void wall_collisions() { wall_action<collide_particle>(); }
   };
 
 }  // namespace Fluid
