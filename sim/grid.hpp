@@ -7,9 +7,9 @@
 #include "particle.hpp"
 #include "vector3.hpp"
 
-#include <vector>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 namespace Fluid {
 
@@ -53,14 +53,17 @@ namespace Fluid {
       /// La velocidad de la partícula
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
         Particle const particle{p, hv, v, id_++};
-        index(particle.p).add(particle);
+        find_block(particle.p, front()).add(particle);
       }
 
       /// Ejecuta una iteración (paso) de la simulación.
       void step() {
         // increment_densities();
-        // transform_densities();
         // transfer_accelerations();
+        // wall_interactions();
+        // particle_movement();
+        // wall_collisions();
+        swap_buffers();
       }
 
       [[nodiscard]] std::vector<Particle> get_all() const;
@@ -68,19 +71,30 @@ namespace Fluid {
     private:
       constexpr void swap_buffers() {
         block_vector temp{std::move(blocks_.first)};
-        blocks_.first = std::move(blocks_.second);
+        blocks_.first  = std::move(blocks_.second);
         blocks_.second = std::move(temp);
       }
 
       [[nodiscard]] constexpr block_vector & front() { return blocks_.first; }
-      [[nodiscard]] constexpr block_vector const& front() const { return blocks_.first; }
+
+      [[nodiscard]] constexpr block_vector const & front() const { return blocks_.first; }
+
       [[nodiscard]] constexpr block_vector & back() { return blocks_.second; }
-      [[nodiscard]] constexpr block_vector const& back() const { return blocks_.second; }
-    protected:
+
+      [[nodiscard]] constexpr block_vector const & back() const { return blocks_.second; }
+
+      // NOLINTNEXTLINE (readability-make-member-function-const)
+      constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
+        return block_vec[idx.y * count_.x * count_.z + idx.x * count_.z + idx.z];
+      }
+
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
       /// @param pos
       /// La posición de la partícula
-      constexpr Block & index(Vector3<double> /*unused*/) { return front()[0]; }
+      constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
+        return index(static_cast<Vector3<std::size_t>>((pos - Constants::b_min) / sizes_),
+                     block_vec);
+      }
   };
 
 }  // namespace Fluid
