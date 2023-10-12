@@ -68,8 +68,19 @@ namespace Fluid {
 
   void Grid::particle_movement() {
     // TODO: Make block variable
-    iter_blocks([this](Vector3<size_t> const& block) {
+    iter_blocks([this](Vector3<size_t> const & block) {
       for (auto & particle : index(block, front())) {
+        // if (particle.id == 701) {
+        //   IO::put_line(std::cerr, "Before movement:");
+        //   IO::put_line(std::cerr, "Block idx: ", block);
+        //   IO::put_line(std::cerr, "Correct Block idx: ",
+        //                static_cast<Vector3<std::size_t>>(
+        //                    (particle.p.clamp(Constants::b_min, Constants::b_max - sizes_) -
+        //                     Constants::b_min) /
+        //                    sizes_));
+        //   IO::put_line(std::cerr, particle);
+        // }
+        // TODO: v/hv incrementan en valor absoluto en cada iteración. ¿Es esto correcto?
         particle.p  += particle.hv * Constants::dt + particle.a * std::pow(Constants::dt, 2);
         particle.v   = particle.hv + particle.a * Constants::dt / 2;
         particle.hv += particle.a * Constants::dt;
@@ -77,7 +88,16 @@ namespace Fluid {
         // iteration. This allows us to skip the full scan of the particles at the beginning of each
         // update cycle
         particle.reset_density(h_, m_);
-        particle.a       = Constants::g;
+        particle.a = Constants::g;
+        if (particle.id == 701) {
+          // IO::put_line(std::cerr, "After movement:");
+          // IO::put_line(std::cerr, "Correct Block idx: ",
+          //              static_cast<Vector3<std::size_t>>(
+          //                  (particle.p.clamp(Constants::b_min, Constants::b_max - sizes_) -
+          //                   Constants::b_min) /
+          //                  sizes_));
+          // IO::put_line(std::cerr, particle);
+        }
       }
     });
   }
@@ -85,23 +105,15 @@ namespace Fluid {
   void Grid::particle_repositioning() {
     block_vector & back = blocks_.second;
     for (auto & block : back) { block.clear(); }
-    blocks_.second.resize(front().size(), Block{10});
-    int i = 0;
-    for (auto const& block : front()) {
-      IO::put_line (std::cerr, "Io", block, " ", ++i, "/", front().size());
-      for (auto const& particle : block) {
-        Vector3<std::size_t> idx{
-            static_cast<Vector3<std::size_t>>((particle.p - Constants::b_min) / sizes_)};
-        const std::size_t tot = idx.z * count_.y * count_.x + idx.y * count_.x + idx.x;
-        IO::put_line(std::cerr, idx, " => ", tot, "/", back.size());
-        // find_block<false>(particle.p, back()).add(particle);
-        back[tot].add(particle);
-        IO::put_line (std::cerr, "Fuck");
-        back[tot].add(particle);
-        IO::put_line (std::cerr, "Fuck");
+    // blocks_.second.resize(front().size(), Block{10});
+    for (auto const & block : front()) {
+      for (auto const & particle : block) {
+        find_block<true>(particle.p, back).add(particle);
+        // IO::put_line(std::cerr, idx, " [", tot, "] ", particle);
+        // IO::put_line(std::cerr, sizes_);
       }
-      IO::put_line (std::cerr, "Oi");
     }
   }
 }  // namespace Fluid
+
 // NOLINTEND

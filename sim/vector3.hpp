@@ -58,10 +58,9 @@ namespace Fluid {
 
       [[nodiscard]] constexpr T square_norm() const { return x * x + y * y + z * z; }
 
-      constexpr void clamp(Vector3 const min, Vector3 const max) {
-        x = std::clamp(x, min.x, max.x);
-        y = std::clamp(y, min.y, max.y);
-        z = std::clamp(z, min.z, max.z);
+      constexpr Vector3 clamp(Vector3 const min, Vector3 const max) {
+        return Vector3{std::clamp(x, min.x, max.x), std::clamp(y, min.y, max.y),
+                       std::clamp(z, min.z, max.z)};
       }
   };
 }  // namespace Fluid

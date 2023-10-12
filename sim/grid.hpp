@@ -111,9 +111,9 @@ namespace Fluid {
       /// La posición de la partícula
       template <bool Clamp>
       constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
+        Vector3<double> pos_{Clamp ? pos.clamp(Constants::b_min, Constants::b_max - sizes_) : pos};
         Vector3<std::size_t> idx{
-            static_cast<Vector3<std::size_t>>((pos - Constants::b_min) / sizes_)};
-        if (Clamp) { idx.clamp({0, 0, 0}, count_ - Vector3<std::size_t>{1, 1, 1}); }
+            static_cast<Vector3<std::size_t>>((pos_ - Constants::b_min) / sizes_)};
         return index(idx, block_vec);
       }
 
@@ -242,9 +242,7 @@ namespace Fluid {
         Vector3<std::size_t> idx{0, 0, 0};
         for (; idx.x < count_.x; ++idx.x) {
           for (idx.y = 0; idx.y < count_.y; ++idx.y) {
-            for (idx.z = 0; idx.z < count_.z; ++idx.z) {
-              f(idx);
-            }
+            for (idx.z = 0; idx.z < count_.z; ++idx.z) { f(idx); }
           }
         }
       }
@@ -265,7 +263,6 @@ namespace Fluid {
           }
         });
       }
-
   };
 
 }  // namespace Fluid
