@@ -189,53 +189,65 @@ namespace Fluid {
         wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc>();
       }
 
-      std::vector<Vector3<std::size_t>> adjacent_blocks(Vector3<std::size_t> block);
-
-      [[nodiscard]] std::vector<Vector3<std::size_t>> iter_blocks() const {
-        std::vector<Vector3<std::size_t>> out{};
-        out.reserve(count_.x * count_.y * count_.z);
-        for (std::size_t i{0}; i < count_.x; ++i) {
-          for (std::size_t j{0}; j < count_.y; ++j) {
-            for (std::size_t k{0}; k < count_.z; ++k) { out.push_back({i, j, k}); }
+      template <typename F>
+      void adjacent_blocks(Vector3<size_t> block, F f)
+        requires std::invocable<F, Vector3<std::size_t> const>
+      {
+        if (block.x > 0) {
+          if (block.y > 0) {
+            if (block.z > 0) { f({block.x - 1, block.y - 1, block.z - 1}); }
+            f({block.x - 1, block.y - 1, block.z});
+            if (block.z < count_.z - 1) { f({block.x - 1, block.y - 1, block.z + 1}); }
+          }
+          if (block.z > 0) { f({block.x - 1, block.y, block.z - 1}); }
+          f({block.x - 1, block.y, block.z});
+          if (block.z < count_.z - 1) { f({block.x - 1, block.y, block.z + 1}); }
+          if (block.y < count_.y - 1) {
+            if (block.z > 0) { f({block.x - 1, block.y + 1, block.z - 1}); }
+            f({block.x - 1, block.y + 1, block.z});
+            if (block.z < count_.z - 1) { f({block.x - 1, block.y + 1, block.z + 1}); }
           }
         }
-        return out;
+        if (block.y > 0) {
+          if (block.z > 0) { f({block.x, block.y - 1, block.z - 1}); }
+          f({block.x, block.y - 1, block.z});
+          if (block.z < count_.z - 1) { f({block.x, block.y - 1, block.z + 1}); }
+        }
+        if (block.z > 0) { f({block.x, block.y, block.z - 1}); }
+      }
+
+      template <typename F>
+      constexpr void iter_blocks(F f)
+        requires std::invocable<F, Vector3<std::size_t> const>
+      {
+        Vector3<std::size_t> idx{0, 0, 0};
+        for (; idx.x < count_.x; ++idx.x) {
+          for (; idx.y < count_.y; ++idx.y) {
+            for (; idx.z < count_.z; ++idx.z) { f(idx); }
+          }
+        }
       }
 
       template <typename F>
       constexpr void iter_pairs(F f)
         requires std::invocable<F, Particle &, Particle &>
       {
-        for (auto block1 : iter_blocks()) {
-          for (auto block2 : adjacent_blocks(block1)) {
+        iter_blocks([this, f](Vector3<std::size_t> const block1) {
+          adjacent_blocks(block1, [this, block1, f](const Vector3<std::size_t> block2) {
             for (auto & particle1 : index(block1, front())) {
               for (auto & particle2 : index(block2, front())) { f(particle1, particle2); }
             }
-          }
+          });
           Block & block = index(block1, front());
           for (std::size_t i{}; i < block.size(); ++i) {
             for (std::size_t j{i + 1}; j < block.size(); ++j) { f(block[i], block[j]); }
           }
-        }
+        });
       }
 
       void particle_repositioning();
-      void _increment_densities(Particle & particle1, Particle & particle2);
-
-      void increment_densities() {
-        iter_pairs([this](Particle & particle1, Particle & particle2) {
-          _increment_densities(particle1, particle2);
-        });
-      }
-
-      void _transfer_accelerations(Particle & particle1, Particle & particle2);
-
-      void transfer_accelerations() {
-        iter_pairs([this](Particle & particle1, Particle & particle2) {
-          _transfer_accelerations(particle1, particle2);
-        });
-      }
-
+      void increment_densities();
+      void transfer_accelerations();
       void particle_movement();
 
       constexpr void wall_interactions() { wall_action<interact_particle>(); }
