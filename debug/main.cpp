@@ -17,6 +17,8 @@ using namespace Fluid::IO;
 using block_vector = std::vector<Fluid::Block>;
 
 constexpr double epsilon = 0.000'001;
+// constexpr int max = 3;
+// static int count = 0;
 
 bool compare (double left, double right) {
   return std::abs(left - right) <= epsilon * std::max(std::abs(left), std::abs(right));
@@ -104,14 +106,36 @@ int main(int argc, char ** argv) {
     // correct = tracer.load("traces/densinc-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
-    correct = tracer.load("traces/denstransf-base-" + std::to_string(i + 1) + ".trz");
-    attempt = grid.get_blocks();
-    compare(correct, attempt);
+    // correct = tracer.load("traces/denstransf-base-" + std::to_string(i + 1) + ".trz");
+    // attempt = grid.get_blocks();
+    // compare(correct, attempt);
 
+    // FIXME
     grid.transfer_accelerations();
+    // correct = tracer.load("traces/acctransf-base-" + std::to_string(i + 1) + ".trz");
+    // attempt = grid.get_blocks();
+    // compare(correct, attempt);
+    // grid.set_blocks(correct);
+
+    // FIXME
     grid.wall_interactions();
+    // correct = tracer.load("traces/partcol-base-" + std::to_string(i + 1) + ".trz");
+    // attempt = grid.get_blocks();
+    // compare(correct, attempt);
+    // grid.set_blocks(correct);
+
     grid.particle_movement();
+    correct = tracer.load("traces/motion-base-" + std::to_string(i + 1) + ".trz");
+    // attempt = grid.get_blocks();
+    // compare(correct, attempt);
+    grid.set_blocks(correct);
+
     grid.wall_collisions();
+    correct = tracer.load("traces/boundint-base-" + std::to_string(i + 1) + ".trz");
+    // attempt = grid.get_blocks();
+    // compare(correct, attempt);
+    // grid.set_blocks(attempt);
+
     grid.particle_repositioning();
     grid.swap_buffers();
   }

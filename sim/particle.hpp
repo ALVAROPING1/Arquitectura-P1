@@ -7,7 +7,7 @@
 namespace Fluid {
 
   constexpr int ALIGN_VALUE = 128;
-  constexpr double density_factor = 31.50 / (64.0 * std::numbers::pi);
+  constexpr double density_factor = 315.0 / (64.0 * std::numbers::pi);
 
   // FIXME: Pensar más detenidamente el valor de alineamiento.
   //        Se podría separar a otro struct

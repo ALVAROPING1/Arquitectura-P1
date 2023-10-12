@@ -1,4 +1,5 @@
 // NOLINTBEGIN
+#include "io.hpp"
 
 // Representación de la malla
 #ifndef GRID_HPP
@@ -89,6 +90,7 @@ namespace Fluid {
         blocks_.second = std::move(temp);
       }
       [[nodiscard]] std::vector<Block> get_blocks() const { return blocks_.first; }
+      void set_blocks(std::vector<Block> const& blocks) { blocks_.first = blocks; }
 
     private:
       [[nodiscard]] constexpr block_vector & front() { return blocks_.first; }
@@ -185,7 +187,7 @@ namespace Fluid {
       template <int Side, typename A, typename B, typename C, typename Proc>
       constexpr void wall_iterate() {
         Vector3<std::size_t> idx{0, 0, 0};
-        C::set(idx)               = (Side == 0 ? 0 : Side * C::get(count_) - 1);
+        C::set(idx)               = (Side == 0 ? 0 : C::get(count_) - 1);
         std::size_t const count_A = A::get(count_);
         std::size_t const count_B = B::get(count_);
         for (; A::get(idx) < count_A; ++A::set(idx)) {
