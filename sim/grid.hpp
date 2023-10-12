@@ -7,6 +7,7 @@
 #include "particle.hpp"
 #include "vector3.hpp"
 
+#include <iostream>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -51,9 +52,10 @@ namespace Fluid {
       /// El parámetro hv de la partícula
       /// @param v
       /// La velocidad de la partícula
+      template <bool Clamp>
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
         Particle const particle{p, hv, v, id_++};
-        find_block(particle.p, front()).add(particle);
+        find_block<Clamp>(particle.p, front()).add(particle);
       }
 
       /// Ejecuta una iteración (paso) de la simulación.
@@ -92,9 +94,12 @@ namespace Fluid {
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
       /// @param pos
       /// La posición de la partícula
+      template <bool Clamp>
       constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
-        return index(static_cast<Vector3<std::size_t>>((pos - Constants::b_min) / sizes_),
-                     block_vec);
+        Vector3<std::size_t> idx{
+            static_cast<Vector3<std::size_t>>((pos - Constants::b_min) / sizes_)};
+        if (Clamp) { idx.clamp({0, 0, 0}, count_ - Vector3<std::size_t>{1, 1, 1}); }
+        return index(idx, block_vec);
       }
 
       struct Axis_X {

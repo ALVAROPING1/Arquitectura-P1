@@ -1,6 +1,7 @@
 #ifndef VECTOR3_HPP
 #define VECTOR3_HPP
 
+#include <algorithm>
 #include <array>
 #include <ostream>
 
@@ -56,6 +57,12 @@ namespace Fluid {
       }
 
       [[nodiscard]] constexpr T square_norm() const { return x * x + y * y + z * z; }
+
+      constexpr void clamp(Vector3 const min, Vector3 const max) {
+        x = std::clamp(x, min.x, max.x);
+        y = std::clamp(y, min.y, max.y);
+        z = std::clamp(z, min.z, max.z);
+      }
   };
 }  // namespace Fluid
 
