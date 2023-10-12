@@ -17,7 +17,7 @@ namespace Fluid::Constants {
   constexpr double dt{10e-3};    // Paso de tiempo
 
   // Constantes vectoriales de la simulación.
-  constexpr Vector3<double> g{0.0, 9.8, 0.0};              // Aceleración externa
+  constexpr Vector3<double> g{0.0, -9.8, 0.0};             // Aceleración externa
   constexpr Vector3<double> b_max{0.065, 0.1, 0.065};      // Límite superior de recinto
   constexpr Vector3<double> b_min{-0.065, -0.08, -0.065};  // Límite inferior de recinto
   // NOLINTEND (readability-identifier-length)

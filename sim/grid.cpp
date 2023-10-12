@@ -1,3 +1,4 @@
+// NOLINTBEGIN
 #include "grid.hpp"
 
 #include <cmath>
@@ -14,17 +15,13 @@ namespace Fluid {
 
   void Grid::increment_densities() {
     iter_pairs([this](Particle & particle1, Particle & particle2) {
-      constexpr int const1{315};
-      constexpr int const2{64};
-      constexpr int const3{6};
-      constexpr int const4{9};
+      constexpr int nine{9};
 
       Vector3<double> const distance{particle1.p - particle2.p};
       double const norm{distance.square_norm()};
-      if (norm >= std::pow(h_, 2)) { return; }
-      double density{std::pow(h_, 2) - norm};
-      density = (density * density * density + std::pow(h_, const3)) * const1 /
-                (const2 * std::numbers::pi * std::pow(h_, const4));
+      if (norm >= h_ * h_) { return; }
+      double density{h_ * h_ - norm};
+      density = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
       particle1.density += density;
       particle2.density += density;
     });
@@ -62,7 +59,7 @@ namespace Fluid {
         // Reset the density/acceleration while we are at it as they are no longer needed in this
         // iteration. This allows us to skip the full scan of the particles at the beginning of each
         // update cycle
-        particle.density = 0;
+        particle.reset_density(h_, m_);
         particle.a       = Constants::g;
       }
     });
@@ -74,9 +71,9 @@ namespace Fluid {
     }
     for (auto const& block : front()) {
       for (auto const& particle : block) {
-        index(particle.p, back()).add(particle);
+        find_block<false>(particle.p, back()).add(particle);
       }
     }
   }
-
 }  // namespace Fluid
+// NOLINTEND

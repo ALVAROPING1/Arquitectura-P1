@@ -21,6 +21,7 @@ FetchContent_MakeAvailable(GSL)
 
 add_subdirectory(sim)
 add_subdirectory(fluid)
+add_subdirectory(debug)
 
 enable_testing()
 add_subdirectory(utest)

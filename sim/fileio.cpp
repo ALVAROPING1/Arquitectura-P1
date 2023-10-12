@@ -10,16 +10,6 @@ namespace Fluid {
 
   constexpr int particle_count_error = -5;
 
-  template <typename T>
-  bool read(std::istream & in, Vector3<T> & result) {
-    return IO::read(in, result.x, result.y, result.z);
-  }
-
-  template <typename T>
-  void write(std::ostream & out, Vector3<T> const & result) {
-    IO::write(out, result.x, result.y, result.z);
-  }
-
   void FileIO::load(Grid & grid) {
     Vector3<float> pos;
     Vector3<float> hvel;

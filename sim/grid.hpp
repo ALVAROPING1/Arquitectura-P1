@@ -1,3 +1,5 @@
+// NOLINTBEGIN
+
 // Representación de la malla
 #ifndef GRID_HPP
 #define GRID_HPP
@@ -54,7 +56,7 @@ namespace Fluid {
       /// La velocidad de la partícula
       template <bool Clamp>
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
-        Particle const particle{p, hv, v, id_++};
+        Particle const particle{{p, hv, v}, id_++, h_, m_};
         find_block<Clamp>(particle.p, front()).add(particle);
       }
 
@@ -68,16 +70,27 @@ namespace Fluid {
         particle_repositioning();
         swap_buffers();
       }
-
       [[nodiscard]] std::vector<Particle> get_all() const;
 
+#ifdef FLUID_DEBUG
+    public:
+#else
     private:
+#endif
+      void particle_repositioning();
+      void increment_densities();
+      void transfer_accelerations();
+      void particle_movement();
+      constexpr void wall_interactions() { wall_action<interact_particle>(); }
+      constexpr void wall_collisions() { wall_action<collide_particle>(); }
       constexpr void swap_buffers() {
         block_vector temp{std::move(blocks_.first)};
         blocks_.first  = std::move(blocks_.second);
         blocks_.second = std::move(temp);
       }
+      [[nodiscard]] std::vector<Block> get_blocks() const { return blocks_.first; }
 
+    private:
       [[nodiscard]] constexpr block_vector & front() { return blocks_.first; }
 
       [[nodiscard]] constexpr block_vector const & front() const { return blocks_.first; }
@@ -88,7 +101,7 @@ namespace Fluid {
 
       // NOLINTNEXTLINE (readability-make-member-function-const)
       constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
-        return block_vec[idx.x * count_.y * count_.z + idx.y * count_.z + idx.z];
+        return block_vec[idx.z * count_.y * count_.x + idx.y * count_.x + idx.x];
       }
 
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
@@ -226,8 +239,10 @@ namespace Fluid {
       {
         Vector3<std::size_t> idx{0, 0, 0};
         for (; idx.x < count_.x; ++idx.x) {
-          for (; idx.y < count_.y; ++idx.y) {
-            for (; idx.z < count_.z; ++idx.z) { f(idx); }
+          for (idx.y = 0; idx.y < count_.y; ++idx.y) {
+            for (idx.z = 0; idx.z < count_.z; ++idx.z) {
+              f(idx);
+            }
           }
         }
       }
@@ -249,16 +264,9 @@ namespace Fluid {
         });
       }
 
-      void particle_repositioning();
-      void increment_densities();
-      void transfer_accelerations();
-      void particle_movement();
-
-      constexpr void wall_interactions() { wall_action<interact_particle>(); }
-
-      constexpr void wall_collisions() { wall_action<collide_particle>(); }
   };
 
 }  // namespace Fluid
 
 #endif  // GRID_HPP
+// NOLINTEND

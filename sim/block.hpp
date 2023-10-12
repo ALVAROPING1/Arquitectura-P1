@@ -44,6 +44,8 @@ namespace Fluid {
         for (auto particle : block) { out << particle; }
         return out << "]";
       }
+
+      [[nodiscard]] constexpr std::vector<Particle> get_particles () const { return particles_; }
   };
 
 }  // namespace Fluid

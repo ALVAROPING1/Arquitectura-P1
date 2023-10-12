@@ -2,6 +2,7 @@
 #define IO_HPP
 
 #include <iostream>
+#include "vector3.hpp"
 
 namespace Fluid::IO {
 
@@ -45,6 +46,11 @@ namespace Fluid::IO {
     return static_cast<bool>(in.read(reinterpret_cast<char *>(&result), sizeof(T)));
   }
 
+  template <typename T>
+  bool read(std::istream & in, Vector3<T> & result) {
+    return read(in, result.x, result.y, result.z);
+  }
+
   template <typename T, typename... Args>
   bool read(std::istream & in, T & result, Args &... args) {
     return read(in, result) && read(in, args...);
@@ -64,6 +70,11 @@ namespace Fluid::IO {
   void write(std::ostream & out, T const & result) {
     // NOLINTNEXTLINE (cppcoreguidelines-pro-type-reinterpret-cast)
     out.write(reinterpret_cast<char const *>(&result), sizeof(T));
+  }
+
+  template <typename T>
+  void write(std::ostream & out, Vector3<T> const & result) {
+    write(out, result.x, result.y, result.z);
   }
 
   template <typename T, typename... Args>
