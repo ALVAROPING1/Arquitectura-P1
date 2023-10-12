@@ -143,10 +143,9 @@ namespace Fluid {
           constexpr static void run(Particle & particle) {
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w        = Axis::get(particle.p) + Axis::get(particle.hv) * Constants::dt;
-            Axis::set(particle.p) = w;
-            double const dw       = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
-                                                                : Axis::get(Constants::b_max) - w);
+            double const w  = Axis::get(particle.p) + Axis::get(particle.hv) * Constants::dt;
+            double const dw = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
+                                                          : Axis::get(Constants::b_max) - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
               Axis::set(particle.a) +=
