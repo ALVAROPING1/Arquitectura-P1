@@ -60,12 +60,12 @@ namespace Fluid {
 
       /// Ejecuta una iteración (paso) de la simulación.
       void step() {
-        // particle_repositioning();
         increment_densities();
         transfer_accelerations();
         wall_interactions();
         particle_movement();
         wall_collisions();
+        particle_repositioning();
         swap_buffers();
       }
 

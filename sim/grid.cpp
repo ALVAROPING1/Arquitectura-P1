@@ -68,4 +68,15 @@ namespace Fluid {
     });
   }
 
+  void Grid::particle_repositioning() {
+    for (auto & block : back()) {
+      block.clear();
+    }
+    for (auto const& block : front()) {
+      for (auto const& particle : block) {
+        index(particle.p, back()).add(particle);
+      }
+    }
+  }
+
 }  // namespace Fluid
