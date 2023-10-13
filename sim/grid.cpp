@@ -103,6 +103,10 @@ namespace Fluid {
   }
 
   void Grid::particle_repositioning() {
+    // TODO: skip clear loop on the first iteration
+    for (auto & block : back_) {
+      block.clear();
+    }
     for (auto const & block : front_) {
       for (auto const & particle : block) {
         find_block(particle.p, back_).add(particle);

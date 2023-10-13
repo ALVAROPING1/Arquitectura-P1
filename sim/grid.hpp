@@ -67,6 +67,7 @@ namespace Fluid {
         wall_interactions();
         particle_movement();
         wall_collisions();
+        // TODO: skip on the last iteration
         particle_repositioning();
         swap_buffers();
       }
