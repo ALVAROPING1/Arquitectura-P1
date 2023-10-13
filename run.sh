@@ -2,7 +2,6 @@ INPUT="build/input"
 CORRECT="build/correct"
 ATTEMPT="build/attempt"
 FLUID="build/fluid/fluid"
-TRACES="build/traces"
 
 for size in "small" "large"; do
    for count in "1" "2" "3" "4" "5"; do
@@ -10,7 +9,7 @@ for size in "small" "large"; do
       input="$INPUT/$size.fld"
       output="$ATTEMPT/$size-$count.fld"
       $FLUID $count "$input" "$output"
-      X="$(diff $input $output)"
+      X="$(diff "$CORRECT/$size-$count.fld" $output)"
       if [ "$X" == "" ]; then
          echo -e "\033[32;1mCORRECT\033[0m"
       else
