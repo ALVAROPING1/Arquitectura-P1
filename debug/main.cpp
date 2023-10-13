@@ -102,7 +102,7 @@ int main(int argc, char ** argv) {
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
 
-    grid.increment_densities();
+    /// grid.increment_densities();
     // correct = tracer.load("traces/densinc-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
@@ -111,30 +111,30 @@ int main(int argc, char ** argv) {
     // compare(correct, attempt);
 
     // FIXME
-    grid.transfer_accelerations();
+    /// grid.transfer_accelerations();
     // correct = tracer.load("traces/acctransf-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
     // grid.set_blocks(correct);
 
     // FIXME
-    grid.wall_interactions();
+    /// grid.wall_interactions();
     // correct = tracer.load("traces/partcol-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
     // grid.set_blocks(correct);
 
-    grid.particle_movement();
-    correct = tracer.load("traces/motion-base-" + std::to_string(i + 1) + ".trz");
+    /// grid.particle_movement();
+    // correct = tracer.load("traces/motion-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
-    grid.set_blocks(correct);
+    // grid.set_blocks(correct);
 
-    grid.wall_collisions();
+    /// grid.wall_collisions();
     correct = tracer.load("traces/boundint-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
-    // grid.set_blocks(attempt);
+    grid.set_blocks(correct);
 
     grid.particle_repositioning();
     grid.swap_buffers();

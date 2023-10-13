@@ -11,7 +11,6 @@
 #include "vector3.hpp"
 
 #include <iostream>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -30,7 +29,8 @@ namespace Fluid {
       Vector3<std::size_t> count_;
       Vector3<double> sizes_;
 
-      std::pair<block_vector, block_vector> blocks_;
+      block_vector front_;
+      block_vector back_;
 
     public:
       /// Construye una nueva malla vacía.
@@ -44,8 +44,8 @@ namespace Fluid {
           sizes_{(Constants::b_max - Constants::b_min) / static_cast<Vector3<double>>(count_)} {
         std::size_t const count  = count_.x * count_.y * count_.z;
         std::size_t const approx = 2 * pc / count;
-        blocks_.first.resize(count, Block{approx});
-        blocks_.second.resize(count, Block{approx});
+        front_.resize(count, Block{approx});
+        back_.resize(count, Block{approx});
       }
 
       /// Añade una partícula a la malla.
@@ -55,10 +55,9 @@ namespace Fluid {
       /// El parámetro hv de la partícula
       /// @param v
       /// La velocidad de la partícula
-      template <bool Clamp>
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
         Particle const particle{{p, hv, v}, id_++, h_, m_};
-        find_block<Clamp>(particle.p, front()).add(particle);
+        find_block(particle.p, front_).add(particle);
       }
 
       /// Ejecuta una iteración (paso) de la simulación.
@@ -84,22 +83,11 @@ namespace Fluid {
       void particle_movement();
       constexpr void wall_interactions() { wall_action<interact_particle>(); }
       constexpr void wall_collisions() { wall_action<collide_particle>(); }
-      constexpr void swap_buffers() {
-        block_vector temp{std::move(blocks_.first)};
-        blocks_.first  = std::move(blocks_.second);
-        blocks_.second = std::move(temp);
-      }
-      [[nodiscard]] std::vector<Block> get_blocks() const { return blocks_.first; }
-      void set_blocks(std::vector<Block> const& blocks) { blocks_.first = blocks; }
+      constexpr void swap_buffers() { std::swap(front_, back_); }
+      [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
+      void set_blocks(std::vector<Block> const& blocks) { front_ = blocks; }
 
     private:
-      [[nodiscard]] constexpr block_vector & front() { return blocks_.first; }
-
-      [[nodiscard]] constexpr block_vector const & front() const { return blocks_.first; }
-
-      [[nodiscard]] constexpr block_vector & back() { return blocks_.second; }
-
-      [[nodiscard]] constexpr block_vector const & back() const { return blocks_.second; }
 
       // NOLINTNEXTLINE (readability-make-member-function-const)
       constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
@@ -109,9 +97,8 @@ namespace Fluid {
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
       /// @param pos
       /// La posición de la partícula
-      template <bool Clamp>
       constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
-        Vector3<double> pos_{Clamp ? pos.clamp(Constants::b_min, Constants::b_max - sizes_) : pos};
+        Vector3<double> pos_{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
         Vector3<std::size_t> idx{
             static_cast<Vector3<std::size_t>>((pos_ - Constants::b_min) / sizes_)};
         return index(idx, block_vec);
@@ -192,7 +179,7 @@ namespace Fluid {
         std::size_t const count_B = B::get(count_);
         for (; A::get(idx) < count_A; ++A::set(idx)) {
           for (B::set(idx) = 0; B::get(idx) < count_B; ++B::set(idx)) {
-            Block & block = index(idx, front());
+            Block & block = index(idx, front_);
             for (auto & particle : block) { Proc::template run<Side, C>(particle); }
           }
         }
@@ -253,11 +240,11 @@ namespace Fluid {
       {
         iter_blocks([this, f](Vector3<std::size_t> const block1) {
           adjacent_blocks(block1, [this, block1, f](const Vector3<std::size_t> block2) {
-            for (auto & particle1 : index(block1, front())) {
-              for (auto & particle2 : index(block2, front())) { f(particle1, particle2); }
+            for (auto & particle1 : index(block1, front_)) {
+              for (auto & particle2 : index(block2, front_)) { f(particle1, particle2); }
             }
           });
-          Block & block = index(block1, front());
+          Block & block = index(block1, front_);
           for (std::size_t i{}; i < block.size(); ++i) {
             for (std::size_t j{i + 1}; j < block.size(); ++j) { f(block[i], block[j]); }
           }

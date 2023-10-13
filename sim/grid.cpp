@@ -8,7 +8,7 @@ namespace Fluid {
 
   std::vector<Particle> Grid::get_all() const {
     std::vector<Particle> result(pc_);  // Inicializa todas las Partículas
-    for (auto const & block : front()) {
+    for (auto const & block : front_) {
       for (auto const & particle : block) { result[particle.id] = particle; }
     }
     return result;
@@ -69,7 +69,7 @@ namespace Fluid {
   void Grid::particle_movement() {
     // TODO: Make block variable
     iter_blocks([this](Vector3<size_t> const & block) {
-      for (auto & particle : index(block, front())) {
+      for (auto & particle : index(block, front_)) {
         // if (particle.id == 701) {
         //   IO::put_line(std::cerr, "Before movement:");
         //   IO::put_line(std::cerr, "Block idx: ", block);
@@ -103,14 +103,9 @@ namespace Fluid {
   }
 
   void Grid::particle_repositioning() {
-    block_vector & back = blocks_.second;
-    for (auto & block : back) { block.clear(); }
-    // blocks_.second.resize(front().size(), Block{10});
-    for (auto const & block : front()) {
+    for (auto const & block : front_) {
       for (auto const & particle : block) {
-        find_block<true>(particle.p, back).add(particle);
-        // IO::put_line(std::cerr, idx, " [", tot, "] ", particle);
-        // IO::put_line(std::cerr, sizes_);
+        find_block(particle.p, back_).add(particle);
       }
     }
   }

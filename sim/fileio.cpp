@@ -15,7 +15,7 @@ namespace Fluid {
     Vector3<float> hvel;
     Vector3<float> vel;
     int idx = 0;
-    for (; IO::read(input_file_, pos, hvel, vel); ++idx) { grid.add<true>(pos, hvel, vel); }
+    for (; IO::read(input_file_, pos, hvel, vel); ++idx) { grid.add(pos, hvel, vel); }
     if (idx != np_) {
       error_ = particle_count_error;
       IO::put_line(std::cerr, "Error: Number of particles mismatch. Header: ", np_,
