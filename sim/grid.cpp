@@ -84,11 +84,7 @@ namespace Fluid {
         particle.p  += particle.hv * Constants::dt + particle.a * std::pow(Constants::dt, 2);
         particle.v   = particle.hv + particle.a * Constants::dt / 2;
         particle.hv += particle.a * Constants::dt;
-        // Reset the density/acceleration while we are at it as they are no longer needed in this
-        // iteration. This allows us to skip the full scan of the particles at the beginning of each
-        // update cycle
-        particle.reset_density(h_, m_);
-        particle.a = Constants::g;
+        // TODO: Reset here accelerations
         if (particle.id == 701) {
           // IO::put_line(std::cerr, "After movement:");
           // IO::put_line(std::cerr, "Correct Block idx: ",
@@ -107,8 +103,13 @@ namespace Fluid {
     for (auto & block : back_) {
       block.clear();
     }
-    for (auto const & block : front_) {
-      for (auto const & particle : block) {
+    for (auto & block : front_) {
+      for (auto & particle : block) {
+        // Reset the density/acceleration while we are at it as they are no longer needed in this
+        // iteration. This allows us to skip the full scan of the particles at the beginning of each
+        // update cycle
+        particle.reset_density(h_, m_);
+        particle.a = Constants::g;
         find_block(particle.p, back_).add(particle);
       }
     }

@@ -152,8 +152,8 @@ namespace Fluid {
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
               Axis::set(particle.a) +=
-                  (Side == 0 ? +1.0 : -1.0) *
-                  (Constants::c_s * dw - Constants::d_v * Axis::get(particle.v));
+                  (Side == 0 ? +1.0 : -1.0) * (Constants::c_s * dw)
+                  - Constants::d_v * Axis::get(particle.v);
             }
           }
       };

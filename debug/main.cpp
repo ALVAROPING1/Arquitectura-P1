@@ -94,47 +94,43 @@ int main(int argc, char ** argv) {
   file.load(grid);
   std::vector<Fluid::Block> correct;
   std::vector<Fluid::Block> attempt;
+
+  auto trace = [&] (std::string const& name, int it) {
+    put(std::cout, "\033[33;1mTesting ", name, " (", it+1, ")", "\033[0m...   \t");
+    correct = tracer.load("trz/small/" + name + "-base-" + std::to_string(it + 1) + ".trz");
+    attempt = grid.get_blocks();
+    if (compare(correct, attempt)) {
+      put_line(std::cout, "\033[32;1m[SUCCESS]\033[0m");
+    } else {
+      put_line(std::cout, "\033[31;1m[FAILURE]\033[0m");
+      grid.set_blocks(correct);
+    }
+  };
+
   for (int i = 0; i < argp.step_count(); ++i) {
-    // correct = tracer.load("traces/repos-base-" + std::to_string(i + 1) + ".trz");
+    // correct = tracer.load("trz/small/repos-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
-    // correct = tracer.load("traces/initacc-base-" + std::to_string(i + 1) + ".trz");
+    // correct = tracer.load("trz/small/initacc-base-" + std::to_string(i + 1) + ".trz");
     // attempt = grid.get_blocks();
     // compare(correct, attempt);
+    // trace("initacc", i);
 
-    /// grid.increment_densities();
-    // correct = tracer.load("traces/densinc-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
-    // correct = tracer.load("traces/denstransf-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
+    grid.increment_densities();
+    // "densinc"
+    // trace("denstransf", i);
 
-    // FIXME
-    /// grid.transfer_accelerations();
-    // correct = tracer.load("traces/acctransf-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
-    // grid.set_blocks(correct);
+    grid.transfer_accelerations();
+    trace("acctransf", i);
 
-    // FIXME
-    /// grid.wall_interactions();
-    // correct = tracer.load("traces/partcol-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
-    // grid.set_blocks(correct);
+    grid.wall_interactions();
+    trace("partcol", i);
 
-    /// grid.particle_movement();
-    // correct = tracer.load("traces/motion-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
-    // grid.set_blocks(correct);
+    grid.particle_movement();
+    trace("motion", i);
 
-    /// grid.wall_collisions();
-    correct = tracer.load("traces/boundint-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
-    grid.set_blocks(correct);
+    grid.wall_collisions();
+    trace("boundint", i);
 
     grid.particle_repositioning();
     grid.swap_buffers();
