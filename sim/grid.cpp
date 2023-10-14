@@ -16,16 +16,29 @@ namespace Fluid {
 
   void Grid::increment_densities() {
     iter_pairs([this](Particle & particle1, Particle & particle2) {
-      constexpr int nine{9};
+      // constexpr int nine{9};
 
       Vector3<double> const distance{particle1.p - particle2.p};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
-      density = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
+      // density = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
+      density = density * density * density;
       particle1.density += density;
       particle2.density += density;
     });
+  }
+
+  void Grid::transform_densities() {
+    double const h3 = h_ * h_ * h_;
+    double const h6 = h3 * h3;
+    double const h9 = h6 * h3;
+    double const factor = density_factor / h9 * m_;
+    for (auto & block : front_) {
+      for (auto & particle : block) {
+        particle.density = (particle.density + h6) * factor;
+      }
+    }
   }
 
   void Grid::transfer_accelerations() {

@@ -80,6 +80,7 @@ namespace Fluid {
 #endif
       void particle_repositioning();
       void increment_densities();
+      void transform_densities();
       void transfer_accelerations();
       void particle_movement();
       constexpr void wall_interactions() { wall_action<interact_particle>(); }

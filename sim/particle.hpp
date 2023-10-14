@@ -13,7 +13,7 @@ namespace Fluid {
   //        Se podría separar a otro struct
   //
   // No toques esto.
-  struct alignas(ALIGN_VALUE) Particle {
+  struct Particle {
       // Parámetros que no cambian
       int id{};
 
@@ -34,8 +34,13 @@ namespace Fluid {
         : id{id}, p{static_cast<Vector3<double>>(data.x)}, hv{static_cast<Vector3<double>>(data.y)},
           v{static_cast<Vector3<double>>(data.z)} { reset_density(h, m); }
 
-      constexpr void reset_density (double h, double m) {
-        density = density_factor / (h * h * h) * m;
+      // constexpr void reset_density (double h, double m) {
+      //   density = density_factor / (h * h * h) * m;
+      // }
+
+      constexpr void reset_density (double /* unused */, double /* unused */) {
+        // density = density_factor / (h * h * h) * m;
+        density = 0;
       }
 
       // Operator '<<' para imprimar la partícula (depurado).

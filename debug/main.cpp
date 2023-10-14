@@ -108,17 +108,14 @@ int main(int argc, char ** argv) {
   };
 
   for (int i = 0; i < argp.step_count(); ++i) {
-    // correct = tracer.load("trz/small/repos-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
-    // correct = tracer.load("trz/small/initacc-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
+    // trace("repos", i);
     // trace("initacc", i);
 
     grid.increment_densities();
-    // "densinc"
-    // trace("denstransf", i);
+    trace("densinc", i);
+
+    grid.transform_densities();
+    trace("denstransf", i);
 
     grid.transfer_accelerations();
     trace("acctransf", i);
@@ -134,6 +131,7 @@ int main(int argc, char ** argv) {
 
     grid.particle_repositioning();
     grid.swap_buffers();
+    // trace("repos", i);
   }
   file.dump(grid);
   return 0;
