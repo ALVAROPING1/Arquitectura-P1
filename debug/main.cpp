@@ -74,9 +74,9 @@ bool compare (block_vector const& left, block_vector const& right) {
     return false;
   }
   int id = 0;
-  for (; l_it != left.end() and r_it != right.end(); ++l_it, ++r_it) {
+  for (; l_it != left.end() and r_it != right.end(); ++l_it, ++r_it, ++id) {
     if (not compare(*l_it, *r_it)) {
-      put_line(std::cerr, "Error comparing block \033[1m", id++, "\033[0m");
+      put_line(std::cout, "Error comparing block \033[1m", id, "\033[0m");
       return false;
     }
   }
@@ -108,12 +108,7 @@ int main(int argc, char ** argv) {
   };
 
   for (int i = 0; i < argp.step_count(); ++i) {
-    // correct = tracer.load("trz/small/repos-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
-    // correct = tracer.load("trz/small/initacc-base-" + std::to_string(i + 1) + ".trz");
-    // attempt = grid.get_blocks();
-    // compare(correct, attempt);
+    // trace("repos", i);
     // trace("initacc", i);
 
     grid.increment_densities();
