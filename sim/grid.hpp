@@ -52,7 +52,10 @@ namespace Fluid {
       /// @param v
       /// La velocidad de la partícula
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
-        Particle const particle{{p, hv, v}, id_++, h_, m_};
+        Particle const particle{
+            {p, hv, v},
+            id_++, h_, m_
+        };
         find_block(particle.p, front_).add(particle);
       }
 
@@ -67,26 +70,34 @@ namespace Fluid {
         particle_repositioning();
         swap_buffers();
       }
+
       [[nodiscard]] std::vector<Particle> get_all() const;
 
 #ifdef FLUID_DEBUG
+
     public:
 #else
+
     private:
 #endif
       void particle_repositioning();
       void increment_densities();
       void transfer_accelerations();
       void particle_movement();
+
       constexpr void wall_interactions() { wall_action<interact_particle>(); }
+
       constexpr void wall_collisions() { wall_action<collide_particle>(); }
+
       constexpr void swap_buffers() { std::swap(front_, back_); }
+
       [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
-      void set_blocks(std::vector<Block> const& blocks) { front_ = blocks; }
+
+      void set_blocks(std::vector<Block> const & blocks) { front_ = blocks; }
 
     private:
-
-      // NOLINTNEXTLINE (readability-make-member-function-const) The function can't be made const because it returns a reference to a stored value
+      // The function can't be made const because it returns a reference to a stored value
+      // NOLINTNEXTLINE (readability-make-member-function-const)
       constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
         return block_vec[idx.z * count_.y * count_.x + idx.y * count_.x + idx.x];
       }
@@ -147,9 +158,8 @@ namespace Fluid {
                                                           : Axis::get(Constants::b_max) - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
-              Axis::set(particle.a) +=
-                  (Side == 0 ? +1.0 : -1.0) * (Constants::c_s * dw)
-                  - Constants::d_v * Axis::get(particle.v);
+              Axis::set(particle.a) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
+                                       Constants::d_v * Axis::get(particle.v);
             }
           }
       };

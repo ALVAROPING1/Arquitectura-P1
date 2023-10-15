@@ -1,8 +1,9 @@
 #ifndef IO_HPP
 #define IO_HPP
 
-#include <iostream>
 #include "vector3.hpp"
+
+#include <iostream>
 
 namespace Fluid::IO {
 

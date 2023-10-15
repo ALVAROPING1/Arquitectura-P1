@@ -58,16 +58,18 @@ namespace Fluid {
 
       [[nodiscard]] constexpr T square_norm() const { return x * x + y * y + z * z; }
 
-      [[nodiscard]] constexpr Vector3 clamp(Vector3 const& min, Vector3 const& max) const {
+      [[nodiscard]] constexpr Vector3 clamp(Vector3 const & min, Vector3 const & max) const {
         return Vector3{std::clamp(x, min.x, max.x), std::clamp(y, min.y, max.y),
                        std::clamp(z, min.z, max.z)};
       }
 
-      constexpr bool operator< (Vector3 const& other) const {
-        return (x < other.x || y < other.y || z < other.z); }
+      constexpr bool operator<(Vector3 const & other) const {
+        return (x < other.x || y < other.y || z < other.z);
+      }
 
-      constexpr bool operator> (Vector3 const& other) const {
-        return (x > other.x || y > other.y || z > other.z); }
+      constexpr bool operator>(Vector3 const & other) const {
+        return (x > other.x || y > other.y || z > other.z);
+      }
   };
 }  // namespace Fluid
 

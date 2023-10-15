@@ -2,4 +2,4 @@
 
 #include "block.hpp"
 
-namespace Fluid {}
+namespace Fluid { }

@@ -45,7 +45,7 @@ namespace Fluid {
         return out << "]";
       }
 
-      [[nodiscard]] constexpr std::vector<Particle> get_particles () const { return particles_; }
+      [[nodiscard]] constexpr std::vector<Particle> get_particles() const { return particles_; }
   };
 
 }  // namespace Fluid

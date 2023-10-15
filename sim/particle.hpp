@@ -6,7 +6,7 @@
 
 namespace Fluid {
 
-  constexpr int ALIGN_VALUE = 128;
+  constexpr int ALIGN_VALUE       = 128;
   constexpr double density_factor = 315.0 / (64.0 * std::numbers::pi);
 
   // FIXME: Pensar más detenidamente el valor de alineamiento.
@@ -32,20 +32,22 @@ namespace Fluid {
 
       constexpr Particle(Vector3<Vector3<float>> const & data, int id, double h, double m)
         : id{id}, p{static_cast<Vector3<double>>(data.x)}, hv{static_cast<Vector3<double>>(data.y)},
-          v{static_cast<Vector3<double>>(data.z)} { reset_density(h, m); }
+          v{static_cast<Vector3<double>>(data.z)} {
+        reset_density(h, m);
+      }
 
-      constexpr void reset_density (double h, double m) {
+      constexpr void reset_density(double h, double m) {
         density = density_factor / (h * h * h) * m;
       }
 
       // Operator '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {
-        return out << "Particle n:   " << c.id      << "\n"
-                   << "\t" << "pos:  " << c.p       << "\n"
-                   << "\t" << "hvel: " << c.hv      << "\n"
-                   << "\t" << "vel:  " << c.v       << "\n"
-                   << "\t" << "acc:  " << c.a       << "\n"
-                   << "\t" << "ρ:    " << c.density << "\n";
+        return out << "Particle n:   " << c.id << "\n"
+                   << "\tpos:  " << c.p << "\n"
+                   << "\thvel: " << c.hv << "\n"
+                   << "\tvel:  " << c.v << "\n"
+                   << "\tacc:  " << c.a << "\n"
+                   << "\tρ:    " << c.density << "\n";
       }
 
       // TODO: Añade funciones para modificar el estado de la partícula.

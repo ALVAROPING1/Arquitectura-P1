@@ -1,5 +1,6 @@
-#include "io.hpp"
 #include "grid.hpp"
+
+#include "io.hpp"
 
 #include <cmath>
 
@@ -21,7 +22,7 @@ namespace Fluid {
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
-      density = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
+      density            = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
       particle1.density += density;
       particle2.density += density;
     });
@@ -37,7 +38,7 @@ namespace Fluid {
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double const dist_ij{std::sqrt(std::max(norm, const1))};
-      Vector3<double> const acceleration {
+      Vector3<double> const acceleration{
           // Clang-format doesn't know how to properly format this formula
           // clang-format off
           (
@@ -54,7 +55,8 @@ namespace Fluid {
     });
   }
 
-  // NOLINTNEXTLINE (readability-function-size) TODO: eliminar cuando eliminemos los comentarios con código de debug
+  // TODO: eliminar cuando eliminemos los comentarios con código de debug
+  // NOLINTNEXTLINE (readability-function-size)
   void Grid::particle_movement() {
     iter_blocks([this](Vector3<size_t> const & block) {
       for (auto & particle : index(block, front_)) {
@@ -92,13 +94,9 @@ namespace Fluid {
 
   void Grid::particle_repositioning() {
     // TODO: skip clear loop on the first iteration
-    for (auto & block : back_) {
-      block.clear();
-    }
+    for (auto & block : back_) { block.clear(); }
     for (auto & block : front_) {
-      for (auto & particle : block) {
-        find_block(particle.p, back_).add(particle);
-      }
+      for (auto & particle : block) { find_block(particle.p, back_).add(particle); }
     }
   }
 }  // namespace Fluid

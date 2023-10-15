@@ -1,6 +1,5 @@
-#include <iostream>
 #include "particle.hpp"
 
-namespace Fluid {
-    
-}
+#include <iostream>
+
+namespace Fluid { }
