@@ -31,36 +31,30 @@ namespace Fluid {
   void Grid::transfer_accelerations() {
     iter_pairs([this](Particle & particle_i, Particle & particle_j) {
       constexpr double const1{1e-12};
-      constexpr int const2{15};
-      constexpr int const4{6};
-      constexpr double const5{45.0};
+      constexpr double const2{15.0};
+      constexpr double const3{45.0};
 
       Vector3<double> const distance{particle_i.p - particle_j.p};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double const dist_ij{std::sqrt(std::max(norm, const1))};
       Vector3<double> const acceleration {
-        (
-          (particle_i.p - particle_j.p)
-          * (const2 / (std::numbers::pi * std::pow(h_, const4)))
-          * (1.5 * m_ * Constants::p_s)
-          * (std::pow((h_ - dist_ij), 2) / dist_ij)
-          * (particle_i.density + particle_j.density - 2 * Constants::rho)
-          + (particle_j.v - particle_i.v)
-          * (const5 / (std::numbers::pi * std::pow(h_, 6)))
-          * Constants::mu * m_
-        )
-          /
-        (particle_i.density * particle_j.density)
+          // Clang-format doesn't know how to properly format this formula
+          // clang-format off
+          (
+            distance
+            * (1.5 * Constants::p_s)
+            * (std::pow((h_ - dist_ij), 2) / dist_ij)
+            * (particle_i.density + particle_j.density - 2 * Constants::rho)
+            +
+            (particle_j.v - particle_i.v)
+            * Constants::mu * (const3/const2)
+          )
+          * (const2 / (std::numbers::pi * std::pow(h_, 6)))
+          * m_
+          / (particle_i.density * particle_j.density)
+          // clang-format on
       };
-      // Vector3<double> const acceleration{
-      //     // Trash format, but that's the formula we were
-      //     // given without meaning of individual parts
-      //     (distance * (3 * Constants::p_s) / const3 * std::pow(h_ - dist_ij, 2) / dist_ij *
-      //          (particle_i.density + particle_j.density - 2 * Constants::rho) +
-      //      (particle_j.v - particle_i.v) * 3 * Constants::mu) *
-      //     const2 / (std::numbers::pi * std::pow(h_, const4)) * m_ /
-      //     (particle_i.density * particle_j.density)};
       particle_i.a += acceleration;
       particle_j.a -= acceleration;
     });
