@@ -104,8 +104,8 @@ int main(int argc, char ** argv) {
   };
 
   for (int i = 0; i < argp.step_count(); ++i) {
-    // trace("repos", i);
-    // trace("initacc", i);
+    trace("repos", i);
+    trace("initacc", i);
 
     grid.increment_densities();
     // "densinc"
