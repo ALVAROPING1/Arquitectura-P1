@@ -1,4 +1,3 @@
-// NOLINTBEGIN
 #include "io.hpp"
 #include "grid.hpp"
 
@@ -42,16 +41,11 @@ namespace Fluid {
           // Clang-format doesn't know how to properly format this formula
           // clang-format off
           (
-            distance
-            * (1.5 * Constants::p_s)
+            distance * (1.5 * Constants::p_s)
             * (std::pow((h_ - dist_ij), 2) / dist_ij)
             * (particle_i.density + particle_j.density - 2 * Constants::rho)
-            +
-            (particle_j.v - particle_i.v)
-            * Constants::mu * (const3/const2)
-          )
-          * (const2 / (std::numbers::pi * std::pow(h_, 6)))
-          * m_
+            + (particle_j.v - particle_i.v) * Constants::mu * (const3/const2)
+          ) * (const2 / (std::numbers::pi * std::pow(h_, 6))) * m_
           / (particle_i.density * particle_j.density)
           // clang-format on
       };
@@ -60,6 +54,7 @@ namespace Fluid {
     });
   }
 
+  // NOLINTNEXTLINE (readability-function-size) TODO: eliminar cuando eliminemos los comentarios con código de debug
   void Grid::particle_movement() {
     iter_blocks([this](Vector3<size_t> const & block) {
       for (auto & particle : index(block, front_)) {
@@ -107,5 +102,3 @@ namespace Fluid {
     }
   }
 }  // namespace Fluid
-
-// NOLINTEND

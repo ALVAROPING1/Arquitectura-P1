@@ -1,6 +1,3 @@
-// NOLINTBEGIN
-#include "io.hpp"
-
 // Representación de la malla
 #ifndef GRID_HPP
 #define GRID_HPP
@@ -19,11 +16,10 @@ namespace Fluid {
   class Grid {
       using block_vector = std::vector<Block>;
 
-      // TODO: solucionar errores de clang-tidy
-      [[maybe_unused]] std::size_t pc_;
-      [[maybe_unused]] double ppm_;
-      [[maybe_unused]] double h_;
-      [[maybe_unused]] double m_;
+      std::size_t pc_;
+      double ppm_;
+      double h_;
+      double m_;
       int id_{};
 
       Vector3<std::size_t> count_;
@@ -90,7 +86,7 @@ namespace Fluid {
 
     private:
 
-      // NOLINTNEXTLINE (readability-make-member-function-const)
+      // NOLINTNEXTLINE (readability-make-member-function-const) The function can't be made const because it returns a reference to a stored value
       constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
         return block_vec[idx.z * count_.y * count_.x + idx.y * count_.x + idx.x];
       }
@@ -256,4 +252,3 @@ namespace Fluid {
 }  // namespace Fluid
 
 #endif  // GRID_HPP
-// NOLINTEND
