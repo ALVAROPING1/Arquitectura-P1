@@ -61,7 +61,6 @@ namespace Fluid {
   }
 
   void Grid::particle_movement() {
-    // TODO: Make block variable
     iter_blocks([this](Vector3<size_t> const & block) {
       for (auto & particle : index(block, front_)) {
         // if (particle.id == 701) {
