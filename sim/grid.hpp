@@ -106,8 +106,8 @@ namespace Fluid {
       /// @param pos
       /// La posición de la partícula
       constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
-        Vector3<double> pos_{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
-        Vector3<std::size_t> idx{
+        Vector3<double> const pos_{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
+        Vector3<std::size_t> const idx{
             static_cast<Vector3<std::size_t>>((pos_ - Constants::b_min) / sizes_)};
         return index(idx, block_vec);
       }

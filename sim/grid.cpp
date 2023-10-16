@@ -60,16 +60,6 @@ namespace Fluid {
   void Grid::particle_movement() {
     iter_blocks([this](Vector3<size_t> const & block) {
       for (auto & particle : index(block, front_)) {
-        // if (particle.id == 701) {
-        //   IO::put_line(std::cerr, "Before movement:");
-        //   IO::put_line(std::cerr, "Block idx: ", block);
-        //   IO::put_line(std::cerr, "Correct Block idx: ",
-        //                static_cast<Vector3<std::size_t>>(
-        //                    (particle.p.clamp(Constants::b_min, Constants::b_max - sizes_) -
-        //                     Constants::b_min) /
-        //                    sizes_));
-        //   IO::put_line(std::cerr, particle);
-        // }
         // TODO: v/hv incrementan en valor absoluto en cada iteración. ¿Es esto correcto?
         particle.p  += particle.hv * Constants::dt + particle.a * std::pow(Constants::dt, 2);
         particle.v   = particle.hv + particle.a * Constants::dt / 2;
