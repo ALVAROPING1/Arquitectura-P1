@@ -1,6 +1,6 @@
-// NOLINTBEGIN
-#include "io.hpp"
 #include "grid.hpp"
+
+#include "io.hpp"
 
 #include <cmath>
 
@@ -23,21 +23,19 @@ namespace Fluid {
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
       // density = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
-      density = density * density * density;
+      density            = density * density * density;
       particle1.density += density;
       particle2.density += density;
     });
   }
 
   void Grid::transform_densities() {
-    double const h3 = h_ * h_ * h_;
-    double const h6 = h3 * h3;
-    double const h9 = h6 * h3;
-    double const factor = density_factor / h9 * m_;
+    double const h_3    = h_ * h_ * h_;
+    double const h_6    = h_3 * h_3;
+    double const h_9    = h_6 * h_3;
+    double const factor = density_factor / h_9 * m_;
     for (auto & block : front_) {
-      for (auto & particle : block) {
-        particle.density = (particle.density + h6) * factor;
-      }
+      for (auto & particle : block) { particle.density = (particle.density + h_6) * factor; }
     }
   }
 
@@ -52,28 +50,13 @@ namespace Fluid {
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double const dist_ij{std::sqrt(std::max(norm, const1))};
-      Vector3<double> const acceleration {
-        (
-          (particle_i.p - particle_j.p)
-          * (const2 / (std::numbers::pi * std::pow(h_, const4)))
-          * (1.5 * m_ * Constants::p_s)
-          * (std::pow((h_ - dist_ij), 2) / dist_ij)
-          * (particle_i.density + particle_j.density - 2 * Constants::rho)
-          + (particle_j.v - particle_i.v)
-          * (const5 / (std::numbers::pi * std::pow(h_, 6)))
-          * Constants::mu * m_
-        )
-          /
-        (particle_i.density * particle_j.density)
-      };
-      // Vector3<double> const acceleration{
-      //     // Trash format, but that's the formula we were
-      //     // given without meaning of individual parts
-      //     (distance * (3 * Constants::p_s) / const3 * std::pow(h_ - dist_ij, 2) / dist_ij *
-      //          (particle_i.density + particle_j.density - 2 * Constants::rho) +
-      //      (particle_j.v - particle_i.v) * 3 * Constants::mu) *
-      //     const2 / (std::numbers::pi * std::pow(h_, const4)) * m_ /
-      //     (particle_i.density * particle_j.density)};
+      Vector3<double> const acceleration{
+          ((particle_i.p - particle_j.p) * (const2 / (std::numbers::pi * std::pow(h_, const4))) *
+               (1.5 * m_ * Constants::p_s) * (std::pow((h_ - dist_ij), 2) / dist_ij) *
+               (particle_i.density + particle_j.density - 2 * Constants::rho) +
+           (particle_j.v - particle_i.v) * (const5 / (std::numbers::pi * std::pow(h_, 6))) *
+               Constants::mu * m_) /
+          (particle_i.density * particle_j.density)};
       particle_i.a += acceleration;
       particle_j.a -= acceleration;
     });
@@ -83,39 +66,18 @@ namespace Fluid {
     // TODO: Make block variable
     iter_blocks([this](Vector3<size_t> const & block) {
       for (auto & particle : index(block, front_)) {
-        // if (particle.id == 701) {
-        //   IO::put_line(std::cerr, "Before movement:");
-        //   IO::put_line(std::cerr, "Block idx: ", block);
-        //   IO::put_line(std::cerr, "Correct Block idx: ",
-        //                static_cast<Vector3<std::size_t>>(
-        //                    (particle.p.clamp(Constants::b_min, Constants::b_max - sizes_) -
-        //                     Constants::b_min) /
-        //                    sizes_));
-        //   IO::put_line(std::cerr, particle);
-        // }
         // TODO: v/hv incrementan en valor absoluto en cada iteración. ¿Es esto correcto?
         particle.p  += particle.hv * Constants::dt + particle.a * std::pow(Constants::dt, 2);
         particle.v   = particle.hv + particle.a * Constants::dt / 2;
         particle.hv += particle.a * Constants::dt;
         // TODO: Reset here accelerations
-        if (particle.id == 701) {
-          // IO::put_line(std::cerr, "After movement:");
-          // IO::put_line(std::cerr, "Correct Block idx: ",
-          //              static_cast<Vector3<std::size_t>>(
-          //                  (particle.p.clamp(Constants::b_min, Constants::b_max - sizes_) -
-          //                   Constants::b_min) /
-          //                  sizes_));
-          // IO::put_line(std::cerr, particle);
-        }
       }
     });
   }
 
   void Grid::particle_repositioning() {
     // TODO: skip clear loop on the first iteration
-    for (auto & block : back_) {
-      block.clear();
-    }
+    for (auto & block : back_) { block.clear(); }
     for (auto & block : front_) {
       for (auto & particle : block) {
         // Reset the density/acceleration while we are at it as they are no longer needed in this
@@ -128,5 +90,3 @@ namespace Fluid {
     }
   }
 }  // namespace Fluid
-
-// NOLINTEND

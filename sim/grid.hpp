@@ -1,6 +1,3 @@
-// NOLINTBEGIN
-#include "io.hpp"
-
 // Representación de la malla
 #ifndef GRID_HPP
 #define GRID_HPP
@@ -56,7 +53,10 @@ namespace Fluid {
       /// @param v
       /// La velocidad de la partícula
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
-        Particle const particle{{p, hv, v}, id_++, h_, m_};
+        Particle const particle{
+            {p, hv, v},
+            id_++, h_, m_
+        };
         find_block(particle.p, front_).add(particle);
       }
 
@@ -72,11 +72,14 @@ namespace Fluid {
         particle_repositioning();
         swap_buffers();
       }
+
       [[nodiscard]] std::vector<Particle> get_all() const;
 
 #ifdef FLUID_DEBUG
+
     public:
 #else
+
     private:
 #endif
       void particle_repositioning();
@@ -84,14 +87,18 @@ namespace Fluid {
       void transform_densities();
       void transfer_accelerations();
       void particle_movement();
+
       constexpr void wall_interactions() { wall_action<interact_particle>(); }
+
       constexpr void wall_collisions() { wall_action<collide_particle>(); }
+
       constexpr void swap_buffers() { std::swap(front_, back_); }
+
       [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
-      void set_blocks(std::vector<Block> const& blocks) { front_ = blocks; }
+
+      void set_blocks(std::vector<Block> const & blocks) { front_ = blocks; }
 
     private:
-
       // NOLINTNEXTLINE (readability-make-member-function-const)
       constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
         return block_vec[idx.z * count_.y * count_.x + idx.y * count_.x + idx.x];
@@ -101,8 +108,8 @@ namespace Fluid {
       /// @param pos
       /// La posición de la partícula
       constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
-        Vector3<double> pos_{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
-        Vector3<std::size_t> idx{
+        Vector3<double> const pos_{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
+        Vector3<std::size_t> const idx{
             static_cast<Vector3<std::size_t>>((pos_ - Constants::b_min) / sizes_)};
         return index(idx, block_vec);
       }
@@ -147,15 +154,12 @@ namespace Fluid {
           template <int Side, typename Axis>
           constexpr static void run(Particle & particle) {
             constexpr double epsilon = 1.0e-10;
-            // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w  = Axis::get(particle.p) + Axis::get(particle.hv) * Constants::dt;
-            double const dw = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
-                                                          : Axis::get(Constants::b_max) - w);
-            // NOLINTEND (readability-identifier-length)
-            if (dw > epsilon) {
-              Axis::set(particle.a) +=
-                  (Side == 0 ? +1.0 : -1.0) * (Constants::c_s * dw)
-                  - Constants::d_v * Axis::get(particle.v);
+            double const val = Axis::get(particle.p) + Axis::get(particle.hv) * Constants::dt;
+            double const d_w = Constants::d_p - (Side == 0 ? val - Axis::get(Constants::b_min)
+                                                           : Axis::get(Constants::b_max) - val);
+            if (d_w > epsilon) {
+              Axis::set(particle.a) += (Side == 0 ? +1.0 : -1.0) * (Constants::c_s * d_w) -
+                                       Constants::d_v * Axis::get(particle.v);
             }
           }
       };
@@ -258,4 +262,3 @@ namespace Fluid {
 }  // namespace Fluid
 
 #endif  // GRID_HPP
-// NOLINTEND
