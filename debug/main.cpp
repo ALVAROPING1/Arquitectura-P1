@@ -16,8 +16,7 @@
 using namespace Fluid::IO;
 using block_vector = std::vector<Fluid::Block>;
 
-constexpr double epsilon = 0.000'001;
-
+constexpr double epsilon = 1e-9;
 // constexpr int max = 3;
 // static int count = 0;
 
@@ -91,8 +90,8 @@ int main(int argc, char ** argv) {
   std::vector<Fluid::Block> correct;
   std::vector<Fluid::Block> attempt;
 
-  auto trace = [&](std::string const & name, int it) {
-    put(std::cout, "\033[33;1mTesting ", name, " (", it + 1, ")", "\033[0m...   \t");
+  auto trace = [&] (std::string const& name, int it) {
+    put(std::cout, "\033[33;1mTesting ", name, " (", it+1, ")", "\033[0m...     \t");
     correct = tracer.load("trz/small/" + name + "-base-" + std::to_string(it + 1) + ".trz");
     attempt = grid.get_blocks();
     if (compare(correct, attempt)) {
@@ -125,6 +124,8 @@ int main(int argc, char ** argv) {
 
     grid.particle_repositioning();
     grid.swap_buffers();
+    // trace("repos", i);
+    put_line(std::cout);
   }
   file.dump(grid);
   return 0;
