@@ -3,6 +3,7 @@
 #include "io.hpp"
 
 #include <cmath>
+#include <tuple>
 
 namespace Fluid {
 
@@ -15,9 +16,11 @@ namespace Fluid {
   }
 
   void Grid::increment_densities() {
-    iter_pairs([this](Particle & particle1, Particle & particle2) {
+    iter_pairs<Block::ParticleField>([&](std::tuple<Particle &> particle_it, std::tuple<Particle &> particle_jt) {
       constexpr int nine{9};
 
+      Particle & particle1{std::get<0>(particle_it)};
+      Particle & particle2{std::get<0>(particle_jt)};
       Vector3<double> const distance{particle1.p - particle2.p};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
@@ -28,12 +31,17 @@ namespace Fluid {
     });
   }
 
+  // TODO: final implementation won't have the partigle_i and particle_j variables definitions.
+  // Thus, it will be shorter and this will be fine
+  // NOLINTNEXTLINE (readability-function-size)
   void Grid::transfer_accelerations() {
-    iter_pairs([this](Particle & particle_i, Particle & particle_j) {
+    iter_pairs<Block::ParticleField>([&](std::tuple<Particle &> particle_it, std::tuple<Particle &> particle_jt) {
       constexpr double const1{1e-12};
       constexpr double const2{15.0};
       constexpr double const3{45.0};
 
+      Particle & particle_i{std::get<0>(particle_it)};
+      Particle & particle_j{std::get<0>(particle_jt)};
       Vector3<double> const distance{particle_i.p - particle_j.p};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }

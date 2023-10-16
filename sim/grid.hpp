@@ -241,19 +241,21 @@ namespace Fluid {
         }
       }
 
-      template <typename F>
+    public:
+      template <typename... Query, typename F>
       constexpr void iter_pairs(F f)
-        requires std::invocable<F, Particle &, Particle &>
+        // requires std::invocable<F, Particle &, Particle &>
       {
-        iter_blocks([this, f](Vector3<std::size_t> const block1) {
-          adjacent_blocks(block1, [this, block1, f](const Vector3<std::size_t> block2) {
-            for (auto & particle1 : index(block1, front_)) {
-              for (auto & particle2 : index(block2, front_)) { f(particle1, particle2); }
+        iter_blocks([&](Vector3<std::size_t> const blockI_idx) {
+          Block & blockI = index(blockI_idx, front_);
+          adjacent_blocks(blockI_idx, [&](const Vector3<std::size_t> blockJ_idx) {
+            Block & blockJ = index(blockJ_idx, front_);
+            for (std::size_t i{0}; i < blockI.size(); ++i) {
+              for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI.ref<Query...>(i), blockJ.ref<Query...>(j)); }
             }
           });
-          Block & block = index(block1, front_);
-          for (std::size_t i{}; i < block.size(); ++i) {
-            for (std::size_t j{i + 1}; j < block.size(); ++j) { f(block[i], block[j]); }
+          for (std::size_t i{}; i < blockI.size(); ++i) {
+            for (std::size_t j{i + 1}; j < blockI.size(); ++j) {  f(blockI.ref<Query...>(i), blockI.ref<Query...>(j));  }
           }
         });
       }
