@@ -16,7 +16,7 @@
 using namespace Fluid::IO;
 using block_vector = std::vector<Fluid::Block>;
 
-constexpr double epsilon = 1e-9;
+constexpr double epsilon = 1e-8;
 // constexpr int max = 3;
 // static int count = 0;
 
