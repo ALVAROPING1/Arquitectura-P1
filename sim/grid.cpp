@@ -19,8 +19,8 @@ namespace Fluid {
     iter_pairs<Block::ParticleField>([&](std::tuple<Particle &> particle_it, std::tuple<Particle &> particle_jt) {
       constexpr int nine{9};
 
-      Particle & particle1{std::get<0>(particle_it)};
-      Particle & particle2{std::get<0>(particle_jt)};
+      auto & particle1{std::get<0>(particle_it)};
+      auto & particle2{std::get<0>(particle_jt)};
       Vector3<double> const distance{particle1.p - particle2.p};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
@@ -40,8 +40,8 @@ namespace Fluid {
       constexpr double const2{15.0};
       constexpr double const3{45.0};
 
-      Particle & particle_i{std::get<0>(particle_it)};
-      Particle & particle_j{std::get<0>(particle_jt)};
+      auto & particle_i{std::get<0>(particle_it)};
+      auto & particle_j{std::get<0>(particle_jt)};
       Vector3<double> const distance{particle_i.p - particle_j.p};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }

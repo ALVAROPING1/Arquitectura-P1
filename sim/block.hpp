@@ -40,14 +40,14 @@ namespace Fluid {
       constexpr auto end() { return particles_.end(); }
 
       struct ParticleField {
-          constexpr static Particle & ref(Block & block, std::size_t i) {
-            return block.particles_[i];
-          }
+          using type = Particle &;
+
+          constexpr static type ref(Block & block, std::size_t i) { return block.particles_[i]; }
       };
 
       template <typename... Query>
-      constexpr auto ref(std::size_t i) {
-        return std::tuple{std::ref(Query::ref(*this, i))...};
+      constexpr std::tuple<typename Query::type...> query(std::size_t i) {
+        return std::ref(Query::ref(*this, i)...);
       }
 
       friend std::ostream & operator<<(std::ostream & out, Block const & block) {

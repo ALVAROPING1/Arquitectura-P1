@@ -244,18 +244,18 @@ namespace Fluid {
     public:
       template <typename... Query, typename F>
       constexpr void iter_pairs(F f)
-        // requires std::invocable<F, Particle &, Particle &>
+        requires std::invocable<F, std::tuple<typename Query::type...>, std::tuple<typename Query::type...>>
       {
         iter_blocks([&](Vector3<std::size_t> const blockI_idx) {
           Block & blockI = index(blockI_idx, front_);
           adjacent_blocks(blockI_idx, [&](const Vector3<std::size_t> blockJ_idx) {
             Block & blockJ = index(blockJ_idx, front_);
             for (std::size_t i{0}; i < blockI.size(); ++i) {
-              for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI.ref<Query...>(i), blockJ.ref<Query...>(j)); }
+              for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI.query<Query...>(i), blockJ.query<Query...>(j)); }
             }
           });
           for (std::size_t i{}; i < blockI.size(); ++i) {
-            for (std::size_t j{i + 1}; j < blockI.size(); ++j) {  f(blockI.ref<Query...>(i), blockI.ref<Query...>(j));  }
+            for (std::size_t j{i + 1}; j < blockI.size(); ++j) {  f(blockI.query<Query...>(i), blockI.query<Query...>(j));  }
           }
         });
       }
