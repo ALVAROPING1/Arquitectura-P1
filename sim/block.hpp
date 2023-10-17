@@ -41,12 +41,19 @@ namespace Fluid {
 
       struct ParticleField {
           using type = Particle &;
+          using const_type = const Particle &;
 
           constexpr static type ref(Block & block, std::size_t i) { return block.particles_[i]; }
+          constexpr static const_type ref(Block const & block, std::size_t i) { return block.particles_[i]; }
       };
 
       template <typename... Query>
       constexpr std::tuple<typename Query::type...> query(std::size_t i) {
+        return std::ref(Query::ref(*this, i)...);
+      }
+
+      template <typename... Query>
+      [[nodiscard]] constexpr std::tuple<typename Query::const_type...> query(std::size_t i) const {
         return std::ref(Query::ref(*this, i)...);
       }
 
