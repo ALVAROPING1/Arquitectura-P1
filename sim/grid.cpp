@@ -10,13 +10,17 @@ namespace Fluid {
   std::vector<Particle> Grid::get_all() const {
     std::vector<Particle> result(pc_);  // Inicializa todas las Partículas
     for (auto const & block : front_) {
-      for (auto const & particle : block) { result[particle.id] = particle; }
+      for (std::size_t i{0}; i < block.size(); ++i) { 
+        const auto & particle{block[i]};
+        result[particle.id] = particle;
+      }
     }
     return result;
   }
 
   void Grid::increment_densities() {
-    iter_pairs<Block::ParticleField>([&](std::tuple<Particle &> particle_it, std::tuple<Particle &> particle_jt) {
+    iter_pairs<Block::ParticleField>([&](std::tuple<Block::ParticleField::type> particle_it,
+                                         std::tuple<Block::ParticleField::type> particle_jt) {
       constexpr int nine{9};
 
       auto & particle1{std::get<0>(particle_it)};
@@ -35,7 +39,8 @@ namespace Fluid {
   // Thus, it will be shorter and this will be fine
   // NOLINTNEXTLINE (readability-function-size)
   void Grid::transfer_accelerations() {
-    iter_pairs<Block::ParticleField>([&](std::tuple<Particle &> particle_it, std::tuple<Particle &> particle_jt) {
+    iter_pairs<Block::ParticleField>([&](std::tuple<Block::ParticleField::type> particle_it,
+                                         std::tuple<Block::ParticleField::type> particle_jt) {
       constexpr double const1{1e-12};
       constexpr double const2{15.0};
       constexpr double const3{45.0};
@@ -66,8 +71,20 @@ namespace Fluid {
   // TODO: eliminar cuando eliminemos los comentarios con código de debug
   // NOLINTNEXTLINE (readability-function-size)
   void Grid::particle_movement() {
-    iter_blocks([this](Vector3<size_t> const & block) {
-      for (auto & particle : index(block, front_)) {
+    iter_blocks([this](Vector3<size_t> const & block_idx) {
+      auto & block{index(block_idx, front_)};
+      for (std::size_t i{0}; i < block.size(); ++i) {
+        auto &particle{std::get<0>(block.query<Block::ParticleField>(i))};
+        // if (particle.id == 701) {
+        //   IO::put_line(std::cerr, "Before movement:");
+        //   IO::put_line(std::cerr, "Block idx: ", block);
+        //   IO::put_line(std::cerr, "Correct Block idx: ",
+        //                static_cast<Vector3<std::size_t>>(
+        //                    (particle.p.clamp(Constants::b_min, Constants::b_max - sizes_) -
+        //                     Constants::b_min) /
+        //                    sizes_));
+        //   IO::put_line(std::cerr, particle);
+        // }
         // TODO: v/hv incrementan en valor absoluto en cada iteración. ¿Es esto correcto?
         particle.p  += particle.hv * Constants::dt + particle.a * std::pow(Constants::dt, 2);
         particle.v   = particle.hv + particle.a * Constants::dt / 2;
@@ -94,7 +111,10 @@ namespace Fluid {
     // TODO: skip clear loop on the first iteration
     for (auto & block : back_) { block.clear(); }
     for (auto & block : front_) {
-      for (auto & particle : block) { find_block(particle.p, back_).add(particle); }
+      for (std::size_t i{0}; i < block.size(); ++i) { 
+        auto & particle{block[i]};
+        find_block(particle.p, back_).add(particle);
+    }
     }
   }
 }  // namespace Fluid

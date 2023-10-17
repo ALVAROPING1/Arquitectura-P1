@@ -9,6 +9,7 @@
 #include <ostream>
 #include <utility>
 #include <vector>
+#include <tuple>
 
 namespace Fluid {
 
@@ -25,19 +26,15 @@ namespace Fluid {
 
       void clear() { particles_.clear(); };
 
-      constexpr Particle & operator[](std::size_t i) { return particles_[i]; }
-
-      constexpr Particle const & operator[](std::size_t i) const { return particles_[i]; }
-
       [[nodiscard]] constexpr std::size_t size() const { return particles_.size(); }
 
-      [[nodiscard]] constexpr auto begin() const { return particles_.begin(); }
-
-      [[nodiscard]] constexpr auto end() const { return particles_.end(); }
-
-      constexpr auto begin() { return particles_.begin(); }
-
-      constexpr auto end() { return particles_.end(); }
+      // [[nodiscard]] constexpr auto begin() const { return particles_.begin(); }
+      //
+      // [[nodiscard]] constexpr auto end() const { return particles_.end(); }
+      //
+      // constexpr auto begin() { return particles_.begin(); }
+      //
+      // constexpr auto end() { return particles_.end(); }
 
       struct ParticleField {
           using type = Particle &;
@@ -57,13 +54,24 @@ namespace Fluid {
         return std::ref(Query::ref(*this, i)...);
       }
 
+      constexpr Particle & operator[](std::size_t i) { return std::get<0>(query<ParticleField>(i)); }
+
+      constexpr Particle const & operator[](std::size_t i) const { return std::get<0>(query<ParticleField>(i)); }
+
+      [[nodiscard]] constexpr std::vector<Particle> get_particles() const { 
+        std::vector<Particle> out(size());
+        for (std::size_t i{0}; i < size(); ++i) {
+          out.push_back(operator[](i));
+        }
+        return out;
+      }
+
       friend std::ostream & operator<<(std::ostream & out, Block const & block) {
         out << "Block[";
-        for (auto particle : block) { out << particle; }
+        for (std::size_t i{0}; i < block.size(); ++i) { out << block[i]; }
         return out << "]";
       }
 
-      [[nodiscard]] constexpr std::vector<Particle> get_particles() const { return particles_; }
   };
 
 }  // namespace Fluid

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <tuple>
 
 namespace Fluid {
 
@@ -85,9 +86,9 @@ namespace Fluid {
       void transfer_accelerations();
       void particle_movement();
 
-      constexpr void wall_interactions() { wall_action<interact_particle>(); }
+      constexpr void wall_interactions() { wall_action<interact_particle, Block::ParticleField>(); }
 
-      constexpr void wall_collisions() { wall_action<collide_particle>(); }
+      constexpr void wall_collisions() { wall_action<collide_particle, Block::ParticleField>(); }
 
       constexpr void swap_buffers() { std::swap(front_, back_); }
 
@@ -150,7 +151,8 @@ namespace Fluid {
 
       struct interact_particle {
           template <int Side, typename Axis>
-          constexpr static void run(Particle & particle) {
+          constexpr static void run(std::tuple<Block::ParticleField::type> particle_t) {
+            auto & particle{std::get<0>(particle_t)};
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
             double const w  = Axis::get(particle.p) + Axis::get(particle.hv) * Constants::dt;
@@ -166,7 +168,8 @@ namespace Fluid {
 
       struct collide_particle {
           template <int Side, typename Axis>
-          constexpr static void run(Particle & particle) {
+          constexpr static void run(std::tuple<Block::ParticleField::type> particle_t) {
+            auto & particle{std::get<0>(particle_t)};
             double const d_w = (Side == 0 ? Axis::get(particle.p) - Axis::get(Constants::b_min)
                                           : Axis::get(Constants::b_max) - Axis::get(particle.p));
             if (d_w < 0) {
@@ -178,7 +181,7 @@ namespace Fluid {
           }
       };
 
-      template <int Side, typename A, typename B, typename C, typename Proc>
+      template <int Side, typename A, typename B, typename C, typename Proc, typename... Query>
       constexpr void wall_iterate() {
         Vector3<std::size_t> idx{0, 0, 0};
         C::set(idx)               = (Side == 0 ? 0 : C::get(count_) - 1);
@@ -187,19 +190,19 @@ namespace Fluid {
         for (; A::get(idx) < count_A; ++A::set(idx)) {
           for (B::set(idx) = 0; B::get(idx) < count_B; ++B::set(idx)) {
             Block & block = index(idx, front_);
-            for (auto & particle : block) { Proc::template run<Side, C>(particle); }
+            for (std::size_t i{0}; i < block.size(); ++i) { Proc::template run<Side, C>(block.query<Query...>(i)); }
           }
         }
       }
 
-      template <typename Proc>
+      template <typename Proc, typename... Query>
       constexpr void wall_action() {
-        wall_iterate<0, Axis_X, Axis_Y, Axis_Z, Proc>();
-        wall_iterate<1, Axis_X, Axis_Y, Axis_Z, Proc>();
-        wall_iterate<0, Axis_X, Axis_Z, Axis_Y, Proc>();
-        wall_iterate<1, Axis_X, Axis_Z, Axis_Y, Proc>();
-        wall_iterate<0, Axis_Y, Axis_Z, Axis_X, Proc>();
-        wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc>();
+        wall_iterate<0, Axis_X, Axis_Y, Axis_Z, Proc, Query...>();
+        wall_iterate<1, Axis_X, Axis_Y, Axis_Z, Proc, Query...>();
+        wall_iterate<0, Axis_X, Axis_Z, Axis_Y, Proc, Query...>();
+        wall_iterate<1, Axis_X, Axis_Z, Axis_Y, Proc, Query...>();
+        wall_iterate<0, Axis_Y, Axis_Z, Axis_X, Proc, Query...>();
+        wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc, Query...>();
       }
 
       template <typename F>
