@@ -86,9 +86,9 @@ namespace Fluid {
       void transfer_accelerations();
       void particle_movement();
 
-      constexpr void wall_interactions() { wall_action<interact_particle, Block::ParticleField>(); }
+      constexpr void wall_interactions() { wall_action<interact_particle, Block::Position, Block::Hv, Block::Velocity, Block::Acceleration>(); }
 
-      constexpr void wall_collisions() { wall_action<collide_particle, Block::ParticleField>(); }
+      constexpr void wall_collisions() { wall_action<collide_particle, Block::Position, Block::Hv, Block::Velocity>(); }
 
       constexpr void swap_buffers() { std::swap(front_, back_); }
 
@@ -151,32 +151,32 @@ namespace Fluid {
 
       struct interact_particle {
           template <int Side, typename Axis>
-          constexpr static void run(std::tuple<Block::ParticleField::type> particle_t) {
-            auto & particle{std::get<0>(particle_t)};
+          constexpr static void run(std::tuple<Block::Position::type, Block::Hv::type, Block::Velocity::type, Block::Acceleration::type> particle) {
+            auto [pos, hv, vel, acc]{particle};
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w  = Axis::get(particle.p) + Axis::get(particle.hv) * Constants::dt;
+            double const w  = Axis::get(pos) + Axis::get(hv) * Constants::dt;
             double const dw = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
                                                           : Axis::get(Constants::b_max) - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
-              Axis::set(particle.a) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
-                                       Constants::d_v * Axis::get(particle.v);
+              Axis::set(acc) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
+                                Constants::d_v * Axis::get(vel);
             }
           }
       };
 
       struct collide_particle {
           template <int Side, typename Axis>
-          constexpr static void run(std::tuple<Block::ParticleField::type> particle_t) {
-            auto & particle{std::get<0>(particle_t)};
-            double const d_w = (Side == 0 ? Axis::get(particle.p) - Axis::get(Constants::b_min)
-                                          : Axis::get(Constants::b_max) - Axis::get(particle.p));
+          constexpr static void run(std::tuple<Block::Position::type, Block::Hv::type, Block::Velocity::type> particle) {
+            auto & [pos, hv, vel]{particle};
+            double const d_w = (Side == 0 ? Axis::get(pos) - Axis::get(Constants::b_min)
+                                          : Axis::get(Constants::b_max) - Axis::get(pos));
             if (d_w < 0) {
-              Axis::set(particle.p)   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
+              Axis::set(pos)   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
                                                    : Axis::get(Constants::b_max) + d_w);
-              Axis::set(particle.v)  *= -1;
-              Axis::set(particle.hv) *= -1;
+              Axis::set(vel) *= -1;
+              Axis::set(hv)  *= -1;
             }
           }
       };

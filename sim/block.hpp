@@ -4,6 +4,8 @@
 #define SIM_BLOCK_HPP
 
 #include "particle.hpp"
+#include "io.hpp"
+#include "vector3.hpp"
 
 #include <iostream>
 #include <ostream>
@@ -14,19 +16,55 @@
 namespace Fluid {
 
   class Block {
-      std::vector<Particle> particles_{};
+      using PositionType = Vector3<double>;
+      using HvType = Vector3<double>;
+      using VelocityType = Vector3<double>;
+      using AccelerationType = Vector3<double>;
+      using DensityType = double;
+      using IDType = int;
+      std::vector<PositionType> position_{};
+      std::vector<HvType> hv_{};
+      std::vector<VelocityType> velocity_{};
+      std::vector<AccelerationType> acceleration_{};
+      std::vector<DensityType> density_{};
+      std::vector<IDType> id_{};
 
     public:
       constexpr explicit Block(std::size_t estimated_amount) {
-        particles_.reserve(estimated_amount);
+        position_.reserve(estimated_amount);
+        hv_.reserve(estimated_amount);
+        velocity_.reserve(estimated_amount);
+        acceleration_.reserve(estimated_amount);
+        density_.reserve(estimated_amount);
+        id_.reserve(estimated_amount);
       };
 
-      // Usamos semántica de movimientos mejor, así no es necesario hacer la copia
-      void add(Particle const & particle) { particles_.push_back(particle); }
+      void add(Particle const & particle) {
+        if (particle.p.x == 0 && particle.p.y == 0 && particle.p.z == 0) {
+          IO::put_line(std::cout, "Partícula rara");
+    }
+        position_.push_back(particle.p);
+        hv_.push_back(particle.hv);
+        velocity_.push_back(particle.v);
+        acceleration_.push_back(particle.a);
+        density_.push_back(particle.density);
+        id_.push_back(particle.id);
+      }
 
-      void clear() { particles_.clear(); };
+      void clear() {
+        position_.clear();
+        hv_.clear();
+        velocity_.clear();
+        acceleration_.clear();
+        density_.clear();
+        id_.clear();
+      };
 
-      [[nodiscard]] constexpr std::size_t size() const { return particles_.size(); }
+      [[nodiscard]] constexpr std::size_t size() const { 
+        // All attribute vectors are appended to/cleared at once, so they will
+        // always have the same size and it's safe to get the size from any of them
+        return id_.size();
+      }
 
       // [[nodiscard]] constexpr auto begin() const { return particles_.begin(); }
       //
@@ -36,32 +74,78 @@ namespace Fluid {
       //
       // constexpr auto end() { return particles_.end(); }
 
-      struct ParticleField {
-          using type = Particle &;
-          using const_type = const Particle &;
+      struct Position {
+          using type = PositionType &;
+          using const_type = const PositionType &;
 
-          constexpr static type ref(Block & block, std::size_t i) { return block.particles_[i]; }
-          constexpr static const_type ref(Block const & block, std::size_t i) { return block.particles_[i]; }
+          constexpr static type ref(Block & block, std::size_t i) { return block.position_[i]; }
+          constexpr static const_type ref(Block const & block, std::size_t i) { return block.position_[i]; }
+      };
+      struct Hv {
+          using type = HvType &;
+          using const_type = const HvType &;
+
+          constexpr static type ref(Block & block, std::size_t i) { return block.hv_[i]; }
+          constexpr static const_type ref(Block const & block, std::size_t i) { return block.hv_[i]; }
+      };
+      struct Velocity {
+          using type = VelocityType &;
+          using const_type = const VelocityType &;
+
+          constexpr static type ref(Block & block, std::size_t i) { return block.velocity_[i]; }
+          constexpr static const_type ref(Block const & block, std::size_t i) { return block.velocity_[i]; }
+      };
+      struct Acceleration {
+          using type = AccelerationType &;
+          using const_type = const AccelerationType &;
+
+          constexpr static type ref(Block & block, std::size_t i) { return block.acceleration_[i]; }
+          constexpr static const_type ref(Block const & block, std::size_t i) { return block.acceleration_[i]; }
+      };
+      struct Density {
+          using type = DensityType &;
+          using const_type = const DensityType &;
+
+          constexpr static type ref(Block & block, std::size_t i) { return block.density_[i]; }
+          constexpr static const_type ref(Block const & block, std::size_t i) { return block.density_[i]; }
+      };
+      struct ID {
+          using type = IDType &;
+          using const_type = const IDType &;
+
+          constexpr static type ref(Block & block, std::size_t i) { return block.id_[i]; }
+          constexpr static const_type ref(Block const & block, std::size_t i) { return block.id_[i]; }
       };
 
       template <typename... Query>
       constexpr std::tuple<typename Query::type...> query(std::size_t i) {
-        return std::ref(Query::ref(*this, i)...);
+        return std::make_tuple(std::ref(Query::ref(*this, i))...);
       }
 
       template <typename... Query>
       [[nodiscard]] constexpr std::tuple<typename Query::const_type...> query(std::size_t i) const {
-        return std::ref(Query::ref(*this, i)...);
+        return std::make_tuple(std::ref(Query::ref(*this, i))...);
       }
 
-      constexpr Particle & operator[](std::size_t i) { return std::get<0>(query<ParticleField>(i)); }
-
-      constexpr Particle const & operator[](std::size_t i) const { return std::get<0>(query<ParticleField>(i)); }
+      constexpr Particle operator[](std::size_t i) const {
+        auto [p, hv, v, a, density, id]{query<Position, Hv, Velocity, Acceleration, Density, ID>(i)};
+        Particle particle;
+        particle.p = p;
+        particle.hv = hv;
+        particle.v = v;
+        particle.a = a;
+        particle.density = density;
+        particle.id = id;
+        return particle;
+      }
 
       [[nodiscard]] constexpr std::vector<Particle> get_particles() const { 
-        std::vector<Particle> out(size());
+        std::vector<Particle> out{};
+        out.reserve(size());
         for (std::size_t i{0}; i < size(); ++i) {
-          out.push_back(operator[](i));
+          Particle particle{operator[](i)};
+          // if (particle.p.x == 0 && particle.p.y == 0 && particle.p.z == 0) {IO::put_line(std::cerr, "wrong particle", particle);}
+          out.push_back(particle);
         }
         return out;
       }
