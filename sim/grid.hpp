@@ -86,9 +86,9 @@ namespace Fluid {
       void transfer_accelerations();
       void particle_movement();
 
-      constexpr void wall_interactions() { wall_action<interact_particle, Block::Position, Block::Hv, Block::Velocity, Block::Acceleration>(); }
+      constexpr void wall_interactions() { wall_action<interact_particle>(); }
 
-      constexpr void wall_collisions() { wall_action<collide_particle, Block::Position, Block::Hv, Block::Velocity>(); }
+      constexpr void wall_collisions() { wall_action<collide_particle>(); }
 
       constexpr void swap_buffers() { std::swap(front_, back_); }
 
@@ -151,37 +151,35 @@ namespace Fluid {
 
       struct interact_particle {
           template <int Side, typename Axis>
-          constexpr static void run(std::tuple<Block::Position::type, Block::Hv::type, Block::Velocity::type, Block::Acceleration::type> particle) {
-            auto [pos, hv, vel, acc]{particle};
+          constexpr static void run(Block & block, std::size_t i) {
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w  = Axis::get(pos) + Axis::get(hv) * Constants::dt;
+            double const w  = Axis::get(block.position_[i]) + Axis::get(block.hv_[i]) * Constants::dt;
             double const dw = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
                                                           : Axis::get(Constants::b_max) - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
-              Axis::set(acc) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
-                                Constants::d_v * Axis::get(vel);
+              Axis::set(block.acceleration_[i]) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
+                                Constants::d_v * Axis::get(block.velocity_[i]);
             }
           }
       };
 
       struct collide_particle {
           template <int Side, typename Axis>
-          constexpr static void run(std::tuple<Block::Position::type, Block::Hv::type, Block::Velocity::type> particle) {
-            auto & [pos, hv, vel]{particle};
-            double const d_w = (Side == 0 ? Axis::get(pos) - Axis::get(Constants::b_min)
-                                          : Axis::get(Constants::b_max) - Axis::get(pos));
+          constexpr static void run(Block & block, std::size_t i) {
+            double const d_w = (Side == 0 ? Axis::get(block.position_[i]) - Axis::get(Constants::b_min)
+                                          : Axis::get(Constants::b_max) - Axis::get(block.position_[i]));
             if (d_w < 0) {
-              Axis::set(pos)   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
+              Axis::set(block.position_[i])   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
                                                    : Axis::get(Constants::b_max) + d_w);
-              Axis::set(vel) *= -1;
-              Axis::set(hv)  *= -1;
+              Axis::set(block.velocity_[i]) *= -1;
+              Axis::set(block.hv_[i])  *= -1;
             }
           }
       };
 
-      template <int Side, typename A, typename B, typename C, typename Proc, typename... Query>
+      template <int Side, typename A, typename B, typename C, typename Proc>
       constexpr void wall_iterate() {
         Vector3<std::size_t> idx{0, 0, 0};
         C::set(idx)               = (Side == 0 ? 0 : C::get(count_) - 1);
@@ -190,19 +188,19 @@ namespace Fluid {
         for (; A::get(idx) < count_A; ++A::set(idx)) {
           for (B::set(idx) = 0; B::get(idx) < count_B; ++B::set(idx)) {
             Block & block = index(idx, front_);
-            for (std::size_t i{0}; i < block.size(); ++i) { Proc::template run<Side, C>(block.query<Query...>(i)); }
+            for (std::size_t i{0}; i < block.size(); ++i) { Proc::template run<Side, C>(block, i); }
           }
         }
       }
 
-      template <typename Proc, typename... Query>
+      template <typename Proc>
       constexpr void wall_action() {
-        wall_iterate<0, Axis_X, Axis_Y, Axis_Z, Proc, Query...>();
-        wall_iterate<1, Axis_X, Axis_Y, Axis_Z, Proc, Query...>();
-        wall_iterate<0, Axis_X, Axis_Z, Axis_Y, Proc, Query...>();
-        wall_iterate<1, Axis_X, Axis_Z, Axis_Y, Proc, Query...>();
-        wall_iterate<0, Axis_Y, Axis_Z, Axis_X, Proc, Query...>();
-        wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc, Query...>();
+        wall_iterate<0, Axis_X, Axis_Y, Axis_Z, Proc>();
+        wall_iterate<1, Axis_X, Axis_Y, Axis_Z, Proc>();
+        wall_iterate<0, Axis_X, Axis_Z, Axis_Y, Proc>();
+        wall_iterate<1, Axis_X, Axis_Z, Axis_Y, Proc>();
+        wall_iterate<0, Axis_Y, Axis_Z, Axis_X, Proc>();
+        wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc>();
       }
 
       template <typename F>
@@ -245,20 +243,20 @@ namespace Fluid {
       }
 
     public:
-      template <typename... Query, typename F>
+      template <typename F>
       constexpr void iter_pairs(F f)
-        requires std::invocable<F, std::tuple<typename Query::type...>, std::tuple<typename Query::type...>>
+        requires std::invocable<F, Block &, Block &, std::size_t, std::size_t>
       {
         iter_blocks([&](Vector3<std::size_t> const blockI_idx) {
           Block & blockI = index(blockI_idx, front_);
           adjacent_blocks(blockI_idx, [&](const Vector3<std::size_t> blockJ_idx) {
             Block & blockJ = index(blockJ_idx, front_);
             for (std::size_t i{0}; i < blockI.size(); ++i) {
-              for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI.query<Query...>(i), blockJ.query<Query...>(j)); }
+              for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI, blockJ, i, j); }
             }
           });
           for (std::size_t i{}; i < blockI.size(); ++i) {
-            for (std::size_t j{i + 1}; j < blockI.size(); ++j) {  f(blockI.query<Query...>(i), blockI.query<Query...>(j));  }
+            for (std::size_t j{i + 1}; j < blockI.size(); ++j) {  f(blockI, blockI, i, j);  }
           }
         });
       }

@@ -16,6 +16,7 @@
 namespace Fluid {
 
   class Block {
+    public:
       using PositionType = Vector3<double>;
       using HvType = Vector3<double>;
       using VelocityType = Vector3<double>;
@@ -74,68 +75,68 @@ namespace Fluid {
       //
       // constexpr auto end() { return particles_.end(); }
 
-      struct Position {
-          using type = PositionType &;
-          using const_type = const PositionType &;
-
-          constexpr static type ref(Block & block, std::size_t i) { return block.position_[i]; }
-          constexpr static const_type ref(Block const & block, std::size_t i) { return block.position_[i]; }
-      };
-      struct Hv {
-          using type = HvType &;
-          using const_type = const HvType &;
-
-          constexpr static type ref(Block & block, std::size_t i) { return block.hv_[i]; }
-          constexpr static const_type ref(Block const & block, std::size_t i) { return block.hv_[i]; }
-      };
-      struct Velocity {
-          using type = VelocityType &;
-          using const_type = const VelocityType &;
-
-          constexpr static type ref(Block & block, std::size_t i) { return block.velocity_[i]; }
-          constexpr static const_type ref(Block const & block, std::size_t i) { return block.velocity_[i]; }
-      };
-      struct Acceleration {
-          using type = AccelerationType &;
-          using const_type = const AccelerationType &;
-
-          constexpr static type ref(Block & block, std::size_t i) { return block.acceleration_[i]; }
-          constexpr static const_type ref(Block const & block, std::size_t i) { return block.acceleration_[i]; }
-      };
-      struct Density {
-          using type = DensityType &;
-          using const_type = const DensityType &;
-
-          constexpr static type ref(Block & block, std::size_t i) { return block.density_[i]; }
-          constexpr static const_type ref(Block const & block, std::size_t i) { return block.density_[i]; }
-      };
-      struct ID {
-          using type = IDType &;
-          using const_type = const IDType &;
-
-          constexpr static type ref(Block & block, std::size_t i) { return block.id_[i]; }
-          constexpr static const_type ref(Block const & block, std::size_t i) { return block.id_[i]; }
-      };
-
-      template <typename... Query>
-      constexpr std::tuple<typename Query::type...> query(std::size_t i) {
-        return std::make_tuple(std::ref(Query::ref(*this, i))...);
-      }
-
-      template <typename... Query>
-      [[nodiscard]] constexpr std::tuple<typename Query::const_type...> query(std::size_t i) const {
-        return std::make_tuple(std::ref(Query::ref(*this, i))...);
-      }
+      // struct Position {
+      //     using type = PositionType &;
+      //     using const_type = const PositionType &;
+      //
+      //     constexpr static type ref(Block & block, std::size_t i) { return block.position_[i]; }
+      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.position_[i]; }
+      // };
+      // struct Hv {
+      //     using type = HvType &;
+      //     using const_type = const HvType &;
+      //
+      //     constexpr static type ref(Block & block, std::size_t i) { return block.hv_[i]; }
+      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.hv_[i]; }
+      // };
+      // struct Velocity {
+      //     using type = VelocityType &;
+      //     using const_type = const VelocityType &;
+      //
+      //     constexpr static type ref(Block & block, std::size_t i) { return block.velocity_[i]; }
+      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.velocity_[i]; }
+      // };
+      // struct Acceleration {
+      //     using type = AccelerationType &;
+      //     using const_type = const AccelerationType &;
+      //
+      //     constexpr static type ref(Block & block, std::size_t i) { return block.acceleration_[i]; }
+      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.acceleration_[i]; }
+      // };
+      // struct Density {
+      //     using type = DensityType &;
+      //     using const_type = const DensityType &;
+      //
+      //     constexpr static type ref(Block & block, std::size_t i) { return block.density_[i]; }
+      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.density_[i]; }
+      // };
+      // struct ID {
+      //     using type = IDType &;
+      //     using const_type = const IDType &;
+      //
+      //     constexpr static type ref(Block & block, std::size_t i) { return block.id_[i]; }
+      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.id_[i]; }
+      // };
+      //
+      // template <typename... Query>
+      // constexpr std::tuple<typename Query::type...> query(std::size_t i) {
+      //   return std::make_tuple(std::ref(Query::ref(*this, i))...);
+      // }
+      //
+      // template <typename... Query>
+      // [[nodiscard]] constexpr std::tuple<typename Query::const_type...> query(std::size_t i) const {
+      //   return std::make_tuple(std::ref(Query::ref(*this, i))...);
+      // }
 
       constexpr Particle operator[](std::size_t i) const {
-        auto [p, hv, v, a, density, id]{query<Position, Hv, Velocity, Acceleration, Density, ID>(i)};
+        // auto [p, hv, v, a, density, id]{query<Position, Hv, Velocity, Acceleration, Density, ID>(i)};
         Particle particle;
-        particle.p = p;
-        particle.hv = hv;
-        particle.v = v;
-        particle.a = a;
-        particle.density = density;
-        particle.id = id;
+        particle.p = position_[i];
+        particle.hv = hv_[i];
+        particle.v = velocity_[i];
+        particle.a = acceleration_[i];
+        particle.density = density_[i];
+        particle.id = id_[i];
         return particle;
       }
 

@@ -19,19 +19,16 @@ namespace Fluid {
   }
 
   void Grid::increment_densities() {
-    iter_pairs<Block::Position, Block::Density>([&](std::tuple<Block::Position::type, Block::Density::type> particle_i,
-                                                    std::tuple<Block::Position::type, Block::Density::type> particle_j) {
+    iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
       constexpr int nine{9};
 
-      auto [pos_i, density_i]{particle_i};
-      auto [pos_j, density_j]{particle_j};
-      Vector3<double> const distance{pos_i - pos_j};
+      Vector3<double> const distance{blockI.position_[i] - blockJ.position_[j]};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
       density            = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
-      density_i += density;
-      density_j += density;
+      blockI.density_[i] += density;
+      blockJ.density_[j] += density;
     });
   }
 
@@ -39,14 +36,11 @@ namespace Fluid {
   // Thus, it will be shorter and this will be fine
   // NOLINTNEXTLINE (readability-function-size)
   void Grid::transfer_accelerations() {
-    iter_pairs<Block::Position, Block::Velocity, Block::Acceleration, Block::Density>([&](std::tuple<Block::Position::type, Block::Velocity::type, Block::Acceleration::type, Block::Density::type> particle_it,
-                                                                                          std::tuple<Block::Position::type, Block::Velocity::type, Block::Acceleration::type, Block::Density::type> particle_jt) {
+    iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
       constexpr double const1{1e-12};
       constexpr double const2{15.0};
       constexpr double const3{45.0};
-      auto [pos_i, vel_i, acc_i, density_i]{particle_it};
-      auto [pos_j, vel_j, acc_j, density_j]{particle_jt};
-      Vector3<double> const distance{pos_i - pos_j};
+      Vector3<double> const distance{blockI.position_[i] - blockJ.position_[j]};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double const dist_ij{std::sqrt(std::max(norm, const1))};
@@ -54,13 +48,13 @@ namespace Fluid {
           // Clang-format doesn't know how to properly format this formula
           // clang-format off
           ( distance * (1.5 * Constants::p_s) * (std::pow((h_ - dist_ij), 2) / dist_ij)
-            * (density_i + density_j - 2 * Constants::rho)
-            + (vel_j - vel_i) * Constants::mu * (const3/const2))
-          * (const2 / (std::numbers::pi * std::pow(h_, 6))) * m_ / (density_i * density_j)
+            * (blockI.density_[i] + blockJ.density_[j] - 2 * Constants::rho)
+            + (blockJ.velocity_[j] - blockI.velocity_[i]) * Constants::mu * (const3/const2))
+          * (const2 / (std::numbers::pi * std::pow(h_, 6))) * m_ / (blockI.density_[i] * blockJ.density_[j])
           // clang-format on
       };
-      acc_i += acceleration;
-      acc_j -= acceleration;
+      blockI.acceleration_[i] += acceleration;
+      blockJ.acceleration_[j] -= acceleration;
     });
   }
 
@@ -70,7 +64,6 @@ namespace Fluid {
     iter_blocks([this](Vector3<size_t> const & block_idx) {
       auto & block{index(block_idx, front_)};
       for (std::size_t i{0}; i < block.size(); ++i) {
-        auto [pos, vel, hv, acc, density]{block.query<Block::Position, Block::Velocity, Block::Hv, Block::Acceleration, Block::Density>(i)};
         // if (particle.id == 701) {
         //   IO::put_line(std::cerr, "Before movement:");
         //   IO::put_line(std::cerr, "Block idx: ", block);
@@ -82,14 +75,14 @@ namespace Fluid {
         //   IO::put_line(std::cerr, particle);
         // }
         // TODO: v/hv incrementan en valor absoluto en cada iteración. ¿Es esto correcto?
-        pos += hv * Constants::dt + acc * std::pow(Constants::dt, 2);
-        vel  = hv + acc * Constants::dt / 2;
-        hv  += acc * Constants::dt;
+        block.position_[i] += block.hv_[i] * Constants::dt + block.acceleration_[i] * std::pow(Constants::dt, 2);
+        block.velocity_[i]  = block.hv_[i] + block.acceleration_[i] * Constants::dt / 2;
+        block.hv_[i]  += block.acceleration_[i] * Constants::dt;
         // Reset the density/acceleration while we are at it as they are no longer needed in this
         // iteration. This allows us to skip the full scan of the particles at the beginning of each
         // update cycle
-        density = Particle::reset_density(h_, m_);
-        acc = Constants::g;
+        block.density_[i] = Particle::reset_density(h_, m_);
+        block.acceleration_[i] = Constants::g;
         // if (particle.id == 701) {
         //   IO::put_line(std::cerr, "After movement:");
         //   IO::put_line(std::cerr, "Correct Block idx: ",
