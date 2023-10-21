@@ -17,26 +17,20 @@ namespace Fluid {
 
   class Block {
     public:
-      using PositionType = Vector3<double>;
+      using PositionDensityType = std::pair<Vector3<double>, double>;
       using HvType = Vector3<double>;
-      using VelocityType = Vector3<double>;
-      using AccelerationType = Vector3<double>;
-      using DensityType = double;
+      using VelocityAccelerationType = std::pair<Vector3<double>, Vector3<double>>;
       using IDType = int;
-      std::vector<PositionType> position_{};
+      std::vector<PositionDensityType> position_density_{};
       std::vector<HvType> hv_{};
-      std::vector<VelocityType> velocity_{};
-      std::vector<AccelerationType> acceleration_{};
-      std::vector<DensityType> density_{};
+      std::vector<VelocityAccelerationType> velocity_acceleration_{};
       std::vector<IDType> id_{};
 
     public:
       constexpr explicit Block(std::size_t estimated_amount) {
-        position_.reserve(estimated_amount);
+        position_density_.reserve(estimated_amount);
         hv_.reserve(estimated_amount);
-        velocity_.reserve(estimated_amount);
-        acceleration_.reserve(estimated_amount);
-        density_.reserve(estimated_amount);
+        velocity_acceleration_.reserve(estimated_amount);
         id_.reserve(estimated_amount);
       };
 
@@ -44,20 +38,16 @@ namespace Fluid {
         if (particle.p.x == 0 && particle.p.y == 0 && particle.p.z == 0) {
           IO::put_line(std::cout, "Partícula rara");
     }
-        position_.push_back(particle.p);
+        position_density_.emplace_back(particle.p, particle.density);
         hv_.push_back(particle.hv);
-        velocity_.push_back(particle.v);
-        acceleration_.push_back(particle.a);
-        density_.push_back(particle.density);
+        velocity_acceleration_.emplace_back(particle.v, particle.a);
         id_.push_back(particle.id);
       }
 
       void clear() {
-        position_.clear();
+        position_density_.clear();
         hv_.clear();
-        velocity_.clear();
-        acceleration_.clear();
-        density_.clear();
+        velocity_acceleration_.clear();
         id_.clear();
       };
 
@@ -131,11 +121,11 @@ namespace Fluid {
       constexpr Particle operator[](std::size_t i) const {
         // auto [p, hv, v, a, density, id]{query<Position, Hv, Velocity, Acceleration, Density, ID>(i)};
         Particle particle;
-        particle.p = position_[i];
+        particle.p = position_density_[i].first;
         particle.hv = hv_[i];
-        particle.v = velocity_[i];
-        particle.a = acceleration_[i];
-        particle.density = density_[i];
+        particle.v = velocity_acceleration_[i].first;
+        particle.a = velocity_acceleration_[i].second;
+        particle.density = position_density_[i].second;
         particle.id = id_[i];
         return particle;
       }

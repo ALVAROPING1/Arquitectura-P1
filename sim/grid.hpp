@@ -154,13 +154,13 @@ namespace Fluid {
           constexpr static void run(Block & block, std::size_t i) {
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w  = Axis::get(block.position_[i]) + Axis::get(block.hv_[i]) * Constants::dt;
+            double const w  = Axis::get(block.position_density_[i].first) + Axis::get(block.hv_[i]) * Constants::dt;
             double const dw = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
                                                           : Axis::get(Constants::b_max) - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
-              Axis::set(block.acceleration_[i]) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
-                                Constants::d_v * Axis::get(block.velocity_[i]);
+              Axis::set(block.velocity_acceleration_[i].second) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
+                                Constants::d_v * Axis::get(block.velocity_acceleration_[i].first);
             }
           }
       };
@@ -168,12 +168,12 @@ namespace Fluid {
       struct collide_particle {
           template <int Side, typename Axis>
           constexpr static void run(Block & block, std::size_t i) {
-            double const d_w = (Side == 0 ? Axis::get(block.position_[i]) - Axis::get(Constants::b_min)
-                                          : Axis::get(Constants::b_max) - Axis::get(block.position_[i]));
+            double const d_w = (Side == 0 ? Axis::get(block.position_density_[i].first) - Axis::get(Constants::b_min)
+                                          : Axis::get(Constants::b_max) - Axis::get(block.position_density_[i].first));
             if (d_w < 0) {
-              Axis::set(block.position_[i])   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
+              Axis::set(block.position_density_[i].first)   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
                                                    : Axis::get(Constants::b_max) + d_w);
-              Axis::set(block.velocity_[i]) *= -1;
+              Axis::set(block.velocity_acceleration_[i].first) *= -1;
               Axis::set(block.hv_[i])  *= -1;
             }
           }

@@ -22,13 +22,13 @@ namespace Fluid {
     iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
       constexpr int nine{9};
 
-      Vector3<double> const distance{blockI.position_[i] - blockJ.position_[j]};
+      Vector3<double> const distance{blockI.position_density_[i].first - blockJ.position_density_[j].first};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
       density            = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
-      blockI.density_[i] += density;
-      blockJ.density_[j] += density;
+      blockI.position_density_[i].second += density;
+      blockJ.position_density_[j].second += density;
     });
   }
 
@@ -40,7 +40,7 @@ namespace Fluid {
       constexpr double const1{1e-12};
       constexpr double const2{15.0};
       constexpr double const3{45.0};
-      Vector3<double> const distance{blockI.position_[i] - blockJ.position_[j]};
+      Vector3<double> const distance{blockI.position_density_[i].first - blockJ.position_density_[j].first};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double const dist_ij{std::sqrt(std::max(norm, const1))};
@@ -48,13 +48,13 @@ namespace Fluid {
           // Clang-format doesn't know how to properly format this formula
           // clang-format off
           ( distance * (1.5 * Constants::p_s) * (std::pow((h_ - dist_ij), 2) / dist_ij)
-            * (blockI.density_[i] + blockJ.density_[j] - 2 * Constants::rho)
-            + (blockJ.velocity_[j] - blockI.velocity_[i]) * Constants::mu * (const3/const2))
-          * (const2 / (std::numbers::pi * std::pow(h_, 6))) * m_ / (blockI.density_[i] * blockJ.density_[j])
+            * (blockI.position_density_[i].second + blockJ.position_density_[j].second - 2 * Constants::rho)
+            + (blockJ.velocity_acceleration_[j].first - blockI.velocity_acceleration_[i].first) * Constants::mu * (const3/const2))
+          * (const2 / (std::numbers::pi * std::pow(h_, 6))) * m_ / (blockI.position_density_[i].second * blockJ.position_density_[j].second)
           // clang-format on
       };
-      blockI.acceleration_[i] += acceleration;
-      blockJ.acceleration_[j] -= acceleration;
+      blockI.velocity_acceleration_[i].second += acceleration;
+      blockJ.velocity_acceleration_[j].second -= acceleration;
     });
   }
 
@@ -75,14 +75,14 @@ namespace Fluid {
         //   IO::put_line(std::cerr, particle);
         // }
         // TODO: v/hv incrementan en valor absoluto en cada iteración. ¿Es esto correcto?
-        block.position_[i] += block.hv_[i] * Constants::dt + block.acceleration_[i] * std::pow(Constants::dt, 2);
-        block.velocity_[i]  = block.hv_[i] + block.acceleration_[i] * Constants::dt / 2;
-        block.hv_[i]  += block.acceleration_[i] * Constants::dt;
+        block.position_density_[i].first += block.hv_[i] * Constants::dt + block.velocity_acceleration_[i].second * std::pow(Constants::dt, 2);
+        block.velocity_acceleration_[i].first  = block.hv_[i] + block.velocity_acceleration_[i].second * Constants::dt / 2;
+        block.hv_[i]  += block.velocity_acceleration_[i].second * Constants::dt;
         // Reset the density/acceleration while we are at it as they are no longer needed in this
         // iteration. This allows us to skip the full scan of the particles at the beginning of each
         // update cycle
-        block.density_[i] = Particle::reset_density(h_, m_);
-        block.acceleration_[i] = Constants::g;
+        block.position_density_[i].second = Particle::reset_density(h_, m_);
+        block.velocity_acceleration_[i].second = Constants::g;
         // if (particle.id == 701) {
         //   IO::put_line(std::cerr, "After movement:");
         //   IO::put_line(std::cerr, "Correct Block idx: ",
