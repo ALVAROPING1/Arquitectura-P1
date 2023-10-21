@@ -1,0 +1,2 @@
+/usr/bin/ar qc libsim.a CMakeFiles/sim.dir/block.cpp.o CMakeFiles/sim.dir/grid.cpp.o CMakeFiles/sim.dir/particle.cpp.o CMakeFiles/sim.dir/math.cpp.o CMakeFiles/sim.dir/argumentparser.cpp.o CMakeFiles/sim.dir/fileio.cpp.o
+/usr/bin/ranlib libsim.a

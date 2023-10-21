@@ -1,0 +1,5 @@
+if(EXISTS "/home/adri/Escritorio/uni/3/Ariquitectura-P1/debug/utest/utest[1]_tests.cmake")
+  include("/home/adri/Escritorio/uni/3/Ariquitectura-P1/debug/utest/utest[1]_tests.cmake")
+else()
+  add_test(utest_NOT_BUILT utest_NOT_BUILT)
+endif()
