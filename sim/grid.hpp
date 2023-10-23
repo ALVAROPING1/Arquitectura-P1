@@ -195,12 +195,12 @@ namespace Fluid {
 
       template <typename Proc>
       constexpr void wall_action() {
-        wall_iterate<0, Axis_X, Axis_Y, Axis_Z, Proc>();
-        wall_iterate<1, Axis_X, Axis_Y, Axis_Z, Proc>();
-        wall_iterate<0, Axis_X, Axis_Z, Axis_Y, Proc>();
-        wall_iterate<1, Axis_X, Axis_Z, Axis_Y, Proc>();
-        wall_iterate<0, Axis_Y, Axis_Z, Axis_X, Proc>();
-        wall_iterate<1, Axis_Y, Axis_Z, Axis_X, Proc>();
+        wall_iterate<0, Axis_Y, Axis_X, Axis_Z, Proc>();
+        wall_iterate<1, Axis_Y, Axis_X, Axis_Z, Proc>();
+        wall_iterate<0, Axis_Z, Axis_X, Axis_Y, Proc>();
+        wall_iterate<1, Axis_Z, Axis_X, Axis_Y, Proc>();
+        wall_iterate<0, Axis_Z, Axis_Y, Axis_X, Proc>();
+        wall_iterate<1, Axis_Z, Axis_Y, Axis_X, Proc>();
       }
 
       template <typename F>
@@ -235,9 +235,9 @@ namespace Fluid {
         requires std::invocable<F, Vector3<std::size_t> const>
       {
         Vector3<std::size_t> idx{0, 0, 0};
-        for (; idx.x < count_.x; ++idx.x) {
+        for (; idx.z < count_.z; ++idx.z) {
           for (idx.y = 0; idx.y < count_.y; ++idx.y) {
-            for (idx.z = 0; idx.z < count_.z; ++idx.z) { f(idx); }
+            for (idx.x = 0; idx.x < count_.x; ++idx.x) { f(idx); }
           }
         }
       }
