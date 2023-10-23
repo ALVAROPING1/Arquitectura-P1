@@ -91,7 +91,7 @@ int main(int argc, char ** argv) {
   std::vector<Fluid::Block> attempt;
 
   auto trace = [&] (std::string const& name, int it) {
-    put(std::cout, "   \033[2;33mTesting ", name, " (", it+1, ")", "\033[0m... \t");
+    put(std::cout, "   \033[33mTesting ", name, " (", it+1, ")", "\033[0m... \t");
     correct = tracer.load("trz/small/" + name + "-base-" + std::to_string(it + 1) + ".trz");
     attempt = grid.get_blocks();
     if (compare(correct, attempt)) {
