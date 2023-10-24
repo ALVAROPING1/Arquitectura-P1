@@ -212,7 +212,7 @@ namespace Fluid {
 
       template <typename F>
       void adjacent_blocks(Vector3<size_t> block, F f)
-        requires std::invocable<F, Vector3<std::size_t> const>
+        requires std::invocable<F, Vector3<std::size_t> const &>
       {
         if (block.x > 0) {
           if (block.y > 0) {
@@ -239,7 +239,7 @@ namespace Fluid {
 
       template <typename F>
       constexpr void iter_blocks(F f)
-        requires std::invocable<F, Vector3<std::size_t> const>
+        requires std::invocable<F, Vector3<std::size_t> const &>
       {
         Vector3<std::size_t> idx{0, 0, 0};
         for (; idx.z < count_.z; ++idx.z) {
@@ -254,9 +254,9 @@ namespace Fluid {
       constexpr void iter_pairs(F f)
         requires std::invocable<F, Block &, Block &, std::size_t, std::size_t>
       {
-        iter_blocks([&](Vector3<std::size_t> const blockI_idx) {
+        iter_blocks([&](Vector3<std::size_t> const & blockI_idx) {
           Block & blockI = index(blockI_idx, front_);
-          adjacent_blocks(blockI_idx, [&](const Vector3<std::size_t> blockJ_idx) {
+          adjacent_blocks(blockI_idx, [&](Vector3<std::size_t> const & blockJ_idx) {
             Block & blockJ = index(blockJ_idx, front_);
             for (std::size_t i{0}; i < blockI.size(); ++i) {
               for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI, blockJ, i, j); }
