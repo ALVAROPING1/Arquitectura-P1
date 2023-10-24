@@ -30,13 +30,9 @@ namespace Fluid {
 
       // Poner como constante de la clase 1/h³ * m
 
-      constexpr Particle(Vector3<Vector3<float>> const & data, int id, double h, double m)
-        : id{id}, p{static_cast<Vector3<double>>(data.x)}, density{reset_density(h, m)},
+      constexpr Particle(Vector3<Vector3<float>> const & data, int id, double density)
+        : id{id}, p{static_cast<Vector3<double>>(data.x)}, density{density},
           hv{static_cast<Vector3<double>>(data.y)}, v{static_cast<Vector3<double>>(data.z)} {
-      }
-
-      constexpr static double reset_density(double h, double m) {
-        return density_factor / (h * h * h) * m;
       }
 
       // Operator '<<' para imprimar la partícula (depurado).

@@ -7,6 +7,7 @@
 #include "particle.hpp"
 #include "vector3.hpp"
 
+#include <cmath>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -21,6 +22,9 @@ namespace Fluid {
       double ppm_;
       double h_;
       double m_;
+      double density_transform_factor_;
+      double acceleration_transform_factor_;
+      double reset_density_;
       int id_{};
 
       Vector3<std::size_t> count_;
@@ -37,6 +41,9 @@ namespace Fluid {
       /// Partículas por metro
       constexpr Grid(std::size_t pc, double ppm)
         : pc_{pc}, ppm_{ppm}, h_{Constants::r / ppm}, m_{Constants::rho / (ppm * ppm * ppm)},
+          density_transform_factor_{density_factor / std::pow(h_, 3 * 3) * m_},
+          acceleration_transform_factor_{m_ / std::pow(h_, 2 * 3)},
+          reset_density_{density_factor / std::pow(h_, 3) * m_},
           count_{static_cast<Vector3<std::size_t>>((Constants::b_max - Constants::b_min) / h_)},
           sizes_{(Constants::b_max - Constants::b_min) / static_cast<Vector3<double>>(count_)} {
         std::size_t const count  = count_.x * count_.y * count_.z;
@@ -55,7 +62,7 @@ namespace Fluid {
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
         Particle const particle{
             {p, hv, v},
-            id_++, h_, m_
+            id_++, reset_density_
         };
         find_block(particle.p, front_).add(particle);
       }

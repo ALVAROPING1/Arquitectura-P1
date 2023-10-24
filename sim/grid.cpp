@@ -20,13 +20,11 @@ namespace Fluid {
 
   void Grid::increment_densities() {
     iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
-      constexpr int nine{9};
-
       Vector3<double> const distance{blockI.position_density_[i].first - blockJ.position_density_[j].first};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
-      density            = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
+      density            = (density * density * density) * density_transform_factor_;
       blockI.position_density_[i].second += density;
       blockJ.position_density_[j].second += density;
     });
@@ -47,10 +45,10 @@ namespace Fluid {
       Vector3<double> const acceleration{
           // Clang-format doesn't know how to properly format this formula
           // clang-format off
-          ( distance * (1.5 * Constants::p_s) * (std::pow((h_ - dist_ij), 2) / dist_ij)
+          ( distance * (1.5 * Constants::p_s * (const2 / std::numbers::pi)) * (std::pow((h_ - dist_ij), 2) / dist_ij)
             * (blockI.position_density_[i].second + blockJ.position_density_[j].second - 2 * Constants::rho)
-            + (blockJ.velocity_acceleration_[j].first - blockI.velocity_acceleration_[i].first) * Constants::mu * (const3/const2))
-          * (const2 / (std::numbers::pi * std::pow(h_, 6))) * m_ / (blockI.position_density_[i].second * blockJ.position_density_[j].second)
+            + (blockJ.velocity_acceleration_[j].first - blockI.velocity_acceleration_[i].first) * Constants::mu * (const3/const2) * (const2 / std::numbers::pi))
+           * acceleration_transform_factor_ / (blockI.position_density_[i].second * blockJ.position_density_[j].second)
           // clang-format on
       };
       blockI.velocity_acceleration_[i].second += acceleration;
@@ -81,7 +79,7 @@ namespace Fluid {
         // Reset the density/acceleration while we are at it as they are no longer needed in this
         // iteration. This allows us to skip the full scan of the particles at the beginning of each
         // update cycle
-        block.position_density_[i].second = Particle::reset_density(h_, m_);
+        block.position_density_[i].second = reset_density_;
         block.velocity_acceleration_[i].second = Constants::g;
         // if (particle.id == 701) {
         //   IO::put_line(std::cerr, "After movement:");
