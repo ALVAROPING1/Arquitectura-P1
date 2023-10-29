@@ -9,64 +9,140 @@
 
 namespace FileIOTest {
 
+namespace Const {
+
+const int ppm = 75;
+const int np1 = -50;
+const int np2 = 0;
+const int np3 = 5;
+const int np4 = 5;
+const int np5 = 5;
+
+const int it_np_true = 5;
+const int it_np_lower_false = 3;
+const int it_np_greater_false = 10;
+
+}; // namespace Const
+
 class FileIOTestClass : public testing::Test {
 
-    int ppm = 75;
-    int np1 = -50, np2 = 0, np3 = 5, np4 = 5, np5 = 5;
-
     FileIOTestClass() = default;
+
+    static bool prepare_np_negative(const std::string &name) {
+        std::ofstream file{name};
+
+        if (!file) {
+            std::cout << "El archivo" << name << " no se ha podido crear\n";
+            return false;
+        }
+
+        file << Const::ppm;
+        file << Const::np1;
+
+        return true;
+    };
+
+    static bool prepare_np_zero(const std::string &name) {
+        std::ofstream file{name};
+
+        if (!file) {
+            std::cout << "El archivo" << name << " no se ha podido crear\n";
+            return false;
+        }
+
+        file << Const::ppm;
+        file << Const::np2;
+
+        return true;
+    };
+    static bool prepare_np_true(const std::string &name) {
+        std::ofstream file{name};
+
+        if (!file) {
+            std::cout << "El archivo" << name << " no se ha podido crear\n";
+            return false;
+        }
+
+        file << Const::ppm;
+        file << Const::np3;
+
+        for (int i = 0; i < Const::it_np_true; i++) {
+            file << i << i << i << i << i << i << 1 << 2 << 3;
+        }
+
+        return true;
+    };
+
+    static bool prepare_np_lower_false(const std::string &name) {
+        std::ofstream file{name};
+
+        if (!file) {
+            std::cout << "El archivo" << name << " no se ha podido crear\n";
+            return false;
+        }
+
+        file << Const::ppm;
+        file << Const::np4;
+
+        for (int i = 0; i < Const::it_np_lower_false; i++) {
+            file << i << i << i << i << i << i << 1 << 2 << 3;
+        }
+
+        return true;
+    };
+
+    static bool prepare_np_greater_false(const std::string &name) {
+        std::ofstream file{name};
+
+        if (!file) {
+            std::cout << "El archivo" << name << " no se ha podido crear\n";
+            return false;
+        }
+
+        file << Const::ppm;
+        file << Const::np5;
+
+        for (int i = 0; i < Const::it_np_greater_false; i++) {
+            file << i << i << i << i << i << i << 1 << 2 << 3;
+        }
+
+        return true;
+    };
+
+    static bool prepare_out(const std::string &name) {
+        const std::ofstream file{name};
+        if (!file) {
+            std::cout << "El archivo de salida no se pudo crear\n";
+            return false;
+        }
+        return true;
+    };
+
     void SetUp() override {
-        std::ofstream archivo_1{"NpNegative.fld"};
-        std::ofstream archivo_2{"NpEqualZero.fld"};
-        std::ofstream archivo_3{"NpTrue.fld"};
-        std::ofstream archivo_4{"NpLowerFalse.fld"};
-        std::ofstream archivo_5{"NpGreaterFalse.fld"};
-        std::ofstream archivo_out{"out.fld"};
 
-        if (!archivo_1 || !archivo_2 || !archivo_3 || !archivo_4 ||
-            !archivo_5) {
-            std::cout
-                << "Los archivos de tests FileIO no se han podido crear!!\n";
-            return;
-        }
+        const bool result_1 = prepare_np_negative("NpNegative.fld");
+        const bool result_2 = prepare_np_zero("NpEqualZero.fld");
+        const bool result_3 = prepare_np_true("NpTrue.fld");
+        const bool result_4 = prepare_np_lower_false("NpLowerFalse.fld");
+        const bool result_5 = prepare_np_greater_false("NpGreaterFalse.fld");
+        const bool result_out = prepare_out("out.fld");
 
-        archivo_1 << ppm;
-        archivo_1 << np1;
-
-        archivo_2 << ppm;
-        archivo_2 << np2;
-
-        archivo_3 << ppm;
-        archivo_3 << np3;
-
-        for (int i = 0; i < 5; i++) {
-            archivo_3 << i << i << i << i << i << i << 1 << 2 << 3;
-        }
-
-        archivo_4 << ppm;
-        archivo_4 << np4;
-
-        for (int i = 0; i < 3; i++) {
-            archivo_4 << i << i << i << i << i << i << 1 << 2 << 3;
-        }
-
-        archivo_5 << ppm;
-        archivo_5 << np5;
-
-        for (int i = 0; i < 10; i++) {
-            archivo_4 << i << i << i << i << i << i << 1 << 2 << 3;
+        if (!result_1 || !result_2 || !result_3 || !result_4 || !result_5 ||
+            !result_out) {
+            std::cout << "Las pruebas no se prepararon correctamente\n";
         }
     };
     void TearDown() override {
 
-        int s1 = std::remove("NpNegative.fld");
-        int s2 = std::remove("NpEqualZero.fld");
-        int s3 = std::remove("NpTrue.fld");
-        int s4 = std::remove("NpLowerFalse.fld");
-        int s5 = std::remove("NpGreaterFalse.fld");
-        int sout = std::remove("out.fld");
+        const int rem1 = std::remove("NpNegative.fld");
+        const int rem2 = std::remove("NpEqualZero.fld");
+        const int rem3 = std::remove("NpTrue.fld");
+        const int rem4 = std::remove("NpLowerFalse.fld");
+        const int rem5 = std::remove("NpGreaterFalse.fld");
+        const int remout = std::remove("out.fld");
 
-        if (s1 != 0 || s2 != 0 || s3 != 0 || s4 != 0 || s5 != 0 || sout != 0) {
+        if (rem1 != 0 || rem2 != 0 || rem3 != 0 || rem4 != 0 || rem5 != 0 ||
+            remout != 0) {
             std::cout
                 << "Los archivos de tests FileIO no se han podido borrar!!\n";
         }
