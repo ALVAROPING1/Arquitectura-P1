@@ -256,6 +256,7 @@ namespace Fluid {
       {
         iter_blocks([&](Vector3<std::size_t> const & blockI_idx) {
           Block & blockI = index(blockI_idx, front_);
+          if (blockI.size() == 0) { return; }
           adjacent_blocks(blockI_idx, [&](Vector3<std::size_t> const & blockJ_idx) {
             Block & blockJ = index(blockJ_idx, front_);
             for (std::size_t i{0}; i < blockI.size(); ++i) {
