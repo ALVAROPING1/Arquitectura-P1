@@ -3,130 +3,76 @@
 #ifndef SIM_BLOCK_HPP
 #define SIM_BLOCK_HPP
 
-#include "particle.hpp"
 #include "io.hpp"
+#include "particle.hpp"
 #include "vector3.hpp"
 
 #include <iostream>
 #include <ostream>
+#include <tuple>
 #include <utility>
 #include <vector>
-#include <tuple>
 
 namespace Fluid {
 
   class Block {
     public:
-      using PositionDensityType = std::pair<Vector3<double>, double>;
-      using HvType = Vector3<double>;
-      using VelocityAccelerationType = std::pair<Vector3<double>, Vector3<double>>;
-      using IDType = int;
-      std::vector<PositionDensityType> position_density_{};
-      std::vector<HvType> hv_{};
-      std::vector<VelocityAccelerationType> velocity_acceleration_{};
-      std::vector<IDType> id_{};
+      // Uses struct of arrays to store the data so that individual attributes
+      // can be accessed separately without having to load all of them into cache
+      //
+      // Position/density and velocity/acceleration attributes are combined to reduce
+      // the amount of cache sets required as they are commonly accessed together
+
+      // Type combining the position and density of a particle
+      struct PositionDensity{
+        Vector3<double> pos;
+        double dens{};
+      };
+      // Type combining the velocity and acceleration of a particle
+      struct VelocityAcceleration{
+        Vector3<double> vel, acc;
+      };
+      std::vector<PositionDensity> position_density{};
+      std::vector<Vector3<double>> hv{};
+      std::vector<VelocityAcceleration> velocity_acceleration{};
+      std::vector<int> id{};
 
     public:
       constexpr explicit Block(std::size_t estimated_amount) {
-        position_density_.reserve(estimated_amount);
-        hv_.reserve(estimated_amount);
-        velocity_acceleration_.reserve(estimated_amount);
-        id_.reserve(estimated_amount);
+        position_density.reserve(estimated_amount);
+        hv.reserve(estimated_amount);
+        velocity_acceleration.reserve(estimated_amount);
+        id.reserve(estimated_amount);
       };
 
       void add(Particle const & particle) {
-        if (particle.p.x == 0 && particle.p.y == 0 && particle.p.z == 0) {
-          IO::put_line(std::cout, "Partícula rara");
-    }
-        position_density_.emplace_back(particle.p, particle.density);
-        hv_.push_back(particle.hv);
-        velocity_acceleration_.emplace_back(particle.v, particle.a);
-        id_.push_back(particle.id);
+        position_density.emplace_back(particle.p, particle.density);
+        hv.push_back(particle.hv);
+        velocity_acceleration.emplace_back(particle.v, particle.a);
+        id.push_back(particle.id);
       }
 
       void clear() {
-        position_density_.clear();
-        hv_.clear();
-        velocity_acceleration_.clear();
-        id_.clear();
+        position_density.clear();
+        hv.clear();
+        velocity_acceleration.clear();
+        id.clear();
       };
 
-      [[nodiscard]] constexpr std::size_t size() const { 
+      [[nodiscard]] constexpr std::size_t size() const {
         // All attribute vectors are appended to/cleared at once, so they will
         // always have the same size and it's safe to get the size from any of them
-        return id_.size();
+        return id.size();
       }
 
-      // [[nodiscard]] constexpr auto begin() const { return particles_.begin(); }
-      //
-      // [[nodiscard]] constexpr auto end() const { return particles_.end(); }
-      //
-      // constexpr auto begin() { return particles_.begin(); }
-      //
-      // constexpr auto end() { return particles_.end(); }
-
-      // struct Position {
-      //     using type = PositionType &;
-      //     using const_type = const PositionType &;
-      //
-      //     constexpr static type ref(Block & block, std::size_t i) { return block.position_[i]; }
-      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.position_[i]; }
-      // };
-      // struct Hv {
-      //     using type = HvType &;
-      //     using const_type = const HvType &;
-      //
-      //     constexpr static type ref(Block & block, std::size_t i) { return block.hv_[i]; }
-      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.hv_[i]; }
-      // };
-      // struct Velocity {
-      //     using type = VelocityType &;
-      //     using const_type = const VelocityType &;
-      //
-      //     constexpr static type ref(Block & block, std::size_t i) { return block.velocity_[i]; }
-      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.velocity_[i]; }
-      // };
-      // struct Acceleration {
-      //     using type = AccelerationType &;
-      //     using const_type = const AccelerationType &;
-      //
-      //     constexpr static type ref(Block & block, std::size_t i) { return block.acceleration_[i]; }
-      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.acceleration_[i]; }
-      // };
-      // struct Density {
-      //     using type = DensityType &;
-      //     using const_type = const DensityType &;
-      //
-      //     constexpr static type ref(Block & block, std::size_t i) { return block.density_[i]; }
-      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.density_[i]; }
-      // };
-      // struct ID {
-      //     using type = IDType &;
-      //     using const_type = const IDType &;
-      //
-      //     constexpr static type ref(Block & block, std::size_t i) { return block.id_[i]; }
-      //     constexpr static const_type ref(Block const & block, std::size_t i) { return block.id_[i]; }
-      // };
-      //
-      // template <typename... Query>
-      // constexpr std::tuple<typename Query::type...> query(std::size_t i) {
-      //   return std::make_tuple(std::ref(Query::ref(*this, i))...);
-      // }
-      //
-      // template <typename... Query>
-      // [[nodiscard]] constexpr std::tuple<typename Query::const_type...> query(std::size_t i) const {
-      //   return std::make_tuple(std::ref(Query::ref(*this, i))...);
-      // }
-
       constexpr Particle operator[](std::size_t i) const {
-        // auto [p, hv, v, a, density, id]{query<Position, Hv, Velocity, Acceleration, Density, ID>(i)};
         Particle particle;
-        particle.p = position_density_[i].first;
-        particle.hv = hv_[i];
-        particle.v = velocity_acceleration_[i].first;
-        particle.a = velocity_acceleration_[i].second;
-        particle.density = position_density_[i].second;
-        particle.id = id_[i];
+        particle.p       = position_density[i].pos;
+        particle.density = position_density[i].dens;
+        particle.v       = velocity_acceleration[i].vel;
+        particle.a       = velocity_acceleration[i].acc;
+        particle.hv      = hv[i];
+        particle.id      = id[i];
         return particle;
       }
 
@@ -134,9 +80,7 @@ namespace Fluid {
         std::vector<Particle> out{};
         out.reserve(size());
         for (std::size_t i{0}; i < size(); ++i) {
-          Particle particle{operator[](i)};
-          // if (particle.p.x == 0 && particle.p.y == 0 && particle.p.z == 0) {IO::put_line(std::cerr, "wrong particle", particle);}
-          out.push_back(particle);
+          out.emplace_back(operator[](i));
         }
         return out;
       }
@@ -146,7 +90,6 @@ namespace Fluid {
         for (std::size_t i{0}; i < block.size(); ++i) { out << block[i]; }
         return out << "]";
       }
-
   };
 
 }  // namespace Fluid
