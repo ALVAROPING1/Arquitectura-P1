@@ -1,22 +1,26 @@
 #pragma once
 
+#include "../sim/io.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <iostream>
-#include <vector>
 
 namespace FileIOTest {
 
 namespace Const {
 
-const int ppm = 75;
-const int np1 = -50;
-const int np2 = 0;
-const int np3 = 5;
-const int np4 = 5;
-const int np5 = 5;
+const float ppm = 75;
+const float np_negative = -50;
+const float np_zero = 0;
+const float np_true = 5;
+const float np_lower_false = 5;
+const float np_greater_false = 5;
+
+const Fluid::Vector3<double> vel{1, 1, 1};
+const Fluid::Vector3<double> pos{1, 1, 1};
+const Fluid::Vector3<double> hvel{1, 1, 1};
 
 const int it_np_true = 5;
 const int it_np_lower_false = 3;
@@ -26,95 +30,100 @@ const int it_np_greater_false = 10;
 
 class FileIOTestClass : public testing::Test {
 
-    FileIOTestClass() = default;
-
     static bool prepare_np_negative(const std::string &name) {
-        std::ofstream file{name};
+        std::ofstream file{name, std::ios::binary};
 
         if (!file) {
             std::cout << "El archivo" << name << " no se ha podido crear\n";
             return false;
         }
 
-        file << Const::ppm;
-        file << Const::np1;
+        Fluid::IO::write<float>(file, Const::ppm);
+        Fluid::IO::write<float>(file, Const::np_negative);
 
+        file.close();
         return true;
     };
 
     static bool prepare_np_zero(const std::string &name) {
-        std::ofstream file{name};
+        std::ofstream file{name, std::ios::binary};
 
         if (!file) {
             std::cout << "El archivo" << name << " no se ha podido crear\n";
             return false;
         }
 
-        file << Const::ppm;
-        file << Const::np2;
+        Fluid::IO::write<float>(file, Const::ppm);
+        Fluid::IO::write<float>(file, Const::np_zero);
 
+        file.close();
         return true;
     };
     static bool prepare_np_true(const std::string &name) {
-        std::ofstream file{name};
+        std::ofstream file{name, std::ios::binary};
 
         if (!file) {
             std::cout << "El archivo" << name << " no se ha podido crear\n";
             return false;
         }
 
-        file << Const::ppm;
-        file << Const::np3;
+        Fluid::IO::write<float>(file, Const::ppm);
+        Fluid::IO::write<float>(file, Const::np_true);
 
         for (int i = 0; i < Const::it_np_true; i++) {
-            file << i << i << i << i << i << i << 1 << 2 << 3;
+            Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
+        file.close();
         return true;
     };
 
     static bool prepare_np_lower_false(const std::string &name) {
-        std::ofstream file{name};
+        std::ofstream file{name, std::ios::binary};
 
         if (!file) {
             std::cout << "El archivo" << name << " no se ha podido crear\n";
             return false;
         }
 
-        file << Const::ppm;
-        file << Const::np4;
+        Fluid::IO::write<float>(file, Const::ppm);
+        Fluid::IO::write<float>(file, Const::np_lower_false);
 
         for (int i = 0; i < Const::it_np_lower_false; i++) {
-            file << i << i << i << i << i << i << 1 << 2 << 3;
+            Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
+        file.close();
         return true;
     };
 
     static bool prepare_np_greater_false(const std::string &name) {
-        std::ofstream file{name};
+        std::ofstream file{name, std::ios::binary};
 
         if (!file) {
             std::cout << "El archivo" << name << " no se ha podido crear\n";
             return false;
         }
 
-        file << Const::ppm;
-        file << Const::np5;
+        Fluid::IO::write<float>(file, Const::ppm);
+        Fluid::IO::write<float>(file, Const::np_greater_false);
 
         for (int i = 0; i < Const::it_np_greater_false; i++) {
-            file << i << i << i << i << i << i << 1 << 2 << 3;
+            Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
+        file.close();
         return true;
     };
 
     static bool prepare_out(const std::string &name) {
-        const std::ofstream file{name};
+        std::ofstream file{name, std::ios::binary};
         if (!file) {
             std::cout << "El archivo de salida no se pudo crear\n";
             return false;
         }
+
+        file.close();
         return true;
     };
 
@@ -130,7 +139,9 @@ class FileIOTestClass : public testing::Test {
         if (!result_1 || !result_2 || !result_3 || !result_4 || !result_5 ||
             !result_out) {
             std::cout << "Las pruebas no se prepararon correctamente\n";
-        }
+        } else {
+            std::cout << "Los archivos se crearon correctamente!!\n";
+        };
     };
     void TearDown() override {
 
@@ -145,7 +156,9 @@ class FileIOTestClass : public testing::Test {
             remout != 0) {
             std::cout
                 << "Los archivos de tests FileIO no se han podido borrar!!\n";
-        }
+        } else {
+            std::cout << "Los archivos se borraron correctamente!!\n";
+        };
     };
 };
 

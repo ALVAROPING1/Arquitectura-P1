@@ -4,32 +4,39 @@
 #include "../sim/grid.hpp"
 #include "FileIO_test.hpp"
 #include <gtest/gtest.h>
+#include <iostream>
 
 namespace FileIOTest {
 
-TEST(FileIOTestClass, npNegative) {
+TEST_F(FileIOTestClass, npNegative) {
 
     Fluid::FileIO iotest1{};
     iotest1.open("NpNegative.fld", "out.fld");
 
+    std::cout << "El ppm es: " << iotest1.ppm() << std::endl;
+    std::cout << "El np es: " << iotest1.np() << std::endl;
     ASSERT_EQ(iotest1.error(), -5);
 }
 
-TEST(FileIOTestClass, npEqualZero) {
+TEST_F(FileIOTestClass, npEqualZero) {
     Fluid::FileIO iotest{};
     iotest.open("NpEqualZero.fld", "out.fld");
+    std::cout << "El ppm es: " << iotest.ppm() << std::endl;
+    std::cout << "El np es: " << iotest.np() << std::endl;
+
     ASSERT_EQ(iotest.error(), -5);
 }
 
-TEST(FileIOTestClass, npTrue) {
+TEST_F(FileIOTestClass, npTrue) {
     Fluid::FileIO iotest{};
     iotest.open("NpTrue.fld", "out.fld");
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
+
     iotest.load(testGrid);
     ASSERT_EQ(iotest, true);
 }
 
-TEST(FileIOTestClass, npLowerFalse) {
+TEST_F(FileIOTestClass, npLowerFalse) {
     Fluid::FileIO iotest{};
     iotest.open("NpLowerFalse.fld", "out.fld");
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
@@ -37,7 +44,7 @@ TEST(FileIOTestClass, npLowerFalse) {
     ASSERT_EQ(iotest.error(), -5);
 }
 
-TEST(FileIOTestClass, npGraterFalse) {
+TEST_F(FileIOTestClass, npGraterFalse) {
     Fluid::FileIO iotest{};
     iotest.open("NpGraterFalse.fld", "out.fld");
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
@@ -45,7 +52,7 @@ TEST(FileIOTestClass, npGraterFalse) {
     ASSERT_EQ(iotest.error(), -5);
 }
 
-TEST(FileIOTestClass, BadInputFile) {
+TEST_F(FileIOTestClass, BadInputFile) {
     Fluid::FileIO iotest{};
     iotest.open("entrada.fld", "out.fld");
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
@@ -53,7 +60,7 @@ TEST(FileIOTestClass, BadInputFile) {
     ASSERT_EQ(iotest.error(), -3);
 }
 
-TEST(FileIOTestClass, BadOutputFile) {
+TEST_F(FileIOTestClass, BadOutputFile) {
     Fluid::FileIO iotest{};
     iotest.open("NpTrue.fld", "salida.fld");
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
