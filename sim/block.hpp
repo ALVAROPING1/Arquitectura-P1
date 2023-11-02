@@ -33,12 +33,17 @@ namespace Fluid {
           Vector3<double> vel, acc;
       };
 
+      // Attributes stored
+
       std::vector<PositionDensity> position_density_{};
       std::vector<Vector3<double>> hv_{};
       std::vector<VelocityAcceleration> velocity_acceleration_{};
       std::vector<int> id_{};
 
     public:
+      /// Construye un nuevo bloque
+      /// @param estimated_amount
+      /// Número de partículas para las que reservar espacio inicialmente
       constexpr explicit Block(std::size_t estimated_amount) {
         position_density_.reserve(estimated_amount);
         hv_.reserve(estimated_amount);
@@ -46,6 +51,7 @@ namespace Fluid {
         id_.reserve(estimated_amount);
       };
 
+      /// Añade una partícula al bloque
       void add(Particle const & particle) {
         position_density_.emplace_back(particle.p, particle.density);
         hv_.push_back(particle.hv);
@@ -53,6 +59,7 @@ namespace Fluid {
         id_.push_back(particle.id);
       }
 
+      /// Vacía el bloque sin modificar la cantidad de espacio reservado
       void clear() {
         position_density_.clear();
         hv_.clear();
@@ -60,24 +67,43 @@ namespace Fluid {
         id_.clear();
       };
 
+      /// Devuelve la cantidad de partículas en el bloque
       [[nodiscard]] constexpr std::size_t size() const {
         // All attribute vectors are appended to/cleared at once, so they will
         // always have the same size and it's safe to get the size from any of them
         return id_.size();
       }
 
+      /// Devuelve una referencia a la posición de la partícula indicada
+      /// @param i
+      /// Índice de la partícula dentro del bloque
       constexpr Vector3<double> & position(std::size_t i) { return position_density_[i].pos; }
 
+      /// Devuelve una referencia a la densidad de la partícula indicada
+      /// @param i
+      /// Índice de la partícula dentro del bloque
       constexpr double & density(std::size_t i) { return position_density_[i].dens; }
 
+      /// Devuelve una referencia a la velocidad de la partícula indicada
+      /// @param i
+      /// Índice de la partícula dentro del bloque
       constexpr Vector3<double> & velocity(std::size_t i) { return velocity_acceleration_[i].vel; }
 
+      /// Devuelve una referencia a la aceleración de la partícula indicada
+      /// @param i
+      /// Índice de la partícula dentro del bloque
       constexpr Vector3<double> & acceleration(std::size_t i) {
         return velocity_acceleration_[i].acc;
       }
 
+      /// Devuelve una referencia al gradiente de la velocidad de la partícula indicada
+      /// @param i
+      /// Índice de la partícula dentro del bloque
       constexpr Vector3<double> & hv(std::size_t i) { return hv_[i]; }
 
+      /// Devuelve una copia de la partícula indicada
+      /// @param i
+      /// Índice de la partícula dentro del bloque
       constexpr Particle operator[](std::size_t i) const {
         Particle particle;
         particle.p       = position_density_[i].pos;
@@ -89,6 +115,7 @@ namespace Fluid {
         return particle;
       }
 
+      /// Devuelve una copia de todas las partículas en el bloque
       [[nodiscard]] constexpr std::vector<Particle> get_particles() const { 
         std::vector<Particle> out{};
         out.reserve(size());
