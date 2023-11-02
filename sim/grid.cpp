@@ -20,13 +20,13 @@ namespace Fluid {
 
   void Grid::increment_densities() {
     iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
-      Vector3<double> const distance{blockI.position(i) - blockJ.position(j)};
+      Vector3<double> const distance{blockI.pos_dens(i).pos - blockJ.pos_dens(j).pos};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
-      density            = (density * density * density) * density_transform_factor_;
-      blockI.density(i) += density;
-      blockJ.density(j) += density;
+      density                  = (density * density * density) * density_transform_factor_;
+      blockI.pos_dens(i).dens += density;
+      blockJ.pos_dens(j).dens += density;
     });
   }
 
@@ -35,7 +35,7 @@ namespace Fluid {
       constexpr double const1{1e-12};
       constexpr double const2{15.0};
       constexpr double const3{45.0};
-      Vector3<double> const distance{blockI.position(i) - blockJ.position(j)};
+      Vector3<double> const distance{blockI.pos_dens(i).pos - blockJ.pos_dens(j).pos};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double const dist_ij{std::sqrt(std::max(norm, const1))};
@@ -43,13 +43,13 @@ namespace Fluid {
           // Clang-format doesn't know how to properly format this formula
           // clang-format off
           ( distance * (1.5 * Constants::p_s * (const2 / std::numbers::pi)) * (std::pow((h_ - dist_ij), 2) / dist_ij)
-            * (blockI.density(i) + blockJ.density(j) - 2 * Constants::rho)
-            + (blockJ.velocity(j) - blockI.velocity(i)) * Constants::mu * (const3/const2) * (const2 / std::numbers::pi))
-           * acceleration_transform_factor_ / (blockI.density(i) * blockJ.density(j))
+            * (blockI.pos_dens(i).dens + blockJ.pos_dens(j).dens - 2 * Constants::rho)
+            + (blockJ.vel_acc(j).vel - blockI.vel_acc(i).vel) * Constants::mu * (const3/const2) * (const2 / std::numbers::pi))
+           * acceleration_transform_factor_ / (blockI.pos_dens(i).dens * blockJ.pos_dens(j).dens)
           // clang-format on
       };
-      blockI.acceleration(i) += acceleration;
-      blockJ.acceleration(j) -= acceleration;
+      blockI.vel_acc(i).acc += acceleration;
+      blockJ.vel_acc(j).acc -= acceleration;
     });
   }
 
@@ -57,15 +57,15 @@ namespace Fluid {
     iter_blocks([this](Vector3<size_t> const & block_idx) {
       auto & block{index(block_idx, front_)};
       for (std::size_t i{0}; i < block.size(); ++i) {
-        block.position(i) +=
-            block.hv(i) * Constants::dt + block.acceleration(i) * std::pow(Constants::dt, 2);
-        block.velocity(i)  = block.hv(i) + block.acceleration(i) * Constants::dt / 2;
-        block.hv(i)       += block.acceleration(i) * Constants::dt;
+        block.pos_dens(i).pos +=
+            block.hv(i) * Constants::dt + block.vel_acc(i).acc * std::pow(Constants::dt, 2);
+        block.vel_acc(i).vel  = block.hv(i) + block.vel_acc(i).acc * Constants::dt / 2;
+        block.hv(i)          += block.vel_acc(i).acc * Constants::dt;
         // Reset the density/acceleration while we are at it as they are no longer needed in this
         // iteration. This allows us to skip the full scan of the particles at the beginning of each
         // update cycle
-        block.density(i)      = reset_density_;
-        block.acceleration(i) = Constants::g;
+        block.pos_dens(i).dens = reset_density_;
+        block.vel_acc(i).acc   = Constants::g;
       }
     });
   }

@@ -161,13 +161,14 @@ namespace Fluid {
           constexpr static void run(Block & block, std::size_t i) {
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w  = Axis::get(block.position(i)) + Axis::get(block.hv(i)) * Constants::dt;
+            double const w =
+                Axis::get(block.pos_dens(i).pos) + Axis::get(block.hv(i)) * Constants::dt;
             double const dw = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
                                                           : Axis::get(Constants::b_max) - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
-              Axis::set(block.acceleration(i)) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
-                                                  Constants::d_v * Axis::get(block.velocity(i));
+              Axis::set(block.vel_acc(i).acc) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
+                                                 Constants::d_v * Axis::get(block.vel_acc(i).vel);
             }
           }
       };
@@ -176,13 +177,13 @@ namespace Fluid {
           template <int Side, typename Axis>
           constexpr static void run(Block & block, std::size_t i) {
             double const d_w =
-                (Side == 0 ? Axis::get(block.position(i)) - Axis::get(Constants::b_min)
-                           : Axis::get(Constants::b_max) - Axis::get(block.position(i)));
+                (Side == 0 ? Axis::get(block.pos_dens(i).pos) - Axis::get(Constants::b_min)
+                           : Axis::get(Constants::b_max) - Axis::get(block.pos_dens(i).pos));
             if (d_w < 0) {
-              Axis::set(block.position(i))  = (Side == 0 ? Axis::get(Constants::b_min) - d_w
-                                                         : Axis::get(Constants::b_max) + d_w);
-              Axis::set(block.velocity(i)) *= -1;
-              Axis::set(block.hv(i))       *= -1;
+              Axis::set(block.pos_dens(i).pos)  = (Side == 0 ? Axis::get(Constants::b_min) - d_w
+                                                             : Axis::get(Constants::b_max) + d_w);
+              Axis::set(block.vel_acc(i).vel)  *= -1;
+              Axis::set(block.hv(i))           *= -1;
             }
           }
       };

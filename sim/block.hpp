@@ -74,27 +74,20 @@ namespace Fluid {
         return id_.size();
       }
 
-      /// Devuelve una referencia a la posición de la partícula indicada
-      /// @param i
-      /// Índice de la partícula dentro del bloque
-      constexpr Vector3<double> & position(std::size_t i) { return position_density_[i].pos; }
+      // These 2 getter functions would be better written if they were split into
+      // returning individual fields. While this should result in the same code
+      // after the definitions are inlined, for some reason, the compiler generates
+      // significantly slower code if we do that. Thus, it will have to stay like this
 
-      /// Devuelve una referencia a la densidad de la partícula indicada
+      /// Devuelve una referencia al par (posición, densidad) de la partícula indicada
       /// @param i
       /// Índice de la partícula dentro del bloque
-      constexpr double & density(std::size_t i) { return position_density_[i].dens; }
+      constexpr PositionDensity & pos_dens(std::size_t i) { return position_density_[i]; }
 
-      /// Devuelve una referencia a la velocidad de la partícula indicada
+      /// Devuelve una referencia al par (velocidad, aceleración) de la partícula indicada
       /// @param i
       /// Índice de la partícula dentro del bloque
-      constexpr Vector3<double> & velocity(std::size_t i) { return velocity_acceleration_[i].vel; }
-
-      /// Devuelve una referencia a la aceleración de la partícula indicada
-      /// @param i
-      /// Índice de la partícula dentro del bloque
-      constexpr Vector3<double> & acceleration(std::size_t i) {
-        return velocity_acceleration_[i].acc;
-      }
+      constexpr VelocityAcceleration & vel_acc(std::size_t i) { return velocity_acceleration_[i]; }
 
       /// Devuelve una referencia al gradiente de la velocidad de la partícula indicada
       /// @param i
