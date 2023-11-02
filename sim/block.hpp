@@ -16,7 +16,6 @@
 namespace Fluid {
 
   class Block {
-    public:
       // Uses struct of arrays to store the data so that individual attributes
       // can be accessed separately without having to load all of them into cache
       //
@@ -32,47 +31,63 @@ namespace Fluid {
       struct VelocityAcceleration{
         Vector3<double> vel, acc;
       };
-      std::vector<PositionDensity> position_density{};
-      std::vector<Vector3<double>> hv{};
-      std::vector<VelocityAcceleration> velocity_acceleration{};
-      std::vector<int> id{};
+      std::vector<PositionDensity> position_density_{};
+      std::vector<Vector3<double>> hv_{};
+      std::vector<VelocityAcceleration> velocity_acceleration_{};
+      std::vector<int> id_{};
 
     public:
       constexpr explicit Block(std::size_t estimated_amount) {
-        position_density.reserve(estimated_amount);
-        hv.reserve(estimated_amount);
-        velocity_acceleration.reserve(estimated_amount);
-        id.reserve(estimated_amount);
+        position_density_.reserve(estimated_amount);
+        hv_.reserve(estimated_amount);
+        velocity_acceleration_.reserve(estimated_amount);
+        id_.reserve(estimated_amount);
       };
 
       void add(Particle const & particle) {
-        position_density.emplace_back(particle.p, particle.density);
-        hv.push_back(particle.hv);
-        velocity_acceleration.emplace_back(particle.v, particle.a);
-        id.push_back(particle.id);
+        position_density_.emplace_back(particle.p, particle.density);
+        hv_.push_back(particle.hv);
+        velocity_acceleration_.emplace_back(particle.v, particle.a);
+        id_.push_back(particle.id);
       }
 
       void clear() {
-        position_density.clear();
-        hv.clear();
-        velocity_acceleration.clear();
-        id.clear();
+        position_density_.clear();
+        hv_.clear();
+        velocity_acceleration_.clear();
+        id_.clear();
       };
 
       [[nodiscard]] constexpr std::size_t size() const {
         // All attribute vectors are appended to/cleared at once, so they will
         // always have the same size and it's safe to get the size from any of them
-        return id.size();
+        return id_.size();
+      }
+
+      constexpr Vector3<double> & position(std::size_t i) {
+        return position_density_[i].pos;
+      }
+      constexpr double & density(std::size_t i) {
+        return position_density_[i].dens;
+      }
+      constexpr Vector3<double> & velocity(std::size_t i) {
+        return velocity_acceleration_[i].vel;
+      }
+      constexpr Vector3<double> & acceleration(std::size_t i) {
+        return velocity_acceleration_[i].acc;
+      }
+      constexpr Vector3<double> & hv(std::size_t i) {
+        return hv_[i];
       }
 
       constexpr Particle operator[](std::size_t i) const {
         Particle particle;
-        particle.p       = position_density[i].pos;
-        particle.density = position_density[i].dens;
-        particle.v       = velocity_acceleration[i].vel;
-        particle.a       = velocity_acceleration[i].acc;
-        particle.hv      = hv[i];
-        particle.id      = id[i];
+        particle.p       = position_density_[i].pos;
+        particle.density = position_density_[i].dens;
+        particle.v       = velocity_acceleration_[i].vel;
+        particle.a       = velocity_acceleration_[i].acc;
+        particle.hv      = hv_[i];
+        particle.id      = id_[i];
         return particle;
       }
 
