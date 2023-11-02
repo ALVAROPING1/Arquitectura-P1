@@ -23,14 +23,16 @@ namespace Fluid {
       // the amount of cache sets required as they are commonly accessed together
 
       // Type combining the position and density of a particle
-      struct PositionDensity{
-        Vector3<double> pos;
-        double dens{};
+      struct PositionDensity {
+          Vector3<double> pos;
+          double dens{};
       };
+
       // Type combining the velocity and acceleration of a particle
-      struct VelocityAcceleration{
-        Vector3<double> vel, acc;
+      struct VelocityAcceleration {
+          Vector3<double> vel, acc;
       };
+
       std::vector<PositionDensity> position_density_{};
       std::vector<Vector3<double>> hv_{};
       std::vector<VelocityAcceleration> velocity_acceleration_{};
@@ -64,21 +66,17 @@ namespace Fluid {
         return id_.size();
       }
 
-      constexpr Vector3<double> & position(std::size_t i) {
-        return position_density_[i].pos;
-      }
-      constexpr double & density(std::size_t i) {
-        return position_density_[i].dens;
-      }
-      constexpr Vector3<double> & velocity(std::size_t i) {
-        return velocity_acceleration_[i].vel;
-      }
+      constexpr Vector3<double> & position(std::size_t i) { return position_density_[i].pos; }
+
+      constexpr double & density(std::size_t i) { return position_density_[i].dens; }
+
+      constexpr Vector3<double> & velocity(std::size_t i) { return velocity_acceleration_[i].vel; }
+
       constexpr Vector3<double> & acceleration(std::size_t i) {
         return velocity_acceleration_[i].acc;
       }
-      constexpr Vector3<double> & hv(std::size_t i) {
-        return hv_[i];
-      }
+
+      constexpr Vector3<double> & hv(std::size_t i) { return hv_[i]; }
 
       constexpr Particle operator[](std::size_t i) const {
         Particle particle;
@@ -94,9 +92,7 @@ namespace Fluid {
       [[nodiscard]] constexpr std::vector<Particle> get_particles() const { 
         std::vector<Particle> out{};
         out.reserve(size());
-        for (std::size_t i{0}; i < size(); ++i) {
-          out.emplace_back(operator[](i));
-        }
+        for (std::size_t i{0}; i < size(); ++i) { out.emplace_back(operator[](i)); }
         return out;
       }
 

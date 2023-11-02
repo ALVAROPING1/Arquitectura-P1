@@ -10,8 +10,8 @@ namespace Fluid {
   std::vector<Particle> Grid::get_all() const {
     std::vector<Particle> result(pc_);  // Inicializa todas las Partículas
     for (auto const & block : front_) {
-      for (std::size_t i{0}; i < block.size(); ++i) { 
-        const auto & particle{block[i]};
+      for (std::size_t i{0}; i < block.size(); ++i) {
+        auto const & particle{block[i]};
         result[particle.id] = particle;
       }
     }
@@ -57,13 +57,14 @@ namespace Fluid {
     iter_blocks([this](Vector3<size_t> const & block_idx) {
       auto & block{index(block_idx, front_)};
       for (std::size_t i{0}; i < block.size(); ++i) {
-        block.position(i) += block.hv(i) * Constants::dt + block.acceleration(i) * std::pow(Constants::dt, 2);
+        block.position(i) +=
+            block.hv(i) * Constants::dt + block.acceleration(i) * std::pow(Constants::dt, 2);
         block.velocity(i)  = block.hv(i) + block.acceleration(i) * Constants::dt / 2;
-        block.hv(i)  += block.acceleration(i) * Constants::dt;
+        block.hv(i)       += block.acceleration(i) * Constants::dt;
         // Reset the density/acceleration while we are at it as they are no longer needed in this
         // iteration. This allows us to skip the full scan of the particles at the beginning of each
         // update cycle
-        block.density(i) = reset_density_;
+        block.density(i)      = reset_density_;
         block.acceleration(i) = Constants::g;
       }
     });
@@ -73,10 +74,10 @@ namespace Fluid {
     // TODO: skip clear loop on the first iteration
     for (auto & block : back_) { block.clear(); }
     for (auto & block : front_) {
-      for (std::size_t i{0}; i < block.size(); ++i) { 
+      for (std::size_t i{0}; i < block.size(); ++i) {
         auto particle{block[i]};
         find_block(particle.p, back_).add(particle);
-    }
+      }
     }
   }
 }  // namespace Fluid

@@ -9,9 +9,9 @@
 
 #include <cmath>
 #include <iostream>
+#include <tuple>
 #include <utility>
 #include <vector>
-#include <tuple>
 
 namespace Fluid {
 
@@ -167,7 +167,7 @@ namespace Fluid {
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
               Axis::set(block.acceleration(i)) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
-                                Constants::d_v * Axis::get(block.velocity(i));
+                                                  Constants::d_v * Axis::get(block.velocity(i));
             }
           }
       };
@@ -175,13 +175,14 @@ namespace Fluid {
       struct collide_particle {
           template <int Side, typename Axis>
           constexpr static void run(Block & block, std::size_t i) {
-            double const d_w = (Side == 0 ? Axis::get(block.position(i)) - Axis::get(Constants::b_min)
-                                          : Axis::get(Constants::b_max) - Axis::get(block.position(i)));
+            double const d_w =
+                (Side == 0 ? Axis::get(block.position(i)) - Axis::get(Constants::b_min)
+                           : Axis::get(Constants::b_max) - Axis::get(block.position(i)));
             if (d_w < 0) {
-              Axis::set(block.position(i))   = (Side == 0 ? Axis::get(Constants::b_min) - d_w
-                                                   : Axis::get(Constants::b_max) + d_w);
+              Axis::set(block.position(i))  = (Side == 0 ? Axis::get(Constants::b_min) - d_w
+                                                         : Axis::get(Constants::b_max) + d_w);
               Axis::set(block.velocity(i)) *= -1;
-              Axis::set(block.hv(i))  *= -1;
+              Axis::set(block.hv(i))       *= -1;
             }
           }
       };
@@ -264,7 +265,7 @@ namespace Fluid {
             }
           });
           for (std::size_t i{}; i < blockI.size(); ++i) {
-            for (std::size_t j{i + 1}; j < blockI.size(); ++j) {  f(blockI, blockI, i, j);  }
+            for (std::size_t j{i + 1}; j < blockI.size(); ++j) { f(blockI, blockI, i, j); }
           }
         });
       }
