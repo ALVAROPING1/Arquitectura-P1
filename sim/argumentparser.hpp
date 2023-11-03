@@ -28,7 +28,6 @@ namespace Fluid {
       int error_;
       int nts_;
       FileIO file_;
-      void openFiles(std::span<gsl::zstring> args);
 
       template <typename... Args>
       constexpr void error(int code, Args... args) {
