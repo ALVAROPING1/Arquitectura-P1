@@ -25,8 +25,7 @@ namespace Fluid {
 
       constexpr Particle(Vector3<Vector3<float>> const & data, int id, double density)
         : id{id}, p{static_cast<Vector3<double>>(data.x)}, density{density},
-          hv{static_cast<Vector3<double>>(data.y)}, v{static_cast<Vector3<double>>(data.z)} {
-      }
+          hv{static_cast<Vector3<double>>(data.y)}, v{static_cast<Vector3<double>>(data.z)} { }
 
       // Operator '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {

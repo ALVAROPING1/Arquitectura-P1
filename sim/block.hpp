@@ -109,7 +109,7 @@ namespace Fluid {
       }
 
       /// Devuelve una copia de todas las partículas en el bloque
-      [[nodiscard]] constexpr std::vector<Particle> get_particles() const { 
+      [[nodiscard]] constexpr std::vector<Particle> get_particles() const {
         std::vector<Particle> out{};
         out.reserve(size());
         for (std::size_t i{0}; i < size(); ++i) { out.emplace_back(operator[](i)); }
