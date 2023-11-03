@@ -15,6 +15,7 @@
 
 namespace Fluid {
 
+  // Objeto representando un bloque en la malla
   class Block {
       // Uses struct of arrays to store the data so that individual attributes
       // can be accessed separately without having to load all of them into cache
@@ -35,10 +36,11 @@ namespace Fluid {
 
       // Attributes stored
 
-      std::vector<PositionDensity> position_density_{};
-      std::vector<Vector3<double>> hv_{};
-      std::vector<VelocityAcceleration> velocity_acceleration_{};
-      std::vector<int> id_{};
+      std::vector<PositionDensity> position_density_{};  // Vector de atributos (posición, densidad)
+      std::vector<Vector3<double>> hv_{};                // Vector del gradiente de la velocidad
+      std::vector<VelocityAcceleration>
+          velocity_acceleration_{};  // Vector de atributos (velocidad, aceleración)
+      std::vector<int> id_{};        // Vector de IDs
 
     public:
       /// Construye un nuevo bloque

@@ -8,9 +8,12 @@
 namespace Fluid {
 
   std::vector<Particle> Grid::get_all() const {
-    std::vector<Particle> result(pc_);  // Inicializa todas las Partículas
+    std::vector<Particle> result(amount_);  // Inicializa todas las Partículas
+    // Itera por todas las partículas
     for (auto const & block : front_) {
       for (std::size_t i{0}; i < block.size(); ++i) {
+        // Lee todos los atributos de la particula, y la almacena en su posición correspondiente
+        // según el ID
         auto const & particle{block[i]};
         result[particle.id] = particle;
       }
@@ -72,9 +75,12 @@ namespace Fluid {
 
   void Grid::particle_repositioning() {
     // TODO: skip clear loop on the first iteration
+    // Vacía todos los bloques en el búfer de la siguiente iteración
     for (auto & block : back_) { block.clear(); }
+    // Itera por todas las partículas en el búfer de la iteración actual
     for (auto & block : front_) {
       for (std::size_t i{0}; i < block.size(); ++i) {
+        // Añade la partícula a su bloque correspondiente en el búfer de la siguiente iteración
         auto particle{block[i]};
         find_block(particle.p, back_).add(particle);
       }

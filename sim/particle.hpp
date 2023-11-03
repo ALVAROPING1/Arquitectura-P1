@@ -15,14 +15,21 @@ namespace Fluid {
       // Parámetros que cambian en cada iteración.
       // Es preferible en este caso nombres más cortos para que sea más fácil
       // escribir las fórmulas.
-      Vector3<double> p{0, 0, 0};
-      double density{0};
-      Vector3<double> hv{0, 0, 0};
-      Vector3<double> v{0, 0, 0};
-      Vector3<double> a{Constants::g};
+      Vector3<double> p{0, 0, 0};       // Posición
+      double density{0};                // Densidad
+      Vector3<double> hv{0, 0, 0};      // Gradiente de la velocidad
+      Vector3<double> v{0, 0, 0};       // Velocidad
+      Vector3<double> a{Constants::g};  // Aceleración
 
       Particle() = default;
 
+      /// Construye una nueva partícula
+      /// @param data
+      /// Tupla (posición, gradiente, velocidad)
+      /// @param id
+      /// ID de la partícula
+      /// @param density
+      /// densidad de la partícula
       constexpr Particle(Vector3<Vector3<float>> const & data, int id, double density)
         : id{id}, p{static_cast<Vector3<double>>(data.x)}, density{density},
           hv{static_cast<Vector3<double>>(data.y)}, v{static_cast<Vector3<double>>(data.z)} { }
