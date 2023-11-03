@@ -120,42 +120,6 @@ namespace Fluid {
         return index(idx, block_vec);
       }
 
-      struct Axis_X {
-          template <typename T>
-          constexpr static T & set(Vector3<T> & v) {
-            return v.x;
-          }
-
-          template <typename T>
-          constexpr static T const & get(Vector3<T> const & v) {
-            return v.x;
-          }
-      };
-
-      struct Axis_Y {
-          template <typename T>
-          constexpr static T & set(Vector3<T> & v) {
-            return v.y;
-          }
-
-          template <typename T>
-          constexpr static T const & get(Vector3<T> const & v) {
-            return v.y;
-          }
-      };
-
-      struct Axis_Z {
-          template <typename T>
-          constexpr static T & set(Vector3<T> & v) {
-            return v.z;
-          }
-
-          template <typename T>
-          constexpr static T const & get(Vector3<T> const & v) {
-            return v.z;
-          }
-      };
-
       struct interact_particle {
           template <int Side, typename Axis>
           constexpr static void run(Block & block, std::size_t i) {

@@ -71,6 +71,42 @@ namespace Fluid {
         return (x > other.x || y > other.y || z > other.z);
       }
   };
+
+  struct Axis_X {
+      template <typename T>
+      constexpr static T & set(Vector3<T> & v) {
+        return v.x;
+      }
+
+      template <typename T>
+      constexpr static T const & get(Vector3<T> const & v) {
+        return v.x;
+      }
+  };
+
+  struct Axis_Y {
+      template <typename T>
+      constexpr static T & set(Vector3<T> & v) {
+        return v.y;
+      }
+
+      template <typename T>
+      constexpr static T const & get(Vector3<T> const & v) {
+        return v.y;
+      }
+  };
+
+  struct Axis_Z {
+      template <typename T>
+      constexpr static T & set(Vector3<T> & v) {
+        return v.z;
+      }
+
+      template <typename T>
+      constexpr static T const & get(Vector3<T> const & v) {
+        return v.z;
+      }
+  };
 }  // namespace Fluid
 
 #endif  // VECTOR3_HPP
