@@ -1,6 +1,5 @@
 add_library(sim
    grid.cpp
-   math.cpp
    argumentparser.cpp
    fileio.cpp)
 target_include_directories(sim PUBLIC ..)

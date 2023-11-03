@@ -6,14 +6,9 @@
 
 namespace Fluid {
 
-  constexpr int ALIGN_VALUE       = 128;
   constexpr double density_factor = 315.0 / (64.0 * std::numbers::pi);
 
-  // FIXME: Pensar más detenidamente el valor de alineamiento.
-  //        Se podría separar a otro struct
-  //
-  // No toques esto.
-  struct alignas(ALIGN_VALUE) Particle {
+  struct Particle {
       // Parámetros que no cambian
       int id{};
 
@@ -27,8 +22,6 @@ namespace Fluid {
       Vector3<double> a{Constants::g};
 
       Particle() = default;
-
-      // Poner como constante de la clase 1/h³ * m
 
       constexpr Particle(Vector3<Vector3<float>> const & data, int id, double density)
         : id{id}, p{static_cast<Vector3<double>>(data.x)}, density{density},
@@ -44,10 +37,6 @@ namespace Fluid {
                    << "\tacc:  " << c.a << "\n"
                    << "\tρ:    " << c.density << "\n";
       }
-
-      // TODO: Añade funciones para modificar el estado de la partícula.
-      //       De momento añade los parámetros que te parezcan. Yo luego
-      //       buscaré cuáles son los mejores parámetros con más calma.
   };
 
 }  // namespace Fluid
