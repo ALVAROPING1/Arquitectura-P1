@@ -3,6 +3,7 @@
 
 #include "constants.hpp"
 #include "vector3.hpp"
+
 #include <numbers>
 
 namespace Fluid {
@@ -16,10 +17,10 @@ namespace Fluid {
       // Parámetros que cambian en cada iteración.
       // Es preferible en este caso nombres más cortos para que sea más fácil
       // escribir las fórmulas.
-      Vector3<double> p{0, 0, 0};       // Posición
+      Vector3<double> p;                // Posición
       double density{0};                // Densidad
-      Vector3<double> hv{0, 0, 0};      // Gradiente de la velocidad
-      Vector3<double> v{0, 0, 0};       // Velocidad
+      Vector3<double> hv;               // Gradiente de la velocidad
+      Vector3<double> v;                // Velocidad
       Vector3<double> a{Constants::g};  // Aceleración
 
       Particle() = default;
