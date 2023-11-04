@@ -8,6 +8,7 @@
 #include "vector3.hpp"
 
 #include <cmath>
+#include <utility>
 #include <vector>
 
 namespace Fluid {
@@ -315,8 +316,7 @@ namespace Fluid {
 
       /// Establece los bloques en la iteración actual a los dados (debug)
       void set_blocks(std::vector<Block> const & blocks) { front_ = blocks; }
-  };
 
-}  // namespace Fluid
+  }  // namespace Fluid
 
 #endif  // GRID_HPP
