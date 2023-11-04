@@ -8,7 +8,7 @@ for size in "small" "large"; do
       printf "\033[1mChecking $size $count\033[0m\t"
       input="$INPUT/$size.fld"
       output="$ATTEMPT/$size-$count.fld"
-      echo $FLUID $count "$input" "$output"
+      $FLUID $count "$input" "$output"
       X="$(diff "$CORRECT/$size-$count.fld" $output)"
       if [ "$X" == "" ]; then
          echo -e "\033[32;1mCORRECT\033[0m"
