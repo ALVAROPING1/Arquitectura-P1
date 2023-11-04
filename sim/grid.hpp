@@ -139,23 +139,23 @@ namespace Fluid {
       struct interact_particle {
           /// Ejecuta el cálculo
           /// @tparam Side
-          /// Borde inferior (0) o superior (1)
+          /// Borde inferior (true) o superior (false)
           /// @tparam Axis
           /// Coordenada en la que aplicar la interacción
           /// @param block
           /// Bloque en el que está la partícula
           /// @param i
           /// Índice de la partícula en el bloque
-          template <int Side, Axis W>
+          template <bool Side, Axis W>
           constexpr static void run(Block & block, std::size_t i) {
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
             double const w  = block.pos_dens(i).pos.get<W>() + block.hv(i).get<W>() * Constants::dt;
-            double const dw = Constants::d_p - (Side == 0 ? w - Constants::b_min.get<W>()
-                                                          : Constants::b_max.get<W>() - w);
+            double const dw = Constants::d_p - (Side ? w - Constants::b_min.get<W>()
+                                                     : Constants::b_max.get<W>() - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
-              block.vel_acc(i).acc.set<W>() += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
+              block.vel_acc(i).acc.set<W>() += (Side ? +1.0 : -1.0) * Constants::c_s * dw -
                                                Constants::d_v * block.vel_acc(i).vel.get<W>();
             }
           }
@@ -165,21 +165,20 @@ namespace Fluid {
       struct collide_particle {
           /// Ejecuta el cálculo
           /// @tparam Side
-          /// Borde inferior (0) o superior (1)
+          /// Borde inferior (true) o superior (false)
           /// @tparam Axis
           /// Coordenada en la que aplicar la colisión
           /// @param block
           /// Bloque en el que está la partícula
           /// @param i
           /// Índice de la partícula en el bloque
-          template <int Side, Axis W>
+          template <bool Side, Axis W>
           constexpr static void run(Block & block, std::size_t i) {
-            double const d_w =
-                (Side == 0 ? block.pos_dens(i).pos.get<W>() - Constants::b_min.get<W>()
-                           : Constants::b_max.get<W>() - block.pos_dens(i).pos.get<W>());
+            double const d_w = (Side ? block.pos_dens(i).pos.get<W>() - Constants::b_min.get<W>()
+                                     : Constants::b_max.get<W>() - block.pos_dens(i).pos.get<W>());
             if (d_w < 0) {
               block.pos_dens(i).pos.set<W>() =
-                  (Side == 0 ? Constants::b_min.get<W>() - d_w : Constants::b_max.get<W>() + d_w);
+                  (Side ? Constants::b_min.get<W>() - d_w : Constants::b_max.get<W>() + d_w);
               block.vel_acc(i).vel.set<W>() *= -1;
               block.hv(i).set<W>()          *= -1;
             }
@@ -188,7 +187,7 @@ namespace Fluid {
 
       /// Itera por las partículas de un borde de la malla y les aplica una función
       /// @tparam Side
-      /// Borde inferior (0) o superior (1)
+      /// Borde inferior (true) o superior (false)
       /// @tparam A
       /// Coordena externa de los bloques por la que iterar
       /// @tparam B
@@ -199,11 +198,11 @@ namespace Fluid {
       /// Struct con la función a aplicar a cada partícula
       /// @param i
       /// Índice de la partícula en el bloque
-      template <int Side, Axis A, Axis B, Axis C, typename Proc>
+      template <bool Side, Axis A, Axis B, Axis C, typename Proc>
       constexpr void wall_iterate() {
         Vector3<std::size_t> idx{0, 0, 0};
         // Calcula el valor de la coordenada fija y los límites de las otras
-        idx.set<C>()              = (Side == 0 ? 0 : count_.get<C>() - 1);
+        idx.set<C>()              = (Side ? 0 : count_.get<C>() - 1);
         std::size_t const count_A = count_.get<A>();
         std::size_t const count_B = count_.get<B>();
         // Itera por las coordenadas A y B
@@ -221,12 +220,12 @@ namespace Fluid {
       /// Struct con la función a aplicar a cada partícula
       template <typename Proc>
       constexpr void wall_action() {
-        wall_iterate<0, Axis::y, Axis::x, Axis::z, Proc>();
-        wall_iterate<1, Axis::y, Axis::x, Axis::z, Proc>();
-        wall_iterate<0, Axis::z, Axis::x, Axis::y, Proc>();
-        wall_iterate<1, Axis::z, Axis::x, Axis::y, Proc>();
-        wall_iterate<0, Axis::z, Axis::y, Axis::x, Proc>();
-        wall_iterate<1, Axis::z, Axis::y, Axis::x, Proc>();
+        wall_iterate<true, Axis::y, Axis::x, Axis::z, Proc>();
+        wall_iterate<false, Axis::y, Axis::x, Axis::z, Proc>();
+        wall_iterate<true, Axis::z, Axis::x, Axis::y, Proc>();
+        wall_iterate<false, Axis::z, Axis::x, Axis::y, Proc>();
+        wall_iterate<true, Axis::z, Axis::y, Axis::x, Proc>();
+        wall_iterate<false, Axis::z, Axis::y, Axis::x, Proc>();
       }
 
       /// Itera por los bloques adyacentes a uno dado, aplicando una función a cada uno
