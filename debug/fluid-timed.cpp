@@ -41,7 +41,7 @@ int main(int argc, char ** argv) {
   file.load(grid);
   for (int i = 0; i < argp.step_count(); ++i) {
     clock.densinc    += Clock::timeit([&grid] () { grid.increment_densities(); });
-    clock.denstransf += Clock::timeit([&grid] () { grid.transform_densities(); });
+    //clock.denstransf += Clock::timeit([&grid] () { grid.transform_densities(); });
     clock.acctransf  += Clock::timeit([&grid] () { grid.transfer_accelerations(); });
     clock.partcol    += Clock::timeit([&grid] () { grid.wall_interactions(); });
     clock.motion     += Clock::timeit([&grid] () { grid.particle_movement(); });

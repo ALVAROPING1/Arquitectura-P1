@@ -26,12 +26,16 @@ namespace Fluid {
       // Type combining the position and density of a particle
       struct PositionDensity {
           Vector3<double> pos;
-          double dens{};
+          double dens;
+
+          PositionDensity(Vector3<double> pos, double dens) : pos{pos}, dens{dens} { }
       };
 
       // Type combining the velocity and acceleration of a particle
       struct VelocityAcceleration {
           Vector3<double> vel, acc;
+
+          VelocityAcceleration(Vector3<double> vel, Vector3<double> acc) : vel{vel}, acc{acc} { }
       };
 
       // Attributes stored

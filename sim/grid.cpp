@@ -3,6 +3,7 @@
 #include "io.hpp"
 
 #include <cmath>
+#include <numbers>
 #include <tuple>
 
 namespace Fluid {

@@ -19,7 +19,6 @@ namespace Fluid {
   class Grid {
       using block_vector = std::vector<Block>;
 
-      double ppm_;                            // Partículas por metro
       double h_;                              // Longitud de suavizado
       double m_;                              // Masa de las partículas
       double density_transform_factor_;       // Factor de transformación de la densidad
@@ -40,7 +39,7 @@ namespace Fluid {
       /// @param ppm
       /// Partículas por metro
       constexpr Grid(std::size_t pc, double ppm)
-        : ppm_{ppm}, h_{Constants::r / ppm}, m_{Constants::rho / (ppm * ppm * ppm)},
+        : h_{Constants::r / ppm}, m_{Constants::rho / (ppm * ppm * ppm)},
           density_transform_factor_{density_factor / std::pow(h_, 3 * 3) * m_},
           acceleration_transform_factor_{m_ / std::pow(h_, 2 * 3)},
           reset_density_{density_factor / std::pow(h_, 3) * m_},

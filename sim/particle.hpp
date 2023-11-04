@@ -3,6 +3,7 @@
 
 #include "constants.hpp"
 #include "vector3.hpp"
+#include <numbers>
 
 namespace Fluid {
 
