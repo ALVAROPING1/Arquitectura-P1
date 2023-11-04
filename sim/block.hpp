@@ -100,6 +100,11 @@ namespace Fluid {
       /// Índice de la partícula dentro del bloque
       constexpr Vector3<double> & hv(std::size_t i) { return hv_[i]; }
 
+      /// Devuelve el ID de la partícula indicada
+      /// @param i
+      /// Índice de la partícula dentro del bloque
+      [[nodiscard]] constexpr int id(std::size_t i) const { return id_[i]; }
+
       /// Devuelve una copia de la partícula indicada
       /// @param i
       /// Índice de la partícula dentro del bloque

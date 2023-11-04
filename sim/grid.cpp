@@ -15,7 +15,7 @@ namespace Fluid {
       for (std::size_t i{0}; i < block.size(); ++i) {
         // Lee todos los atributos de la particula, y la almacena en su posición correspondiente
         // según el ID
-        auto const & particle{block[i]};
+        auto const particle{block[i]};
         result[particle.id] = particle;
       }
     }
@@ -65,11 +65,6 @@ namespace Fluid {
             block.hv(i) * Constants::dt + block.vel_acc(i).acc * std::pow(Constants::dt, 2);
         block.vel_acc(i).vel  = block.hv(i) + block.vel_acc(i).acc * Constants::dt / 2;
         block.hv(i)          += block.vel_acc(i).acc * Constants::dt;
-        // Reset the density/acceleration while we are at it as they are no longer needed in this
-        // iteration. This allows us to skip the full scan of the particles at the beginning of each
-        // update cycle
-        block.pos_dens(i).dens = reset_density_;
-        block.vel_acc(i).acc   = Constants::g;
       }
     });
   }
@@ -82,7 +77,12 @@ namespace Fluid {
     for (auto & block : front_) {
       for (std::size_t i{0}; i < block.size(); ++i) {
         // Añade la partícula a su bloque correspondiente en el búfer de la siguiente iteración
-        auto particle{block[i]};
+        Particle particle;
+        particle.p       = block.pos_dens(i).pos;
+        particle.v       = block.vel_acc(i).vel;
+        particle.hv      = block.hv(i);
+        particle.id      = block.id(i);
+        particle.density = reset_density_;
         find_block(particle.p, back_).add(particle);
       }
     }
