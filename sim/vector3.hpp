@@ -79,12 +79,12 @@ namespace Fluid {
       }
 
       template <Axis coordinate>
-      constexpr T const & get() const {
+      [[nodiscard]] constexpr T const & get() const {
         return coordinate == Axis::x ? x : (coordinate == Axis::y ? y : z);
       }
 
       template <Axis coordinate>
-      constexpr T & set() {
+      [[nodiscard]] constexpr T & set() {
         return coordinate == Axis::x ? x : (coordinate == Axis::y ? y : z);
       }
   };

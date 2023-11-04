@@ -25,26 +25,19 @@ namespace Fluid {
 
       Particle() = default;
 
-      /// Construye una nueva partícula
-      /// @param data
-      /// Tupla (posición, gradiente, velocidad)
-      /// @param id
-      /// ID de la partícula
-      /// @param density
-      /// densidad de la partícula
-      constexpr Particle(Vector3<Vector3<float>> const & data, int id, double density)
-        : id{id}, pos{static_cast<Vector3<double>>(data.x)}, density{density},
-          gradient{static_cast<Vector3<double>>(data.y)},
-          vel{static_cast<Vector3<double>>(data.z)} { }
+      constexpr Particle(Vector3<float> const & pp, Vector3<float> const & phv,
+                         Vector3<float> const & pv, int id)
+        : id{id}, pos{static_cast<Vector3<double>>(pp)}, gradient{static_cast<Vector3<double>>(phv)},
+          vel{static_cast<Vector3<double>>(pv)} { }
 
       // Operator '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {
-        return out << "Particle n:   " << c.id << "\n"
-                   << "\tpos:  " << c.pos << "\n"
-                   << "\thvel: " << c.gradient << "\n"
-                   << "\tvel:  " << c.vel << "\n"
-                   << "\tacc:  " << c.acc << "\n"
-                   << "\tρ:    " << c.density << "\n";
+        return out << "Particle n: "   << c.id
+                   << "\n\tPosition: " << c.pos
+                   << "\n\tVelocity: " << c.vel
+                   << "\n\tAccelera: " << c.acc
+                   << "\n\tGradient: " << c.gradient
+                   << "\n\tDensity : " << c.density << std::endl;
       }
   };
 
