@@ -4,10 +4,6 @@
 
 
 namespace Vector3Test{
-
-
-    
-
     // pruebas de suma
     // clases de equivalencia
     TEST_F(Vector3TestClass, sumar_int_1){
@@ -278,7 +274,7 @@ namespace Vector3Test{
 
 
 
-}
+} // namespace Vector3Test
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

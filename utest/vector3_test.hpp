@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VECTOR_TEST_HPP
+#define VECTOR_TEST_HPP
 
 #include <cstdio>
 #include <cstdlib>
@@ -10,10 +11,6 @@
 
 namespace Vector3Test {
     
-    
-
-
-
 class Vector3TestClass: public testing::Test{
     public:
     Vector3TestClass() = default;
@@ -125,18 +122,7 @@ class Vector3TestClass: public testing::Test{
     Fluid::Vector3 <double>  vector_double_1;
     Fluid::Vector3 <double>  vector_double_2;
     
-    
-
-    
-    
-
-    
-    
 
 };
-
-
-
-
-
 } //namsespace Vector3Test
+#endif //VECTOR_TEST_HPP
