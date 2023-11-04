@@ -81,37 +81,6 @@ namespace Fluid {
       /// Devuelve todas las partículas de la malla
       [[nodiscard]] std::vector<Particle> get_all() const;
 
-#ifdef FLUID_DEBUG
-
-    public:
-#else
-
-    private:
-#endif
-      /// Reasigna las partículas a bloques
-      void particle_repositioning();
-      /// Calcula la densidad de las partículas
-      void increment_densities();
-      /// Calcula la aceleración de las partículas
-      void transfer_accelerations();
-      /// Mueve las partículas
-      void particle_movement();
-
-      /// Calcula las interacciones de las partículas con las paredes
-      constexpr void wall_interactions() { wall_action<interact_particle>(); }
-
-      /// Calcula las colisiones de las partículas con las paredes
-      constexpr void wall_collisions() { wall_action<collide_particle>(); }
-
-      /// Intercambia los buffers de bloques
-      constexpr void swap_buffers() { std::swap(front_, back_); }
-
-      /// Devuelve los bloqus en la iteración actual
-      [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
-
-      /// Establece los bloques en la iteración actual a los dados (debug)
-      void set_blocks(std::vector<Block> const & blocks) { front_ = blocks; }
-
     private:
       /// Indexa el vector de bloques según las coordendas de bloque dadas
       /// @param idx
@@ -321,6 +290,37 @@ namespace Fluid {
           }
         });
       }
+
+#ifdef FLUID_DEBUG
+
+    public:
+#else
+
+    private:
+#endif
+      /// Reasigna las partículas a bloques
+      void particle_repositioning();
+      /// Calcula la densidad de las partículas
+      void increment_densities();
+      /// Calcula la aceleración de las partículas
+      void transfer_accelerations();
+      /// Mueve las partículas
+      void particle_movement();
+
+      /// Calcula las interacciones de las partículas con las paredes
+      constexpr void wall_interactions() { wall_action<interact_particle>(); }
+
+      /// Calcula las colisiones de las partículas con las paredes
+      constexpr void wall_collisions() { wall_action<collide_particle>(); }
+
+      /// Intercambia los buffers de bloques
+      constexpr void swap_buffers() { std::swap(front_, back_); }
+
+      /// Devuelve los bloqus en la iteración actual
+      [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
+
+      /// Establece los bloques en la iteración actual a los dados (debug)
+      void set_blocks(std::vector<Block> const & blocks) { front_ = blocks; }
   };
 
 }  // namespace Fluid
