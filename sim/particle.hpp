@@ -22,7 +22,6 @@ namespace Fluid {
       Vector3<double> gradient;           // Gradiente de la velocidad
       Vector3<double> vel;                // Velocidad
       Vector3<double> acc{Constants::g};  // Aceleración
-
       Particle() = default;
 
       constexpr Particle(Vector3<float> const & pp, Vector3<float> const & phv,

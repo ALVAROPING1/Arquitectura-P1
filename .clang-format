@@ -53,7 +53,7 @@ BraceWrapping:
   SplitEmptyFunction: false
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
-# BracedInitializerIndentWidth: 2
+BracedInitializerIndentWidth: 2
 BreakAfterAttributes: Never
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Attach
