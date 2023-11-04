@@ -6,6 +6,8 @@
 #include <ostream>
 
 namespace Fluid {
+  enum class Axis { x, y, z };
+
   template <class T>
   struct Vector3 {
       T x{}, y{}, z{};
@@ -76,44 +78,15 @@ namespace Fluid {
       constexpr bool operator>(Vector3 const & other) const {
         return (x > other.x || y > other.y || z > other.z);
       }
-  };
 
-  // Struct para acceder a la coordenada X de un vector
-  struct Axis_X {
-      template <typename T>
-      constexpr static T & set(Vector3<T> & v) {
-        return v.x;
+      template <Axis coordinate>
+      constexpr T const & get() const {
+        return coordinate == Axis::x ? x : (coordinate == Axis::y ? y : z);
       }
 
-      template <typename T>
-      constexpr static T const & get(Vector3<T> const & v) {
-        return v.x;
-      }
-  };
-
-  // Struct para acceder a la coordenada Y de un vector
-  struct Axis_Y {
-      template <typename T>
-      constexpr static T & set(Vector3<T> & v) {
-        return v.y;
-      }
-
-      template <typename T>
-      constexpr static T const & get(Vector3<T> const & v) {
-        return v.y;
-      }
-  };
-
-  // Struct para acceder a la coordenada Z de un vector
-  struct Axis_Z {
-      template <typename T>
-      constexpr static T & set(Vector3<T> & v) {
-        return v.z;
-      }
-
-      template <typename T>
-      constexpr static T const & get(Vector3<T> const & v) {
-        return v.z;
+      template <Axis coordinate>
+      constexpr T & set() {
+        return coordinate == Axis::x ? x : (coordinate == Axis::y ? y : z);
       }
   };
 }  // namespace Fluid

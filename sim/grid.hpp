@@ -141,24 +141,22 @@ namespace Fluid {
           /// @tparam Side
           /// Borde inferior (0) o superior (1)
           /// @tparam Axis
-          /// Struct de funciones getter/setter de una coordenada de un vector
-          /// (`Axis_X`/`Axis_Y`/`Axis_Z`)
+          /// Coordenada en la que aplicar la interacción
           /// @param block
           /// Bloque en el que está la partícula
           /// @param i
           /// Índice de la partícula en el bloque
-          template <int Side, typename Axis>
+          template <int Side, Axis W>
           constexpr static void run(Block & block, std::size_t i) {
             constexpr double epsilon = 1.0e-10;
             // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w =
-                Axis::get(block.pos_dens(i).pos) + Axis::get(block.hv(i)) * Constants::dt;
-            double const dw = Constants::d_p - (Side == 0 ? w - Axis::get(Constants::b_min)
-                                                          : Axis::get(Constants::b_max) - w);
+            double const w  = block.pos_dens(i).pos.get<W>() + block.hv(i).get<W>() * Constants::dt;
+            double const dw = Constants::d_p - (Side == 0 ? w - Constants::b_min.get<W>()
+                                                          : Constants::b_max.get<W>() - w);
             // NOLINTEND (readability-identifier-length)
             if (dw > epsilon) {
-              Axis::set(block.vel_acc(i).acc) += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
-                                                 Constants::d_v * Axis::get(block.vel_acc(i).vel);
+              block.vel_acc(i).acc.set<W>() += (Side == 0 ? +1.0 : -1.0) * Constants::c_s * dw -
+                                               Constants::d_v * block.vel_acc(i).vel.get<W>();
             }
           }
       };
@@ -169,22 +167,21 @@ namespace Fluid {
           /// @tparam Side
           /// Borde inferior (0) o superior (1)
           /// @tparam Axis
-          /// Struct de funciones getter/setter de una coordenada de un vector
-          /// (`Axis_X`/`Axis_Y`/`Axis_Z`)
+          /// Coordenada en la que aplicar la colisión
           /// @param block
           /// Bloque en el que está la partícula
           /// @param i
           /// Índice de la partícula en el bloque
-          template <int Side, typename Axis>
+          template <int Side, Axis W>
           constexpr static void run(Block & block, std::size_t i) {
             double const d_w =
-                (Side == 0 ? Axis::get(block.pos_dens(i).pos) - Axis::get(Constants::b_min)
-                           : Axis::get(Constants::b_max) - Axis::get(block.pos_dens(i).pos));
+                (Side == 0 ? block.pos_dens(i).pos.get<W>() - Constants::b_min.get<W>()
+                           : Constants::b_max.get<W>() - block.pos_dens(i).pos.get<W>());
             if (d_w < 0) {
-              Axis::set(block.pos_dens(i).pos)  = (Side == 0 ? Axis::get(Constants::b_min) - d_w
-                                                             : Axis::get(Constants::b_max) + d_w);
-              Axis::set(block.vel_acc(i).vel)  *= -1;
-              Axis::set(block.hv(i))           *= -1;
+              block.pos_dens(i).pos.set<W>() =
+                  (Side == 0 ? Constants::b_min.get<W>() - d_w : Constants::b_max.get<W>() + d_w);
+              block.vel_acc(i).vel.set<W>() *= -1;
+              block.hv(i).set<W>()          *= -1;
             }
           }
       };
@@ -193,31 +190,25 @@ namespace Fluid {
       /// @tparam Side
       /// Borde inferior (0) o superior (1)
       /// @tparam A
-      /// Coordena externa de los bloques por la que iterar.
-      /// Struct de funciones getter/setter de una coordenada de un vector
-      /// (`Axis_X`/`Axis_Y`/`Axis_Z`)
+      /// Coordena externa de los bloques por la que iterar
       /// @tparam B
-      /// Coordena interna de los bloques por la que iterar.
-      /// Struct de funciones getter/setter de una coordenada de un vector
-      /// (`Axis_X`/`Axis_Y`/`Axis_Z`)
+      /// Coordena interna de los bloques por la que iterar
       /// @tparam C
-      /// Coordena fija de los bloques por los que iterar.
-      /// Struct de funciones getter/setter de una coordenada de un vector
-      /// (`Axis_X`/`Axis_Y`/`Axis_Z`)
+      /// Coordena fija de los bloques por los que iterar
       /// @tparam Proc
       /// Struct con la función a aplicar a cada partícula
       /// @param i
       /// Índice de la partícula en el bloque
-      template <int Side, typename A, typename B, typename C, typename Proc>
+      template <int Side, Axis A, Axis B, Axis C, typename Proc>
       constexpr void wall_iterate() {
         Vector3<std::size_t> idx{0, 0, 0};
         // Calcula el valor de la coordenada fija y los límites de las otras
-        C::set(idx)               = (Side == 0 ? 0 : C::get(count_) - 1);
-        std::size_t const count_A = A::get(count_);
-        std::size_t const count_B = B::get(count_);
+        idx.set<C>()              = (Side == 0 ? 0 : count_.get<C>() - 1);
+        std::size_t const count_A = count_.get<A>();
+        std::size_t const count_B = count_.get<B>();
         // Itera por las coordenadas A y B
-        for (; A::get(idx) < count_A; ++A::set(idx)) {
-          for (B::set(idx) = 0; B::get(idx) < count_B; ++B::set(idx)) {
+        for (; idx.get<A>() < count_A; ++idx.set<A>()) {
+          for (idx.set<B>() = 0; idx.get<B>() < count_B; ++idx.set<B>()) {
             // Itera por las partículas del bloque y les aplica la función
             Block & block = index(idx, front_);
             for (std::size_t i{0}; i < block.size(); ++i) { Proc::template run<Side, C>(block, i); }
@@ -230,12 +221,12 @@ namespace Fluid {
       /// Struct con la función a aplicar a cada partícula
       template <typename Proc>
       constexpr void wall_action() {
-        wall_iterate<0, Axis_Y, Axis_X, Axis_Z, Proc>();
-        wall_iterate<1, Axis_Y, Axis_X, Axis_Z, Proc>();
-        wall_iterate<0, Axis_Z, Axis_X, Axis_Y, Proc>();
-        wall_iterate<1, Axis_Z, Axis_X, Axis_Y, Proc>();
-        wall_iterate<0, Axis_Z, Axis_Y, Axis_X, Proc>();
-        wall_iterate<1, Axis_Z, Axis_Y, Axis_X, Proc>();
+        wall_iterate<0, Axis::y, Axis::x, Axis::z, Proc>();
+        wall_iterate<1, Axis::y, Axis::x, Axis::z, Proc>();
+        wall_iterate<0, Axis::z, Axis::x, Axis::y, Proc>();
+        wall_iterate<1, Axis::z, Axis::x, Axis::y, Proc>();
+        wall_iterate<0, Axis::z, Axis::y, Axis::x, Proc>();
+        wall_iterate<1, Axis::z, Axis::y, Axis::x, Proc>();
       }
 
       /// Itera por los bloques adyacentes a uno dado, aplicando una función a cada uno
