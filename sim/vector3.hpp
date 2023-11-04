@@ -2,7 +2,6 @@
 #define VECTOR3_HPP
 
 #include <algorithm>
-#include <array>
 #include <ostream>
 
 namespace Fluid {

@@ -7,10 +7,6 @@
 #include "particle.hpp"
 #include "vector3.hpp"
 
-#include <iostream>
-#include <ostream>
-#include <tuple>
-#include <utility>
 #include <vector>
 
 namespace Fluid {

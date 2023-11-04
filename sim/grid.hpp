@@ -8,9 +8,6 @@
 #include "vector3.hpp"
 
 #include <cmath>
-#include <iostream>
-#include <tuple>
-#include <utility>
 #include <vector>
 
 namespace Fluid {
