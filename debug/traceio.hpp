@@ -34,12 +34,12 @@ class TraceIO {
         Block block{static_cast<std::size_t>(particle_count)};
         for (int64_t p = 0; p < particle_count; ++p) {
           IO::read(in_file, id, pos, hvel, vel, density, acc);
-          particle.id      = static_cast<int>(id);
-          particle.density = density;
-          particle.p       = pos;
-          particle.hv      = hvel;
-          particle.v       = vel;
-          particle.a       = acc;
+          particle.id       = static_cast<int>(id);
+          particle.density  = density;
+          particle.pos      = pos;
+          particle.gradient = hvel;
+          particle.vel      = vel;
+          particle.acc      = acc;
           block.add(particle);
         }
         blocks.emplace_back(std::move(block));

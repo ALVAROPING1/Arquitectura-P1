@@ -77,12 +77,12 @@ namespace Fluid {
       for (std::size_t i{0}; i < block.size(); ++i) {
         // Añade la partícula a su bloque correspondiente en el búfer de la siguiente iteración
         Particle particle;
-        particle.p       = block.pos_dens(i).pos;
-        particle.v       = block.vel_acc(i).vel;
-        particle.hv      = block.hv(i);
-        particle.id      = block.id(i);
-        particle.density = reset_density_;
-        find_block(particle.p, back_).add(particle);
+        particle.pos      = block.pos_dens(i).pos;
+        particle.vel      = block.vel_acc(i).vel;
+        particle.gradient = block.hv(i);
+        particle.id       = block.id(i);
+        particle.density  = reset_density_;
+        find_block(particle.pos, back_).add(particle);
       }
     }
   }

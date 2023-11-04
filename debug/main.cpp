@@ -17,6 +17,7 @@ using namespace Fluid::IO;
 using block_vector = std::vector<Fluid::Block>;
 
 constexpr double epsilon = 1e-9;
+
 // constexpr int max = 3;
 // static int count = 0;
 
@@ -32,8 +33,9 @@ bool compare(Fluid::Particle const & left, Fluid::Particle const & right) {
   if (left.id != right.id) {
     put_line(std::cerr, "Ids differ: ", left.id, " != ", right.id);
     return false;
-  } else if (compare(left.p, right.p) && compare(left.density, right.density) &&
-             compare(left.hv, right.hv) && compare(left.v, right.v) && compare(left.a, right.a)) {
+  } else if (compare(left.pos, right.pos) && compare(left.density, right.density) &&
+             compare(left.gradient, right.gradient) && compare(left.vel, right.vel) &&
+             compare(left.acc, right.acc)) {
     return true;
   } else {
     put_line(std::cout, left, " ?= ", right);
@@ -90,8 +92,8 @@ int main(int argc, char ** argv) {
   std::vector<Fluid::Block> correct;
   std::vector<Fluid::Block> attempt;
 
-  auto trace = [&] (std::string const& name, int it) {
-    put(std::cout, "   \033[33mTesting ", name, " (", it+1, ")", "\033[0m... \t");
+  auto trace = [&](std::string const & name, int it) {
+    put(std::cout, "   \033[33mTesting ", name, " (", it + 1, ")", "\033[0m... \t");
     correct = tracer.load("trz/small/" + name + "-base-" + std::to_string(it + 1) + ".trz");
     attempt = grid.get_blocks();
     if (compare(correct, attempt)) {
@@ -103,7 +105,7 @@ int main(int argc, char ** argv) {
   };
 
   for (int i = 0; i < argp.step_count(); ++i) {
-    put_line(std::cout, "\033[1;36mIteration ", i+1, "\033[0m");
+    put_line(std::cout, "\033[1;36mIteration ", i + 1, "\033[0m");
     trace("repos", i);
     trace("initacc", i);
 

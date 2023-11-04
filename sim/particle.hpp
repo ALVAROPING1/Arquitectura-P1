@@ -17,11 +17,11 @@ namespace Fluid {
       // Parámetros que cambian en cada iteración.
       // Es preferible en este caso nombres más cortos para que sea más fácil
       // escribir las fórmulas.
-      Vector3<double> p;                // Posición
-      double density{0};                // Densidad
-      Vector3<double> hv;               // Gradiente de la velocidad
-      Vector3<double> v;                // Velocidad
-      Vector3<double> a{Constants::g};  // Aceleración
+      Vector3<double> pos;                // Posición
+      double density{0};                  // Densidad
+      Vector3<double> gradient;           // Gradiente de la velocidad
+      Vector3<double> vel;                // Velocidad
+      Vector3<double> acc{Constants::g};  // Aceleración
 
       Particle() = default;
 
@@ -33,16 +33,17 @@ namespace Fluid {
       /// @param density
       /// densidad de la partícula
       constexpr Particle(Vector3<Vector3<float>> const & data, int id, double density)
-        : id{id}, p{static_cast<Vector3<double>>(data.x)}, density{density},
-          hv{static_cast<Vector3<double>>(data.y)}, v{static_cast<Vector3<double>>(data.z)} { }
+        : id{id}, pos{static_cast<Vector3<double>>(data.x)}, density{density},
+          gradient{static_cast<Vector3<double>>(data.y)},
+          vel{static_cast<Vector3<double>>(data.z)} { }
 
       // Operator '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {
         return out << "Particle n:   " << c.id << "\n"
-                   << "\tpos:  " << c.p << "\n"
-                   << "\thvel: " << c.hv << "\n"
-                   << "\tvel:  " << c.v << "\n"
-                   << "\tacc:  " << c.a << "\n"
+                   << "\tpos:  " << c.pos << "\n"
+                   << "\thvel: " << c.gradient << "\n"
+                   << "\tvel:  " << c.vel << "\n"
+                   << "\tacc:  " << c.acc << "\n"
                    << "\tρ:    " << c.density << "\n";
       }
   };

@@ -32,8 +32,9 @@ namespace Fluid {
     auto const particles = grid.get_all();
     // Escribe las partículas de la malla
     for (auto particle : particles) {
-      IO::write(output_file_, static_cast<Vector3<float>>(particle.p),
-                static_cast<Vector3<float>>(particle.hv), static_cast<Vector3<float>>(particle.v));
+      IO::write(output_file_, static_cast<Vector3<float>>(particle.pos),
+                static_cast<Vector3<float>>(particle.gradient),
+                static_cast<Vector3<float>>(particle.vel));
     }
   }
 

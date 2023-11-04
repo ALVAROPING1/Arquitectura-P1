@@ -60,7 +60,7 @@ namespace Fluid {
             {p, hv, v},
             amount_++, reset_density_
         };
-        find_block(particle.p, front_).add(particle);
+        find_block(particle.pos, front_).add(particle);
       }
 
       /// Ejecuta una iteración (paso) de la simulación.

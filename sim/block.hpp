@@ -55,9 +55,9 @@ namespace Fluid {
 
       /// Añade una partícula al bloque
       void add(Particle const & particle) {
-        position_density_.emplace_back(particle.p, particle.density);
-        hv_.push_back(particle.hv);
-        velocity_acceleration_.emplace_back(particle.v, particle.a);
+        position_density_.emplace_back(particle.pos, particle.density);
+        hv_.push_back(particle.gradient);
+        velocity_acceleration_.emplace_back(particle.vel, particle.acc);
         id_.push_back(particle.id);
       }
 
@@ -106,12 +106,12 @@ namespace Fluid {
       /// Índice de la partícula dentro del bloque
       constexpr Particle operator[](std::size_t i) const {
         Particle particle;
-        particle.p       = position_density_[i].pos;
-        particle.density = position_density_[i].dens;
-        particle.v       = velocity_acceleration_[i].vel;
-        particle.a       = velocity_acceleration_[i].acc;
-        particle.hv      = hv_[i];
-        particle.id      = id_[i];
+        particle.pos      = position_density_[i].pos;
+        particle.density  = position_density_[i].dens;
+        particle.vel      = velocity_acceleration_[i].vel;
+        particle.acc      = velocity_acceleration_[i].acc;
+        particle.gradient = hv_[i];
+        particle.id       = id_[i];
         return particle;
       }
 
