@@ -12,15 +12,15 @@ namespace FileIOTest {
 namespace Const {
 
 const float ppm = 75;
-const float np_negative = -50;
-const float np_zero = 0;
-const float np_true = 5;
-const float np_lower_false = 5;
-const float np_greater_false = 5;
+const int np_negative = -50;
+const int np_zero = 0;
+const int np_true = 5;
+const int np_lower_false = 5;
+const int np_greater_false = 5;
 
-const Fluid::Vector3<double> vel{1, 1, 1};
-const Fluid::Vector3<double> pos{1, 1, 1};
-const Fluid::Vector3<double> hvel{1, 1, 1};
+const Fluid::Vector3<float> vel{1, 1, 1};
+const Fluid::Vector3<float> pos{1, 1, 1};
+const Fluid::Vector3<float> hvel{1, 1, 1};
 
 const int it_np_true = 5;
 const int it_np_lower_false = 3;
@@ -38,8 +38,8 @@ class FileIOTestClass : public testing::Test {
             return false;
         }
 
-        Fluid::IO::write<float>(file, Const::ppm);
-        Fluid::IO::write<float>(file, Const::np_negative);
+        Fluid::IO::write(file, Const::ppm);
+        Fluid::IO::write(file, Const::np_negative);
 
         file.close();
         return true;
@@ -53,8 +53,8 @@ class FileIOTestClass : public testing::Test {
             return false;
         }
 
-        Fluid::IO::write<float>(file, Const::ppm);
-        Fluid::IO::write<float>(file, Const::np_zero);
+        Fluid::IO::write(file, Const::ppm);
+        Fluid::IO::write(file, Const::np_zero);
 
         file.close();
         return true;
@@ -67,8 +67,8 @@ class FileIOTestClass : public testing::Test {
             return false;
         }
 
-        Fluid::IO::write<float>(file, Const::ppm);
-        Fluid::IO::write<float>(file, Const::np_true);
+        Fluid::IO::write(file, Const::ppm);
+        Fluid::IO::write(file, Const::np_true);
 
         for (int i = 0; i < Const::it_np_true; i++) {
             Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
@@ -86,8 +86,8 @@ class FileIOTestClass : public testing::Test {
             return false;
         }
 
-        Fluid::IO::write<float>(file, Const::ppm);
-        Fluid::IO::write<float>(file, Const::np_lower_false);
+        Fluid::IO::write(file, Const::ppm);
+        Fluid::IO::write(file, Const::np_lower_false);
 
         for (int i = 0; i < Const::it_np_lower_false; i++) {
             Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
@@ -105,8 +105,8 @@ class FileIOTestClass : public testing::Test {
             return false;
         }
 
-        Fluid::IO::write<float>(file, Const::ppm);
-        Fluid::IO::write<float>(file, Const::np_greater_false);
+        Fluid::IO::write(file, Const::ppm);
+        Fluid::IO::write(file, Const::np_greater_false);
 
         for (int i = 0; i < Const::it_np_greater_false; i++) {
             Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);

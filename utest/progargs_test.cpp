@@ -26,6 +26,7 @@ void prepare_file(std::string const &name) {
     Fluid::IO::write<float>(file, np_i);
 
     Fluid::IO::write(file, h_i, h_i, h_i);
+    file.close();
 }
 
 void close_file(const char *name) {
