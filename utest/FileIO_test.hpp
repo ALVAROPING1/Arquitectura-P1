@@ -3,8 +3,11 @@
 #include "../sim/io.hpp"
 #include <cstdio>
 #include <cstdlib>
+#include <fcntl.h>
 #include <fstream>
 #include <gtest/gtest.h>
+#include <sys/stat.h>
+
 #include <iostream>
 
 namespace FileIOTest {
@@ -31,7 +34,7 @@ const int it_np_greater_false = 10;
 class FileIOTestClass : public testing::Test {
 
     static bool prepare_np_negative(const std::string &name) {
-        std::ofstream file{name, std::ios::binary};
+        std::ofstream file{name, std::ios::binary | std::ios::out};
 
         if (!file) {
             std::cout << "El archivo" << name << " no se ha podido crear\n";
@@ -127,6 +130,22 @@ class FileIOTestClass : public testing::Test {
         return true;
     };
 
+    static bool prepare_only_read_out(const std::string &name) {
+        std::ofstream file{name, std::ios::binary};
+
+        if (!file) {
+            std::cout << "El archivo de solo lectura no se puede crear\n";
+            return false;
+        }
+        file.close();
+
+        if (chmod(name.c_str(), 0) != 0) {
+            std::cout << "No se pudieron cambiar los permisos de el archivo de "
+                         "solo lectura\n";
+            return false;
+        }
+        return true;
+    }
     void SetUp() override {
 
         const bool result_1 = prepare_np_negative("NpNegative.fld");
@@ -135,10 +154,11 @@ class FileIOTestClass : public testing::Test {
         const bool result_4 = prepare_np_lower_false("NpLowerFalse.fld");
         const bool result_5 = prepare_np_greater_false("NpGreaterFalse.fld");
         const bool result_out = prepare_out("out.fld");
+        const bool result_read_out = prepare_only_read_out("r.fld");
 
         if (!result_1 || !result_2 || !result_3 || !result_4 || !result_5 ||
-            !result_out) {
-            std::cout << "Las pruebas no se prepararon correctamente\n";
+            !result_out || !result_read_out) {
+            std::cout << "Las pruebas no se prepararon correctamente: \n";
         } else {
             std::cout << "Los archivos se crearon correctamente!!\n";
         };
@@ -151,9 +171,10 @@ class FileIOTestClass : public testing::Test {
         const int rem4 = std::remove("NpLowerFalse.fld");
         const int rem5 = std::remove("NpGreaterFalse.fld");
         const int remout = std::remove("out.fld");
+        const int remlectout = std::remove("r.fld");
 
         if (rem1 != 0 || rem2 != 0 || rem3 != 0 || rem4 != 0 || rem5 != 0 ||
-            remout != 0) {
+            remout != 0 || remlectout != 0) {
             std::cout
                 << "Los archivos de tests FileIO no se han podido borrar!!\n";
         } else {
