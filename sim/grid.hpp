@@ -57,7 +57,10 @@ namespace Fluid {
       /// @param v
       /// La velocidad de la partícula
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
-        Particle const particle{p, hv, v, amount_++};
+        Particle const particle{
+            {p, hv, v},
+            amount_++, reset_density_
+        };
         find_block(particle.pos, front_).add(particle);
       }
 
