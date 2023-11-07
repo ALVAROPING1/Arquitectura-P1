@@ -1,0 +1,249 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3,
+						4,
+						5,
+						6,
+						7
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "_deps/gsl-build",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-_deps.gsl-build-Debug-988c3b806109bfc9798b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1.3"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "cmake-build-debug/_deps/gsl-src"
+				},
+				{
+					"build" : "_deps/gsl-build/include",
+					"jsonFile" : "directory-_deps.gsl-build.include-Debug-1229d05b3ee8f784f484.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1.3"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "cmake-build-debug/_deps/gsl-src/include"
+				},
+				{
+					"build" : "sim",
+					"jsonFile" : "directory-sim-Debug-534bce2306e26f945707.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "sim",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "fluid",
+					"jsonFile" : "directory-fluid-Debug-d866ab9b6068992e7620.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "fluid",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "debug",
+					"jsonFile" : "directory-debug-Debug-9b4f44651216cb715917.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "debug",
+					"targetIndexes" : 
+					[
+						1,
+						3,
+						4
+					]
+				},
+				{
+					"build" : "utest",
+					"jsonFile" : "directory-utest-Debug-a9fe13039c05a1e4f785.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "utest",
+					"targetIndexes" : 
+					[
+						0,
+						5,
+						7,
+						8
+					]
+				},
+				{
+					"build" : "ftest",
+					"jsonFile" : "directory-ftest-Debug-d9fe54f0a739b76aa65c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "ftest"
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						3,
+						4,
+						5,
+						6,
+						7
+					],
+					"name" : "fluid",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2
+					],
+					"name" : "GSL",
+					"parentIndex" : 0
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 6,
+					"id" : "block::@7e7bb22f205f750f4ff0",
+					"jsonFile" : "target-block-Debug-f724ae2774dc5566b515.json",
+					"name" : "block",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "fdiff::@789cf532419e99b67093",
+					"jsonFile" : "target-fdiff-Debug-4d9d8e1f3a46f1038a0e.json",
+					"name" : "fdiff",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "fluid::@167fe83ba7da77ddcbfb",
+					"jsonFile" : "target-fluid-Debug-dddc55fdcf25432fa09e.json",
+					"name" : "fluid",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "fluid-dbg::@789cf532419e99b67093",
+					"jsonFile" : "target-fluid-dbg-Debug-bfc184d630a4db72b7c9.json",
+					"name" : "fluid-dbg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "fluid-timed::@789cf532419e99b67093",
+					"jsonFile" : "target-fluid-timed-Debug-9b5c6f0c19845f27beeb.json",
+					"name" : "fluid-timed",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "progargs::@7e7bb22f205f750f4ff0",
+					"jsonFile" : "target-progargs-Debug-0f4ebcf1e2a70ad14bb2.json",
+					"name" : "progargs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "sim::@b622755370c2a46d4cb5",
+					"jsonFile" : "target-sim-Debug-a5fbc3adb6b3f768ae75.json",
+					"name" : "sim",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "utest::@7e7bb22f205f750f4ff0",
+					"jsonFile" : "target-utest-Debug-a1c0e3a90bc23c48b3a6.json",
+					"name" : "utest",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "vector3::@7e7bb22f205f750f4ff0",
+					"jsonFile" : "target-vector3-Debug-1e4d2b37e7cd2dbffd05.json",
+					"name" : "vector3",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/adri/CLionProjects/Ariquitectura-P1/cmake-build-debug",
+		"source" : "/home/adri/CLionProjects/Ariquitectura-P1"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}

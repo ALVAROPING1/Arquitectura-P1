@@ -9,7 +9,7 @@
 #include <span>
 #include <vector>
 
-int main(int argc, char ** argv) {
+int main(int argc, const char ** argv) {
   Fluid::ArgumentParser argp{
       {argv, static_cast<std::size_t>(argc)}
   };
