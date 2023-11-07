@@ -74,7 +74,7 @@ class Vector3TestClass: public testing::Test{
 
     void test_menor_que_int_2(){
         Fluid::Vector3 <int> const test1 = {4, 5, 6};
-        Fluid::Vector3 <int> const test2 = {1, 2 , 3};
+        Fluid::Vector3 <int> const test2 = {1, 2, 3};
         vector_int_1 = test1;
         vector_int_2 = test2;
     };
