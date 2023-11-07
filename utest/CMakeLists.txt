@@ -1,8 +1,7 @@
 # Enable Google Test Library
 
-add_executable(utest
+add_executable(file_io
 FileIO_test.cpp
-grid_test.cpp
 )
 
 add_executable(progargs progargs_test.cpp)
@@ -13,8 +12,10 @@ add_executable(vector3
 add_executable(block
     block_test.cpp)
 
+add_executable(grid
+    grid_test.cpp)
 # Library dependencies
-target_link_libraries (utest PRIVATE
+target_link_libraries (file_io PRIVATE
 sim
 gtest
 Microsoft.GSL::GSL)
@@ -37,4 +38,8 @@ sim
 gtest
 Microsoft.GSL::GSL)
 
+target_link_libraries (grid PRIVATE
+sim
+gtest
+Microsoft.GSL::GSL)
 
