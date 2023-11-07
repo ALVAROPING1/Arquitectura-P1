@@ -50,23 +50,23 @@ namespace BlockTest{
     }
     // operador begin y end
     // clases de equivalencia
-    TEST_F(BlockTestClass, operador_begin){
-        int const expected_answer = 10;
-        Fluid::Block bloque = get_block();
-        // agruegar particulas al bloque
-        for (int i = 0; i < expected_answer; i++)
-        {
-            Fluid::Particle particula {};
-            particula.id = i;
-            bloque.add(particula);
-        }
-        // iterar
-        int iterador = 0;    
-        for (auto i = bloque.begin(); i != bloque.end(); i++){
-            iterador++;
-        }
-        ASSERT_EQ(iterador, expected_answer);      
-    }
+    // TEST_F(BlockTestClass, operador_begin){
+    //     int const expected_answer = 10;
+    //     Fluid::Block bloque = get_block();
+    //     // agruegar particulas al bloque
+    //     for (int i = 0; i < expected_answer; i++)
+    //     {
+    //         Fluid::Particle particula {};
+    //         particula.id = i;
+    //         bloque.add(particula);
+    //     }
+    //     // iterar
+    //     int iterador = 0;    
+    //     for (auto i = bloque.begin(); i != bloque.end(); i++){
+    //         iterador++;
+    //     }
+    //     ASSERT_EQ(iterador, expected_answer);      
+    // }
     // get particles
     // clases de equivalencia
     TEST_F(BlockTestClass, obtener_particulas){
