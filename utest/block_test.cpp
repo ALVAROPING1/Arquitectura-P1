@@ -27,7 +27,7 @@ namespace BlockTest{
     }
     // prueba indexar
     // clases de equivalencia
-    TEST_F(BlockTestClass, operador_idexar){
+    TEST_F(BlockTestClass, operador_indexar){
         Fluid::Particle expected_answer = {};
         expected_answer.id = 4;
         add_particle();
@@ -48,25 +48,6 @@ namespace BlockTest{
         Fluid::Block const bloque = get_block();
         ASSERT_EQ(bloque.size(), expected_answer);        
     }
-    // operador begin y end
-    // clases de equivalencia
-    // TEST_F(BlockTestClass, operador_begin){
-    //     int const expected_answer = 10;
-    //     Fluid::Block bloque = get_block();
-    //     // agruegar particulas al bloque
-    //     for (int i = 0; i < expected_answer; i++)
-    //     {
-    //         Fluid::Particle particula {};
-    //         particula.id = i;
-    //         bloque.add(particula);
-    //     }
-    //     // iterar
-    //     int iterador = 0;    
-    //     for (auto i = bloque.begin(); i != bloque.end(); i++){
-    //         iterador++;
-    //     }
-    //     ASSERT_EQ(iterador, expected_answer);      
-    // }
     // get particles
     // clases de equivalencia
     TEST_F(BlockTestClass, obtener_particulas){
@@ -88,6 +69,68 @@ namespace BlockTest{
             }
         }
         ASSERT_EQ(equal, true);
+    }
+    // funcion id
+    // clases de equivalencia
+    TEST_F(BlockTestClass, id_particula){
+        Fluid::Particle particula{};
+        int const id_particula = 5;
+        particula.id = id_particula;
+        Fluid::Block bloque = get_block();
+        bloque.add(particula);
+        ASSERT_EQ(bloque.id(0), particula.id);
+    }
+    // funcion hv
+    // clases de equivalencia
+    TEST_F(BlockTestClass, funcion_hv){
+        Fluid::Particle particula{};
+        int const id_particula = 5;
+        particula.id = id_particula;
+        Fluid::Block bloque = get_block();
+        bloque.add(particula);
+        ASSERT_EQ(bloque.hv(0), particula.gradient);
+    }
+    // funcion vel_acc
+    // clases de equivalencia
+    // dividido en dos
+    // comparar la aceleracion
+    TEST_F(BlockTestClass, funcion_vel_acc_1){
+        Fluid::Particle particula{};
+        int const id_particula = 5;
+        particula.id = id_particula;
+        Fluid::Block bloque = get_block();
+        bloque.add(particula);
+        ASSERT_EQ(bloque.vel_acc(0).acc, particula.acc);
+    }
+    // comparar la velocidad
+    TEST_F(BlockTestClass, funcion_vel_acc_2){
+        Fluid::Particle particula{};
+        int const id_particula = 5;
+        particula.id = id_particula;
+        Fluid::Block bloque = get_block();
+        bloque.add(particula);
+        ASSERT_EQ(bloque.vel_acc(0).vel, particula.vel);
+    }
+    // funcion pos_dens
+    // clases de equivalencia
+    // dividido en dos
+    // comparar la posicion
+    TEST_F(BlockTestClass, funcion_pos_dens_1){
+        Fluid::Particle particula{};
+        int const id_particula = 5;
+        particula.id = id_particula;
+        Fluid::Block bloque = get_block();
+        bloque.add(particula);
+        ASSERT_EQ(bloque.pos_dens(0).pos, particula.pos);
+    }
+    // comparar la densidad
+    TEST_F(BlockTestClass, funcion_pos_dens_2){
+        Fluid::Particle particula{};
+        int const id_particula = 5;
+        particula.id = id_particula;
+        Fluid::Block bloque = get_block();
+        bloque.add(particula);
+        ASSERT_EQ(bloque.pos_dens(0).dens, particula.density);
     }
 
     
