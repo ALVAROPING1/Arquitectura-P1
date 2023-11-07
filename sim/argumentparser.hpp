@@ -12,35 +12,45 @@
 
 namespace Fluid {
 
-class ArgumentParser {
-  public:
-    ArgumentParser(std::span<gsl::czstring> args);
+  class ArgumentParser {
+    public:
+      /// Construye un nuevo parser de argumentos
+      /// @param args
+      /// Argumentos del programa. Formato esperado:
+      /// `(<cmd>, <pasos>, <archivo_entrada>, <archivo_salida>)`
+      ArgumentParser(std::span<gsl::zstring> args);
 
-    constexpr explicit operator bool() const { return error_ == 0; }
+      /// Devuelve si ha habido algún error
+      constexpr explicit operator bool() const { return error_ == 0; }
 
-    constexpr int error() const { return error_; }
+      /// Devuelve el código de error
+      constexpr int error() const { return error_; }
 
-    constexpr int step_count() const { return nts_; }
+      /// Devuelve el número de pasos de tiempo a ejecutar
+      constexpr int step_count() const { return steps_; }
 
-    FileIO &file() { return file_; }
+      /// Devuelve el objeto de archivos de IO
+      FileIO & file() { return file_; }
 
-  private:
-    int error_;
-    int nts_;
-    FileIO file_;
-    void openFiles(std::span<gsl::zstring> args);
+    private:
+      int error_;    // Código de error
+      int steps_;    // Número de pasos de tiempo a ejecutar
+      FileIO file_;  // Objeto de archivos de IO
 
-    template <typename... Args> constexpr void error(int code, Args... args) {
+      /// Establece un código de error, enviando un mensaje de error por `std::cerr`
+      template <typename... Args>
+      constexpr void error(int code, Args... args) {
         error_ = code;
         IO::put_line(std::cerr, args...);
-    }
+      }
 
-    template <typename... Args> constexpr void check(int code, Args... args) {
-        if (error_ == code) {
-            IO::put_line(std::cerr, args...);
-        }
-    }
-};
+      /// Comprueba si el código de error es el índicado, enviando un mensaje de error por
+      /// `std::cerr` en caso afirmativo
+      template <typename... Args>
+      constexpr void check(int code, Args... args) {
+        if (error_ == code) { IO::put_line(std::cerr, args...); }
+      }
+  };
 
-} // namespace Fluid
-#endif // SIM_PROGARGS_HPP
+}  // namespace Fluid
+#endif  // SIM_PROGARGS_HPP

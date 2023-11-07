@@ -2,10 +2,11 @@
 #define VECTOR3_HPP
 
 #include <algorithm>
-#include <array>
 #include <ostream>
 
 namespace Fluid {
+  enum class Axis { x, y, z };
+
   template <class T>
   struct Vector3 {
       T x{}, y{}, z{};
@@ -56,21 +57,38 @@ namespace Fluid {
         return Vector3<U>{static_cast<U>(x), static_cast<U>(y), static_cast<U>(z)};
       }
 
+      // Calcula la norma al cuadrado del vector
       [[nodiscard]] constexpr T square_norm() const { return x * x + y * y + z * z; }
 
-      [[nodiscard]] constexpr Vector3 clamp(Vector3 const& min, Vector3 const& max) const {
+      // Limita las coordenadas del vector al rango definido por los vectores
+      /// @param min
+      /// Vector con los valores mínimos de cada coordenada
+      /// @param max
+      /// Vector con los valores máximos de cada coordenada
+      [[nodiscard]] constexpr Vector3 clamp(Vector3 const & min, Vector3 const & max) const {
         return Vector3{std::clamp(x, min.x, max.x), std::clamp(y, min.y, max.y),
                        std::clamp(z, min.z, max.z)};
       }
 
-      constexpr bool operator< (Vector3 const& other) const {
-        return (x < other.x || y < other.y || z < other.z); }
+      constexpr bool operator<(Vector3 const & other) const {
+        return (x < other.x || y < other.y || z < other.z);
+      }
 
-      constexpr bool operator> (Vector3 const& other) const {
+      constexpr bool operator>(Vector3 const& other) const {
         return (x > other.x || y > other.y || z > other.z); }
 
-        constexpr bool operator== (Vector3 const& other) const {
+      constexpr bool operator== (Vector3 const& other) const {
         return (x == other.x && y == other.y && z == other.z); }
+
+      template <Axis coordinate>
+      [[nodiscard]] constexpr T const & get() const {
+        return coordinate == Axis::x ? x : (coordinate == Axis::y ? y : z);
+      }
+
+      template <Axis coordinate>
+      [[nodiscard]] constexpr T & set() {
+        return coordinate == Axis::x ? x : (coordinate == Axis::y ? y : z);
+      }
   };
 }  // namespace Fluid
 

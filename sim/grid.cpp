@@ -3,89 +3,86 @@
 #include "io.hpp"
 
 #include <cmath>
+#include <numbers>
 
 namespace Fluid {
 
   std::vector<Particle> Grid::get_all() const {
-    std::vector<Particle> result(pc_);  // Inicializa todas las Partículas
+    std::vector<Particle> result(amount_);  // Inicializa todas las Partículas
+    // Itera por todas las partículas
     for (auto const & block : front_) {
-      for (auto const & particle : block) { result[particle.id] = particle; }
+      for (std::size_t i{0}; i < block.size(); ++i) {
+        // Lee todos los atributos de la particula, y la almacena en su posición correspondiente
+        // según el ID
+        auto const particle{block[i]};
+        result[particle.id] = particle;
+      }
     }
     return result;
   }
 
   void Grid::increment_densities() {
-    iter_pairs([this](Particle & particle1, Particle & particle2) {
-      // constexpr int nine{9};
-
-      Vector3<double> const distance{particle1.p - particle2.p};
+    iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
+      Vector3<double> const distance{blockI.pos_dens(i).pos - blockJ.pos_dens(j).pos};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double density{h_ * h_ - norm};
-      // density = (density * density * density) * density_factor / std::pow(h_, nine) * m_;
-      density            = density * density * density;
-      particle1.density += density;
-      particle2.density += density;
+      density                  = (density * density * density) * density_transform_factor_;
+      blockI.pos_dens(i).dens += density;
+      blockJ.pos_dens(j).dens += density;
     });
   }
 
-  void Grid::transform_densities() {
-    double const h_3    = h_ * h_ * h_;
-    double const h_6    = h_3 * h_3;
-    double const h_9    = h_6 * h_3;
-    double const factor = density_factor / h_9 * m_;
-    for (auto & block : front_) {
-      for (auto & particle : block) { particle.density = (particle.density + h_6) * factor; }
-    }
-  }
-
   void Grid::transfer_accelerations() {
-    iter_pairs([this](Particle & particle_i, Particle & particle_j) {
+    iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
       constexpr double const1{1e-12};
-      constexpr int const2{15};
-      constexpr int const4{6};
-      constexpr double const5{45.0};
-
-      Vector3<double> const distance{particle_i.p - particle_j.p};
+      constexpr double const2{15.0};
+      constexpr double const3{45.0};
+      Vector3<double> const distance{blockI.pos_dens(i).pos - blockJ.pos_dens(j).pos};
       double const norm{distance.square_norm()};
       if (norm >= h_ * h_) { return; }
       double const dist_ij{std::sqrt(std::max(norm, const1))};
       Vector3<double> const acceleration{
-          ((particle_i.p - particle_j.p) * (const2 / (std::numbers::pi * std::pow(h_, const4))) *
-               (1.5 * m_ * Constants::p_s) * (std::pow((h_ - dist_ij), 2) / dist_ij) *
-               (particle_i.density + particle_j.density - 2 * Constants::rho) +
-           (particle_j.v - particle_i.v) * (const5 / (std::numbers::pi * std::pow(h_, 6))) *
-               Constants::mu * m_) /
-          (particle_i.density * particle_j.density)};
-      particle_i.a += acceleration;
-      particle_j.a -= acceleration;
+          // Clang-format doesn't know how to properly format this formula
+          // clang-format off
+          ( distance * (1.5 * Constants::p_s * (const2 / std::numbers::pi)) * (std::pow((h_ - dist_ij), 2) / dist_ij)
+            * (blockI.pos_dens(i).dens + blockJ.pos_dens(j).dens - 2 * Constants::rho)
+            + (blockJ.vel_acc(j).vel - blockI.vel_acc(i).vel) * Constants::mu * (const3/const2) * (const2 / std::numbers::pi))
+           * acceleration_transform_factor_ / (blockI.pos_dens(i).dens * blockJ.pos_dens(j).dens)
+          // clang-format on
+      };
+      blockI.vel_acc(i).acc += acceleration;
+      blockJ.vel_acc(j).acc -= acceleration;
     });
   }
 
   void Grid::particle_movement() {
-    // TODO: Make block variable
-    iter_blocks([this](Vector3<size_t> const & block) {
-      for (auto & particle : index(block, front_)) {
-        // TODO: v/hv incrementan en valor absoluto en cada iteración. ¿Es esto correcto?
-        particle.p  += particle.hv * Constants::dt + particle.a * std::pow(Constants::dt, 2);
-        particle.v   = particle.hv + particle.a * Constants::dt / 2;
-        particle.hv += particle.a * Constants::dt;
-        // TODO: Reset here accelerations
+    iter_blocks([this](Vector3<size_t> const & block_idx) {
+      auto & block{index(block_idx, front_)};
+      for (std::size_t i{0}; i < block.size(); ++i) {
+        block.pos_dens(i).pos +=
+            block.hv(i) * Constants::dt + block.vel_acc(i).acc * std::pow(Constants::dt, 2);
+        block.vel_acc(i).vel  = block.hv(i) + block.vel_acc(i).acc * Constants::dt / 2;
+        block.hv(i)          += block.vel_acc(i).acc * Constants::dt;
       }
     });
   }
 
   void Grid::particle_repositioning() {
     // TODO: skip clear loop on the first iteration
+    // Vacía todos los bloques en el búfer de la siguiente iteración
     for (auto & block : back_) { block.clear(); }
+    // Itera por todas las partículas en el búfer de la iteración actual
     for (auto & block : front_) {
-      for (auto & particle : block) {
-        // Reset the density/acceleration while we are at it as they are no longer needed in this
-        // iteration. This allows us to skip the full scan of the particles at the beginning of each
-        // update cycle
-        particle.reset_density(h_, m_);
-        particle.a = Constants::g;
-        find_block(particle.p, back_).add(particle);
+      for (std::size_t i{0}; i < block.size(); ++i) {
+        // Añade la partícula a su bloque correspondiente en el búfer de la siguiente iteración
+        Particle particle;
+        particle.pos      = block.pos_dens(i).pos;
+        particle.vel      = block.vel_acc(i).vel;
+        particle.gradient = block.hv(i);
+        particle.id       = block.id(i);
+        particle.density  = reset_density_;
+        find_block(particle.pos, back_).add(particle);
       }
     }
   }

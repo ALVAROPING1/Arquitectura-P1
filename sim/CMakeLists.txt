@@ -1,8 +1,5 @@
 add_library(sim
-   block.cpp
    grid.cpp
-   particle.cpp
-   math.cpp
    argumentparser.cpp
    fileio.cpp)
 target_include_directories(sim PUBLIC ..)

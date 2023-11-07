@@ -9,19 +9,15 @@
 #include <span>
 #include <vector>
 
-int main(int argc, const char **argv) {
-
-    const std::span<gsl::czstring> args{argv, static_cast<std::size_t>(argc)};
-    Fluid::ArgumentParser argp{args};
-    if (!argp) {
-        return argp.error();
-    }
-    Fluid::FileIO &file = argp.file();
-    Fluid::Grid grid{file.np(), file.ppm()};
-    file.load(grid);
-    for (int i = 0; i < argp.step_count(); ++i) {
-        grid.step();
-    }
-    file.dump(grid);
-    return 0;
+int main(int argc, char ** argv) {
+  Fluid::ArgumentParser argp{
+      {argv, static_cast<std::size_t>(argc)}
+  };
+  if (!argp) { return argp.error(); }
+  Fluid::FileIO & file = argp.file();
+  Fluid::Grid grid{file.np(), file.ppm()};
+  file.load(grid);
+  for (int i = 0; i < argp.step_count(); ++i) { grid.step(); }
+  file.dump(grid);
+  return 0;
 }
