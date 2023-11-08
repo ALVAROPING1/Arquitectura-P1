@@ -115,6 +115,7 @@ namespace Vector3Test {
       };
 
     private:
+      // vectores declarados para las pruebas
       Fluid::Vector3<int> vector_int_1;
       Fluid::Vector3<int> vector_int_2;
       Fluid::Vector3<float> vector_float_1;
