@@ -55,7 +55,7 @@ namespace Fluid {
           count_{static_cast<Vector3<std::size_t>>((Constants::b_max - Constants::b_min) / h_)},
           sizes_{(Constants::b_max - Constants::b_min) / static_cast<Vector3<double>>(count_)} {
         std::size_t const count  = count_.x * count_.y * count_.z;
-        std::size_t const approx = 2 * pc / count;
+        std::size_t const approx = pc / count;
         front_.resize(count, Block{approx});
         back_.resize(count, Block{approx});
       }
