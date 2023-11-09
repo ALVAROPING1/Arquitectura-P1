@@ -19,6 +19,8 @@ FetchContent_Declare(GSL
 )
 FetchContent_MakeAvailable(GSL)
 
+find_package(GTest CONFIG REQUIRED)
+
 add_subdirectory(sim)
 add_subdirectory(fluid)
 add_subdirectory(debug)

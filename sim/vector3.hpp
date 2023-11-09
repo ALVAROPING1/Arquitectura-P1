@@ -74,9 +74,11 @@ namespace Fluid {
         return (x < other.x || y < other.y || z < other.z);
       }
 
-      constexpr bool operator>(Vector3 const & other) const {
-        return (x > other.x || y > other.y || z > other.z);
-      }
+      constexpr bool operator>(Vector3 const& other) const {
+        return (x > other.x || y > other.y || z > other.z); }
+
+      constexpr bool operator== (Vector3 const& other) const {
+        return (x == other.x && y == other.y && z == other.z); }
 
       template <Axis coordinate>
       [[nodiscard]] constexpr T const & get() const {

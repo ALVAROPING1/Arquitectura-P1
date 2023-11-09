@@ -9,7 +9,6 @@
 #include <gsl/gsl>
 #include <iostream>
 #include <span>
-
 namespace Fluid {
 
   class ArgumentParser {
@@ -18,7 +17,7 @@ namespace Fluid {
       /// @param args
       /// Argumentos del programa. Formato esperado:
       /// `(<cmd>, <pasos>, <archivo_entrada>, <archivo_salida>)`
-      ArgumentParser(std::span<gsl::zstring> args);
+      ArgumentParser(std::span<gsl::czstring> args);
 
       /// Devuelve si ha habido algún error
       constexpr explicit operator bool() const { return error_ == 0; }
