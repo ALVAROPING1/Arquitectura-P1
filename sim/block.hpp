@@ -73,7 +73,9 @@ namespace Fluid {
       [[nodiscard]] constexpr std::size_t size() const {
         // All attribute vectors are appended to/cleared at once, so they will
         // always have the same size and it's safe to get the size from any of them
-        return id_.size();
+        // `position_density_` is the most fequently used, so use that as its
+        // metadada will likely already be in the cache
+        return position_density_.size();
       }
 
       // These 2 getter functions would be better written if they were split into
