@@ -5,7 +5,7 @@
 #include <ostream>
 
 namespace Fluid {
-  enum class Axis { x, y, z };
+  enum class Axis: std::uint8_t { x, y, z };
 
   template <class T>
   struct Vector3 {

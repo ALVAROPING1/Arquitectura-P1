@@ -43,7 +43,7 @@ namespace Fluid {
                    << "\n\tVelocity: " << c.vel
                    << "\n\tAccelera: " << c.acc
                    << "\n\tGradient: " << c.gradient
-                   << "\n\tDensity : " << c.density << std::endl;
+                   << "\n\tDensity : " << c.density << "\n";
       }
   };
 

@@ -40,7 +40,7 @@ namespace Fluid::IO {
 
   // Casos base
   template <typename T>
-    requires std::is_arithmetic<T>::value
+    requires std::is_arithmetic_v<T>
   bool read(std::istream & in, T & result) {
     // NOLINTNEXTLINE (cppcoreguidelines-pro-type-reinterpret-cast)
     return static_cast<bool>(in.read(reinterpret_cast<char *>(&result), sizeof(T)));
@@ -66,7 +66,7 @@ namespace Fluid::IO {
 
   // Casos base
   template <typename T>
-    requires std::is_arithmetic<T>::value
+    requires std::is_arithmetic_v<T>
   void write(std::ostream & out, T const & result) {
     // NOLINTNEXTLINE (cppcoreguidelines-pro-type-reinterpret-cast)
     out.write(reinterpret_cast<char const *>(&result), sizeof(T));
