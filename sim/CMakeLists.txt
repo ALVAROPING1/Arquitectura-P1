@@ -1,5 +1,4 @@
 add_library(sim
-   grid.cpp
    argumentparser.cpp
    fileio.cpp)
 target_include_directories(sim PUBLIC ..)
