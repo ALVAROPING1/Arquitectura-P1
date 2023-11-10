@@ -15,7 +15,14 @@ namespace Fluid {
 
   // Objeto representando la malla de la simulación
   class Grid {
-     public:
+
+#ifdef FLUID_DEBUG
+
+    public:
+#else
+
+    private:
+#endif
 
       using block_vector = std::vector<Block>;
 
@@ -32,7 +39,9 @@ namespace Fluid {
       block_vector front_;  // Búfer de bloques en la iteración actual
       block_vector back_;   // Búfer de bloques en la siguiente iteración
 
-    
+      friend class GridTestHarness;
+
+    public:
       /// Construye una nueva malla vacía.
       /// @param pc
       /// Número de partículas
@@ -43,7 +52,7 @@ namespace Fluid {
           density_transform_factor_{density_factor / std::pow(h_, 3 * 3) * m_},
           acceleration_transform_factor_{m_ / std::pow(h_, 2 * 3)},
           reset_density_{density_factor / std::pow(h_, 3) * m_},
-    count_{static_cast<Vector3<std::size_t>>((Constants::b_max - Constants::b_min) / h_)},
+          count_{static_cast<Vector3<std::size_t>>((Constants::b_max - Constants::b_min) / h_)},
           sizes_{(Constants::b_max - Constants::b_min) / static_cast<Vector3<double>>(count_)} {
         std::size_t const count  = count_.x * count_.y * count_.z;
         std::size_t const approx = 2 * pc / count;

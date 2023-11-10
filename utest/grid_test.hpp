@@ -1,5 +1,6 @@
 #pragma once
 
+#define FLUID_DEBUG
 #include "../sim/io.hpp"
 
 #include <cstdio>
