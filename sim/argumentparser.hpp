@@ -9,6 +9,7 @@
 #include <gsl/gsl>
 #include <iostream>
 #include <span>
+
 namespace Fluid {
 
   class ArgumentParser {

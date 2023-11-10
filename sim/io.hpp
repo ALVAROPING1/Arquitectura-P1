@@ -2,6 +2,7 @@
 #define IO_HPP
 
 #include "vector3.hpp"
+
 #include <iostream>
 
 namespace Fluid::IO {

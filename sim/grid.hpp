@@ -8,15 +8,14 @@
 #include "vector3.hpp"
 
 #include <cmath>
+#include <numbers>
 #include <utility>
 #include <vector>
-#include <numbers>
 
 namespace Fluid {
 
   // Objeto representando la malla de la simulación
   class Grid {
-
 #ifdef FLUID_DEBUG
 
     public:
@@ -332,6 +331,7 @@ namespace Fluid {
           blockJ.pos_dens(j).dens += density;
         });
       }
+
       /// Calcula la aceleración de las partículas
       constexpr void transfer_accelerations() {
         iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
@@ -355,6 +355,7 @@ namespace Fluid {
           blockJ.vel_acc(j).acc -= acceleration;
         });
       }
+
       /// Mueve las partículas
       constexpr void particle_movement() {
         iter_blocks([this](Vector3<size_t> const & block_idx) {

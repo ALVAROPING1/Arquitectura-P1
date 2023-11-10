@@ -9,9 +9,9 @@
 #include <span>
 #include <vector>
 
-int main(int argc, const char ** argv) {
+int main(int argc, char const ** argv) {
   Fluid::ArgumentParser argp{
-    {argv, static_cast<std::size_t>(argc)}
+      {argv, static_cast<std::size_t>(argc)}
   };
   if (!argp) { return argp.error(); }
   Fluid::FileIO & file = argp.file();

@@ -80,7 +80,7 @@ bool compare(block_vector const & left, block_vector const & right) {
   return true;
 }
 
-int main(int argc, const char **argv) {
+int main(int argc, char const ** argv) {
   Fluid::ArgumentParser argp{
       {argv, static_cast<std::size_t>(argc)}
   };

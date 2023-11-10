@@ -38,12 +38,9 @@ namespace Fluid {
 
       // Operator '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {
-        return out << "Particle n: "   << c.id
-                   << "\n\tPosition: " << c.pos
-                   << "\n\tVelocity: " << c.vel
-                   << "\n\tAccelera: " << c.acc
-                   << "\n\tGradient: " << c.gradient
-                   << "\n\tDensity : " << c.density << "\n";
+        return out << "Particle n: " << c.id << "\n\tPosition: " << c.pos
+                   << "\n\tVelocity: " << c.vel << "\n\tAccelera: " << c.acc
+                   << "\n\tGradient: " << c.gradient << "\n\tDensity : " << c.density << "\n";
       }
   };
 
