@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 #include <chrono>
+#include <string>
 
 struct Clock {
   using duration_t = std::chrono::duration<long long,std::micro>;
@@ -29,6 +30,12 @@ struct Clock {
   duration_t boundint{};
   duration_t repos{};
 };
+
+namespace {
+  std::string image (Clock::duration_t duration) {
+    return std::to_string(duration.count()) + "μs";
+  }
+}
 
 int main(int argc, const char ** argv) {
   Fluid::ArgumentParser argp{
@@ -50,13 +57,13 @@ int main(int argc, const char ** argv) {
     grid.swap_buffers();
   }
 
-  Fluid::IO::put_line(std::cerr, "densinc    => ", clock.densinc);
-  Fluid::IO::put_line(std::cerr, "denstransf => ", clock.denstransf);
-  Fluid::IO::put_line(std::cerr, "acctransf  => ", clock.acctransf);
-  Fluid::IO::put_line(std::cerr, "partcol    => ", clock.partcol);
-  Fluid::IO::put_line(std::cerr, "motion     => ", clock.motion);
-  Fluid::IO::put_line(std::cerr, "boundint   => ", clock.boundint);
-  Fluid::IO::put_line(std::cerr, "repos      => ", clock.repos);
+  Fluid::IO::put_line(std::cerr, "densinc    => ", image(clock.densinc));
+  // Fluid::IO::put_line(std::cerr, "denstransf => ", clock.denstransf);
+  Fluid::IO::put_line(std::cerr, "acctransf  => ", image(clock.acctransf));
+  Fluid::IO::put_line(std::cerr, "partcol    => ", image(clock.partcol));
+  Fluid::IO::put_line(std::cerr, "motion     => ", image(clock.motion));
+  Fluid::IO::put_line(std::cerr, "boundint   => ", image(clock.boundint));
+  Fluid::IO::put_line(std::cerr, "repos      => ", image(clock.repos));
 
   file.dump(grid);
   return 0;

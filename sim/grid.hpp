@@ -48,7 +48,7 @@ namespace Fluid {
       /// Número de partículas
       /// @param ppm
       /// Partículas por metro
-      constexpr Grid(std::size_t pc, double ppm)
+      Grid(std::size_t pc, double ppm)
         : h_{Constants::r / ppm}, m_{Constants::rho / (ppm * ppm * ppm)},
           density_transform_factor_{density_factor / std::pow(h_, 3 * 3) * m_},
           acceleration_transform_factor_{m_ / std::pow(h_, 2 * 3)},

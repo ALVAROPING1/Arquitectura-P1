@@ -46,7 +46,7 @@ namespace Fluid {
       /// Construye un nuevo bloque
       /// @param estimated_amount
       /// Número de partículas para las que reservar espacio inicialmente
-      constexpr explicit Block(std::size_t estimated_amount) {
+      explicit Block(std::size_t estimated_amount) {
         position_density_.reserve(estimated_amount);
         hv_.reserve(estimated_amount);
         velocity_acceleration_.reserve(estimated_amount);
@@ -118,7 +118,7 @@ namespace Fluid {
       }
 
       /// Devuelve una copia de todas las partículas en el bloque
-      [[nodiscard]] constexpr std::vector<Particle> get_particles() const {
+      [[nodiscard]] std::vector<Particle> get_particles() const {
         std::vector<Particle> out{};
         out.reserve(size());
         for (std::size_t i{0}; i < size(); ++i) { out.emplace_back(operator[](i)); }
