@@ -84,7 +84,6 @@ namespace Fluid {
         wall_collisions();
         // TODO: skip on the last iteration
         particle_repositioning();
-        swap_buffers();
       }
 
       /// Devuelve todas las partículas de la malla
@@ -393,6 +392,7 @@ namespace Fluid {
             find_block(particle.pos, back_).add(particle);
           }
         }
+        swap_buffers();
       }
 
       /// Intercambia los buffers de bloques

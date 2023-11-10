@@ -67,7 +67,6 @@ int main(int argc, char const ** argv) {
     clock.repos     += Clock::timeit([&grid]() {
       grid.particle_repositioning();
     });
-    grid.swap_buffers();
   }
 
   Fluid::IO::put_line(std::cerr, "densinc    => ", image(clock.densinc));

@@ -126,7 +126,6 @@ int main(int argc, char const ** argv) {
     trace("boundint", i);
 
     grid.particle_repositioning();
-    grid.swap_buffers();
     // trace("repos", i);
     put_line(std::cout);
   }
