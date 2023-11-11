@@ -17,11 +17,11 @@ namespace Fluid {
       // Parámetros que cambian en cada iteración.
       // Es preferible en este caso nombres más cortos para que sea más fácil
       // escribir las fórmulas.
-      Vector3<double> pos;                // Posición
-      double density{0};                  // Densidad
-      Vector3<double> gradient;           // Gradiente de la velocidad
-      Vector3<double> vel;                // Velocidad
-      Vector3<double> acc{Constants::g};  // Aceleración
+      Vector3<double> pos;                      // Posición
+      double density{0};                        // Densidad
+      Vector3<double> gradient;                 // Gradiente de la velocidad
+      Vector3<double> vel;                      // Velocidad
+      Vector3<double> acc{Constants::gravity};  // Aceleración
       Particle() = default;
 
       /// Construye una nueva partícula

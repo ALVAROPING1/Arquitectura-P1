@@ -37,7 +37,7 @@ namespace Fluid {
       // Attributes stored
 
       std::vector<PositionDensity> position_density_{};  // Vector de atributos (posición, densidad)
-      std::vector<Vector3<double>> hv_{};                // Vector del gradiente de la velocidad
+      std::vector<Vector3<double>> gradient_{};          // Vector del gradiente de la velocidad
       std::vector<VelocityAcceleration>
           velocity_acceleration_{};  // Vector de atributos (velocidad, aceleración)
       std::vector<int> id_{};        // Vector de IDs
@@ -48,7 +48,7 @@ namespace Fluid {
       /// Número de partículas para las que reservar espacio inicialmente
       explicit Block(std::size_t estimated_amount) {
         position_density_.reserve(estimated_amount);
-        hv_.reserve(estimated_amount);
+        gradient_.reserve(estimated_amount);
         velocity_acceleration_.reserve(estimated_amount);
         id_.reserve(estimated_amount);
       };
@@ -56,7 +56,7 @@ namespace Fluid {
       /// Añade una partícula al bloque
       void add(Particle const & particle) {
         position_density_.emplace_back(particle.pos, particle.density);
-        hv_.push_back(particle.gradient);
+        gradient_.push_back(particle.gradient);
         velocity_acceleration_.emplace_back(particle.vel, particle.acc);
         id_.push_back(particle.id);
       }
@@ -64,7 +64,7 @@ namespace Fluid {
       /// Vacía el bloque sin modificar la cantidad de espacio reservado
       void clear() {
         position_density_.clear();
-        hv_.clear();
+        gradient_.clear();
         velocity_acceleration_.clear();
         id_.clear();
       };
@@ -96,7 +96,7 @@ namespace Fluid {
       /// Devuelve una referencia al gradiente de la velocidad de la partícula indicada
       /// @param i
       /// Índice de la partícula dentro del bloque
-      constexpr Vector3<double> & hv(std::size_t i) { return hv_[i]; }
+      constexpr Vector3<double> & gradient(std::size_t i) { return gradient_[i]; }
 
       /// Devuelve el ID de la partícula indicada
       /// @param i
@@ -112,7 +112,7 @@ namespace Fluid {
         particle.density  = position_density_[i].dens;
         particle.vel      = velocity_acceleration_[i].vel;
         particle.acc      = velocity_acceleration_[i].acc;
-        particle.gradient = hv_[i];
+        particle.gradient = gradient_[i];
         particle.id       = id_[i];
         return particle;
       }

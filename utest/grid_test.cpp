@@ -22,8 +22,9 @@ namespace GridTest {
     Fluid::Grid test_grid{iotest.np(), iotest.ppm()};
     iotest.load(test_grid);
 
-    EXPECT_EQ(test_grid.h_, Fluid::Constants::r / iotest.ppm());
-    EXPECT_EQ(test_grid.m_, Fluid::Constants::rho / (iotest.ppm() * iotest.ppm() * iotest.ppm()));
+    EXPECT_EQ(test_grid.h_, Fluid::Constants::radius / iotest.ppm());
+    EXPECT_EQ(test_grid.m_,
+              Fluid::Constants::density / (iotest.ppm() * iotest.ppm() * iotest.ppm()));
     EXPECT_EQ(test_grid.acceleration_transform_factor_,
               test_grid.m_ / std::pow(test_grid.h_, 2 * 3));
     EXPECT_EQ(test_grid.count_,

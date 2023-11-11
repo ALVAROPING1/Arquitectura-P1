@@ -48,7 +48,7 @@ namespace Fluid {
       /// @param ppm
       /// Partículas por metro
       Grid(std::size_t pc, double ppm)
-        : h_{Constants::r / ppm}, m_{Constants::rho / (ppm * ppm * ppm)},
+        : h_{Constants::radius / ppm}, m_{Constants::density / (ppm * ppm * ppm)},
           density_transform_factor_{density_factor / std::pow(h_, 3 * 3) * m_},
           acceleration_transform_factor_{m_ / std::pow(h_, 2 * 3)},
           reset_density_{density_factor / std::pow(h_, 3) * m_},
@@ -108,7 +108,8 @@ namespace Fluid {
       /// @param block_vec
       /// Vector de bloques a indexar. Debería ser `front_` o `back_`
       //
-      // The function can't be made const because it returns a reference to a stored value
+      // The function can't be made const because it's used
+      // to return a mutable reference to a stored value
       // NOLINTNEXTLINE (readability-make-member-function-const)
       constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
         return block_vec[idx.z * count_.y * count_.x + idx.y * count_.x + idx.x];
@@ -138,14 +139,15 @@ namespace Fluid {
           template <bool Side, Axis W>
           constexpr static void run(Block & block, std::size_t i) {
             constexpr double epsilon = 1.0e-10;
-            // NOLINTBEGIN (readability-identifier-length) Mathematical equation
-            double const w  = block.pos_dens(i).pos.get<W>() + block.hv(i).get<W>() * Constants::dt;
-            double const dw = Constants::d_p - (Side ? w - Constants::b_min.get<W>()
-                                                     : Constants::b_max.get<W>() - w);
-            // NOLINTEND (readability-identifier-length)
-            if (dw > epsilon) {
-              block.vel_acc(i).acc.set<W>() += (Side ? +1.0 : -1.0) * Constants::c_s * dw -
-                                               Constants::d_v * block.vel_acc(i).vel.get<W>();
+            double const coordinate =
+                block.pos_dens(i).pos.get<W>() + block.gradient(i).get<W>() * Constants::delta_time;
+            double const delta_coordinate =
+                Constants::size - (Side ? coordinate - Constants::b_min.get<W>()
+                                        : Constants::b_max.get<W>() - coordinate);
+            if (delta_coordinate > epsilon) {
+              block.vel_acc(i).acc.set<W>() +=
+                  (Side ? +1.0 : -1.0) * Constants::collisions * delta_coordinate -
+                  Constants::damping * block.vel_acc(i).vel.get<W>();
             }
           }
       };
@@ -169,7 +171,7 @@ namespace Fluid {
               block.pos_dens(i).pos.set<W>() =
                   (Side ? Constants::b_min.get<W>() - d_w : Constants::b_max.get<W>() + d_w);
               block.vel_acc(i).vel.set<W>() *= -1;
-              block.hv(i).set<W>()          *= -1;
+              block.gradient(i).set<W>()    *= -1;
             }
           }
       };
@@ -344,9 +346,9 @@ namespace Fluid {
           Vector3<double> const acceleration{
               // Clang-format doesn't know how to properly format this formula
               // clang-format off
-              ( distance * (1.5 * Constants::p_s * (const2 / std::numbers::pi)) * (std::pow((h_ - dist_ij), 2) / dist_ij)
-                * (blockI.pos_dens(i).dens + blockJ.pos_dens(j).dens - 2 * Constants::rho)
-                + (blockJ.vel_acc(j).vel - blockI.vel_acc(i).vel) * Constants::mu * (const3/const2) * (const2 / std::numbers::pi))
+              ( distance * (1.5 * Constants::pressure * (const2 / std::numbers::pi)) * (std::pow((h_ - dist_ij), 2) / dist_ij)
+                * (blockI.pos_dens(i).dens + blockJ.pos_dens(j).dens - 2 * Constants::density)
+                + (blockJ.vel_acc(j).vel - blockI.vel_acc(i).vel) * Constants::viscosity * (const3/const2) * (const2 / std::numbers::pi))
                * acceleration_transform_factor_ / (blockI.pos_dens(i).dens * blockJ.pos_dens(j).dens)
               // clang-format on
           };
@@ -360,10 +362,11 @@ namespace Fluid {
         iter_blocks([this](Vector3<size_t> const & block_idx) {
           auto & block{index(block_idx, front_)};
           for (std::size_t i{0}; i < block.size(); ++i) {
-            block.pos_dens(i).pos +=
-                block.hv(i) * Constants::dt + block.vel_acc(i).acc * std::pow(Constants::dt, 2);
-            block.vel_acc(i).vel  = block.hv(i) + block.vel_acc(i).acc * Constants::dt / 2;
-            block.hv(i)          += block.vel_acc(i).acc * Constants::dt;
+            block.pos_dens(i).pos += block.gradient(i) * Constants::delta_time +
+                                     block.vel_acc(i).acc * std::pow(Constants::delta_time, 2);
+            block.vel_acc(i).vel =
+                block.gradient(i) + block.vel_acc(i).acc * Constants::delta_time / 2;
+            block.gradient(i) += block.vel_acc(i).acc * Constants::delta_time;
           }
         });
       }
@@ -386,7 +389,7 @@ namespace Fluid {
             Particle particle;
             particle.pos      = block.pos_dens(i).pos;
             particle.vel      = block.vel_acc(i).vel;
-            particle.gradient = block.hv(i);
+            particle.gradient = block.gradient(i);
             particle.id       = block.id(i);
             particle.density  = reset_density_;
             find_block(particle.pos, back_).add(particle);

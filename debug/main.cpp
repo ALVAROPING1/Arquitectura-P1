@@ -1,4 +1,3 @@
-// NOLINTBEGIN
 #define FLUID_DEBUG
 #include "sim/argumentparser.hpp"
 #include "sim/fileio.hpp"
@@ -16,121 +15,151 @@
 using namespace Fluid::IO;
 using block_vector = std::vector<Fluid::Block>;
 
-constexpr double epsilon = 1e-9;
+constexpr double epsilon = 1e-9;  // Floating point comparison tolerance
 
-// constexpr int max = 3;
-// static int count = 0;
-
+/// Compara 2 `double`s con una toleracia
 bool compare(double left, double right) {
   return std::abs(left - right) <= epsilon * std::max(std::abs(left), std::abs(right));
 }
 
+/// Compara 2 `Vector3<double>`s con una tolerancia
 bool compare(Fluid::Vector3<double> left, Fluid::Vector3<double> right) {
   return compare(left.x, right.x) && compare(left.y, right.y) && compare(left.z, right.z);
 }
 
+/// Compara 2 `Particle`s
 bool compare(Fluid::Particle const & left, Fluid::Particle const & right) {
   if (left.id != right.id) {
     put_line(std::cerr, "Ids differ: ", left.id, " != ", right.id);
     return false;
-  } else if (compare(left.pos, right.pos) && compare(left.density, right.density) &&
-             compare(left.gradient, right.gradient) && compare(left.vel, right.vel) &&
-             compare(left.acc, right.acc)) {
-    return true;
-  } else {
-    put_line(std::cout, left, " ?= ", right);
-    return false;
   }
+  if (compare(left.pos, right.pos) && compare(left.density, right.density) &&
+      compare(left.gradient, right.gradient) && compare(left.vel, right.vel) &&
+      compare(left.acc, right.acc)) {
+    return true;
+  }
+  put_line(std::cout, "Left: correct, right: calculated");
+  put_line(std::cout, left, " != ", right);
+  return false;
 }
 
+/// Compara 2 `Block`s
 bool compare(Fluid::Block const & left, Fluid::Block const & right) {
-  auto lp = left.get_particles();
-  auto rp = right.get_particles();
-  if (lp.size() != rp.size()) {
+  // Gets the particles
+  auto left_vec  = left.get_particles();
+  auto right_vec = right.get_particles();
+  // Checks that the amounts match
+  if (left_vec.size() != right_vec.size()) {
     put_line(std::cerr, "\033[31mBlock sizes differ\033[0m");
     return false;
   }
+  // Sorts the vectors according to the particle IDs
   constexpr auto cmp = [](Fluid::Particle const & l, Fluid::Particle const & r) {
     return l.id < r.id;
   };
-  std::sort(lp.begin(), lp.end(), cmp);
-  std::sort(rp.begin(), rp.end(), cmp);
-  auto l_it = lp.begin();
-  auto r_it = rp.begin();
-  for (; l_it != lp.end() and r_it != rp.end(); ++l_it, ++r_it) {
+  std::sort(left_vec.begin(), left_vec.end(), cmp);
+  std::sort(right_vec.begin(), right_vec.end(), cmp);
+  // Iterates through both vectors
+  for (auto l_it{left_vec.begin()}, r_it{right_vec.begin()};
+       l_it != left_vec.end() and r_it != right_vec.end(); ++l_it, ++r_it) {
+    // Checks if the particles match
     if (!compare(*l_it, *r_it)) { return false; }
   }
   return true;
 }
 
+/// Compara 2 vectores de `Block`
 bool compare(block_vector const & left, block_vector const & right) {
-  auto l_it = left.begin();
-  auto r_it = right.begin();
+  // Compares the amount of blocks
   if (left.size() != right.size()) {
     put_line(std::cerr, "\033[31mBlock vector sizes differ\033[0m");
     return false;
   }
-  int id = 0;
-  for (; l_it != left.end() and r_it != right.end(); ++l_it, ++r_it, ++id) {
+  int block_id{0};
+  // Iterates through both vectors
+  for (auto l_it{left.begin()}, r_it{right.begin()}; l_it != left.end() and r_it != right.end();
+       ++l_it, ++r_it, ++block_id) {
+    // Checks if the blocks match
     if (not compare(*l_it, *r_it)) {
-      put_line(std::cout, "Error comparing block \033[1m", id, "\033[0m");
+      put_line(std::cout, "Error comparing block \033[1m", block_id, "\033[0m");
       return false;
     }
   }
   return true;
 }
 
+/// Compara el estado del programa con el del archivo de trazas `<name>-base-<i>.trz`
+/// @param grid
+/// Malla de la simulación
+/// @param name
+/// Nombre del paso
+/// @param i
+/// Iteración de la simulación
+void trace_state(Fluid::Grid & grid, std::string const & name, int i) {
+  put(std::cout, "   \033[33mTesting ", name, " (", i + 1, ")", "\033[0m... \t");
+  // Carga el vector de bloques correcto y del programa
+  std::vector<Fluid::Block> const correct =
+      TraceIO{"trz/small/" + name + "-base-" + std::to_string(i + 1) + ".trz"}.load();
+  std::vector<Fluid::Block> const attempt = grid.get_blocks();
+  // Compara los vectores
+  if (compare(correct, attempt)) {
+    put_line(std::cout, "\033[32;1m[SUCCESS]\033[0m");
+  } else {
+    put_line(std::cout, "\033[31;1m[FAILURE]\033[0m");
+    // If there was an error, sets the internal program state to a correct one to avoid compounding
+    // errors
+    grid.set_blocks(correct);
+  }
+}
+
+/// Compara el estado del programa con el de los archivos de trazas para una iteración
+/// @param grid
+/// Malla de la simulación
+/// @param i
+/// Iteración de la simulación
+void compare_iteration(Fluid::Grid & grid, int i) {
+  put_line(std::cout, "\033[1;36mIteration ", i + 1, "\033[0m");
+  trace_state(grid, "repos", i);
+  trace_state(grid, "initacc", i);
+
+  grid.increment_densities();
+  // "densinc"
+  // trace_state(grid, "denstransf", i);
+
+  grid.transfer_accelerations();
+  trace_state(grid, "acctransf", i);
+
+  grid.wall_interactions();
+  trace_state(grid, "partcol", i);
+
+  grid.particle_movement();
+  trace_state(grid, "motion", i);
+
+  grid.wall_collisions();
+  trace_state(grid, "boundint", i);
+
+  grid.particle_repositioning();
+  // trace(grid, "repos", i);
+  put_line(std::cout);
+}
+
 int main(int argc, char const ** argv) {
+  // Inicializa el programa
   Fluid::ArgumentParser argp{
       {argv, static_cast<std::size_t>(argc)}
   };
   if (!argp) { return argp.error(); }
   Fluid::FileIO & file = argp.file();
   Fluid::Grid grid{file.np(), file.ppm()};
-  TraceIO tracer;
+  // Carga el archivo de entrada
   file.load(grid);
-  std::vector<Fluid::Block> correct;
-  std::vector<Fluid::Block> attempt;
-
-  auto trace = [&](std::string const & name, int it) {
-    put(std::cout, "   \033[33mTesting ", name, " (", it + 1, ")", "\033[0m... \t");
-    correct = tracer.load("trz/small/" + name + "-base-" + std::to_string(it + 1) + ".trz");
-    attempt = grid.get_blocks();
-    if (compare(correct, attempt)) {
-      put_line(std::cout, "\033[32;1m[SUCCESS]\033[0m");
-    } else {
-      put_line(std::cout, "\033[31;1m[FAILURE]\033[0m");
-      grid.set_blocks(correct);
-    }
-  };
-
-  for (int i = 0; i < argp.step_count(); ++i) {
-    put_line(std::cout, "\033[1;36mIteration ", i + 1, "\033[0m");
-    trace("repos", i);
-    trace("initacc", i);
-
-    grid.increment_densities();
-    // "densinc"
-    // trace("denstransf", i);
-
-    grid.transfer_accelerations();
-    trace("acctransf", i);
-
-    grid.wall_interactions();
-    trace("partcol", i);
-
-    grid.particle_movement();
-    trace("motion", i);
-
-    grid.wall_collisions();
-    trace("boundint", i);
-
-    grid.particle_repositioning();
-    // trace("repos", i);
-    put_line(std::cout);
+  if (!file) { return file.error(); }
+  constexpr int max_debug_iterations{5};
+  // Realiza las iteraciones
+  for (int i = 0; i < std::min(argp.step_count(), max_debug_iterations); ++i) {
+    compare_iteration(grid, i);
   }
+  // Escribre el archivo de salida
   file.dump(grid);
   return 0;
 }
-
-// NOLINTEND

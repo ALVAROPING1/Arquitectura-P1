@@ -90,7 +90,7 @@ namespace BlockTest {
     particula.id           = id_particula;
     Fluid::Block bloque    = get_block();
     bloque.add(particula);
-    ASSERT_EQ(bloque.hv(0), particula.gradient);
+    ASSERT_EQ(bloque.gradient(0), particula.gradient);
   }
 
   // funcion vel_acc
