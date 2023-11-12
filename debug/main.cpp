@@ -88,6 +88,13 @@ bool compare(block_vector const & left, block_vector const & right) {
   return true;
 }
 
+/// Resetea la densidad de todas las partículas a 0
+void init_density(std::vector<Fluid::Block> & block_vec) {
+  for (auto & block : block_vec) {
+    for (std::size_t i{0}; i < block.size(); ++i) { block.pos_dens(i).dens = 0; }
+  }
+}
+
 /// Compara el estado del programa con el del archivo de trazas `<name>-base-<i>.trz`
 /// @param grid
 /// Malla de la simulación
@@ -100,7 +107,8 @@ void trace_state(Fluid::Grid & grid, std::string const & name, int i) {
   // Carga el vector de bloques correcto y del programa
   std::vector<Fluid::Block> const correct =
       TraceIO{"trz/small/" + name + "-base-" + std::to_string(i + 1) + ".trz"}.load();
-  std::vector<Fluid::Block> const attempt = grid.get_blocks();
+  std::vector<Fluid::Block> attempt = grid.get_blocks();
+  if (name == "repos" or name == "initacc") { init_density(attempt); }
   // Compara los vectores
   if (compare(correct, attempt)) {
     put_line(std::cout, "\033[32;1m[SUCCESS]\033[0m");
@@ -123,9 +131,12 @@ void compare_iteration(Fluid::Grid & grid, int i) {
   trace_state(grid, "initacc", i);
 
   grid.increment_densities();
-  // "densinc"
-  // trace_state(grid, "denstransf", i);
+  // Densinc step can't be tested since the densinc and denstransf steps are combined in the program
+  // trace_state(grid, "densinc", i);
+  trace_state(grid, "denstransf", i);
 
+  // for performance reasons. Additionally, running it will cause the denstransf comparison to
+  // also fail as the state of the program will be reverted to the result of the densinc step
   grid.transfer_accelerations();
   trace_state(grid, "acctransf", i);
 
@@ -139,7 +150,6 @@ void compare_iteration(Fluid::Grid & grid, int i) {
   trace_state(grid, "boundint", i);
 
   grid.particle_repositioning();
-  // trace(grid, "repos", i);
   put_line(std::cout);
 }
 
