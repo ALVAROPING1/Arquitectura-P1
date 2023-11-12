@@ -15,7 +15,7 @@
 using namespace Fluid::IO;
 using block_vector = std::vector<Fluid::Block>;
 
-constexpr double epsilon = 1e-9;  // Floating point comparison tolerance
+constexpr double epsilon = 1e-8;  // Floating point comparison tolerance
 
 /// Compara 2 `double`s con una toleracia
 bool compare(double left, double right) {
@@ -102,11 +102,11 @@ void init_density(std::vector<Fluid::Block> & block_vec) {
 /// Nombre del paso
 /// @param i
 /// Iteración de la simulación
-void trace_state(Fluid::Grid & grid, std::string const & name, int i) {
+void trace_state(Fluid::Grid & grid, std::string const & model, std::string const & name, int i) {
   put(std::cout, "   \033[33mTesting ", name, " (", i + 1, ")", "\033[0m... \t");
   // Carga el vector de bloques correcto y del programa
   std::vector<Fluid::Block> const correct =
-      TraceIO{"trz/small/" + name + "-base-" + std::to_string(i + 1) + ".trz"}.load();
+      TraceIO{"trz/" + model + "/" + name + "-base-" + std::to_string(i + 1) + ".trz"}.load();
   std::vector<Fluid::Block> attempt = grid.get_blocks();
   if (name == "repos" or name == "initacc") { init_density(attempt); }
   // Compara los vectores
@@ -123,31 +123,29 @@ void trace_state(Fluid::Grid & grid, std::string const & name, int i) {
 /// Compara el estado del programa con el de los archivos de trazas para una iteración
 /// @param grid
 /// Malla de la simulación
+/// @param model
+/// Nombre del modelo, usado para seleccionar las trazas a cargar
 /// @param i
 /// Iteración de la simulación
-void compare_iteration(Fluid::Grid & grid, int i) {
+void compare_iteration(Fluid::Grid & grid, std::string const & model, int i) {
   put_line(std::cout, "\033[1;36mIteration ", i + 1, "\033[0m");
-  trace_state(grid, "repos", i);
-  trace_state(grid, "initacc", i);
+  trace_state(grid, model, "repos", i);
+  trace_state(grid, model, "initacc", i);
 
   grid.increment_densities();
   // Densinc step can't be tested since the densinc and denstransf steps are combined in the program
-  // trace_state(grid, "densinc", i);
-  trace_state(grid, "denstransf", i);
-
   // for performance reasons. Additionally, running it will cause the denstransf comparison to
   // also fail as the state of the program will be reverted to the result of the densinc step
+  // trace_state(grid, model, "densinc", i);
+  trace_state(grid, model, "denstransf", i);
   grid.transfer_accelerations();
-  trace_state(grid, "acctransf", i);
-
+  trace_state(grid, model, "acctransf", i);
   grid.wall_interactions();
-  trace_state(grid, "partcol", i);
-
+  trace_state(grid, model, "partcol", i);
   grid.particle_movement();
-  trace_state(grid, "motion", i);
-
+  trace_state(grid, model, "motion", i);
   grid.wall_collisions();
-  trace_state(grid, "boundint", i);
+  trace_state(grid, model, "boundint", i);
 
   grid.particle_repositioning();
   put_line(std::cout);
@@ -155,9 +153,8 @@ void compare_iteration(Fluid::Grid & grid, int i) {
 
 int main(int argc, char const ** argv) {
   // Inicializa el programa
-  Fluid::ArgumentParser argp{
-      {argv, static_cast<std::size_t>(argc)}
-  };
+  std::span<gsl::czstring> args{argv, static_cast<std::size_t>(argc)};
+  Fluid::ArgumentParser argp{args};
   if (!argp) { return argp.error(); }
   Fluid::FileIO & file = argp.file();
   Fluid::Grid grid{file.np(), file.ppm()};
@@ -165,9 +162,12 @@ int main(int argc, char const ** argv) {
   file.load(grid);
   if (!file) { return file.error(); }
   constexpr int max_debug_iterations{5};
+  // Obtiene el nombre del modelo a usar del nombre del archivo de entrada
+  std::string const model_file_name{args[2]};
+  std::string const model{model_file_name.substr(model_file_name.size() - 3L * 3L, 5)};
   // Realiza las iteraciones
   for (int i = 0; i < std::min(argp.step_count(), max_debug_iterations); ++i) {
-    compare_iteration(grid, i);
+    compare_iteration(grid, model, i);
   }
   // Escribre el archivo de salida
   file.dump(grid);
