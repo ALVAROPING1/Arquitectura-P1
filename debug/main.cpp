@@ -153,7 +153,7 @@ void compare_iteration(Fluid::Grid & grid, std::string const & model, int i) {
 
 int main(int argc, char const ** argv) {
   // Inicializa el programa
-  std::span<gsl::czstring> args{argv, static_cast<std::size_t>(argc)};
+  std::span<gsl::czstring> const args{argv, static_cast<std::size_t>(argc)};
   Fluid::ArgumentParser argp{args};
   if (!argp) { return argp.error(); }
   Fluid::FileIO & file = argp.file();
