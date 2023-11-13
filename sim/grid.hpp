@@ -39,8 +39,6 @@ namespace Fluid {
       block_vector front_;  // Búfer de bloques en la iteración actual
       block_vector back_;   // Búfer de bloques en la siguiente iteración
 
-      friend class GridTestHarness;
-
     public:
       /// Construye una nueva malla vacía.
       /// @param pc
