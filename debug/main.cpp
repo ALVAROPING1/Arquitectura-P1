@@ -148,7 +148,39 @@ void compare_iteration(Fluid::Grid & grid, std::string const & model, int i) {
   trace_state(grid, model, "boundint", i);
 
   grid.particle_repositioning();
-  put_line(std::cout);
+}
+
+/// Compara el archivo de salida del programa con el de referencia
+/// @param result_file
+/// Archivo de salida generado
+/// @param model
+/// Nombre del modelo, usado para seleccionar el archivo de salida de referencia
+/// @param i
+/// Iteración de la simulación
+void compare_result(std::ifstream result_file, std::string const & model, int i) {
+  put(std::cout, "   \033[33mTesting result file (", i + 1, ")", "\033[0m... \t");
+  // Abre el archivo de salida de referencia
+  std::string correct_name{"correct/" + model + "-" + std::to_string(i + 1) + ".fld"};
+  std::ifstream correct_file{correct_name};
+  if (not correct_file) {
+    put_line(std::cout,
+             "\033[31;1m[FAILURE]\033[0m\nNo se puede abrir el archivo de salida de referencia: ",
+             correct_name + "\n");
+    return;
+  }
+  // Compara byte a byte los archivos
+  char correct_byte{};
+  char result_byte{};
+  while (result_file.read(&result_byte, sizeof(char)) and
+         correct_file.read(&correct_byte, sizeof(char))) {
+    // Si hay alguna diferencia, da un error y termina
+    if (correct_byte != result_byte) {
+      put_line(std::cout, "\033[31;1m[FAILURE]\033[0m\nEl archivo de salida generado difiere del "
+                          "archivo de salida de referencia\n");
+      return;
+    }
+  }
+  put_line(std::cout, "\033[32;1m[SUCCESS]\033[0m\n");
 }
 
 int main(int argc, char const ** argv) {
@@ -161,15 +193,19 @@ int main(int argc, char const ** argv) {
   // Carga el archivo de entrada
   file.load(grid);
   if (!file) { return file.error(); }
-  constexpr int max_debug_iterations{5};
   // Obtiene el nombre del modelo a usar del nombre del archivo de entrada
   std::string const model_file_name{args[2]};
   std::string const model{model_file_name.substr(model_file_name.size() - 3L * 3L, 5)};
   // Realiza las iteraciones
+  constexpr int max_debug_iterations{5};
   for (int i = 0; i < std::min(argp.step_count(), max_debug_iterations); ++i) {
     compare_iteration(grid, model, i);
+    // Escribe el archivo de salida y comprueba que es correcto. Se vuelve a abrir el archivo para
+    // sobreescribirlo
+    Fluid::FileIO file;
+    file.open(args[2], args[3]);
+    file.dump(grid);
+    compare_result(std::ifstream{args[3]}, model, i);
   }
-  // Escribre el archivo de salida
-  file.dump(grid);
   return 0;
 }
