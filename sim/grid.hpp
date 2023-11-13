@@ -103,14 +103,8 @@ namespace Fluid {
       /// Indexa el vector de bloques según las coordendas de bloque dadas
       /// @param idx
       /// Índice de bloque
-      /// @param block_vec
-      /// Vector de bloques a indexar. Debería ser `front_` o `back_`
-      //
-      // The function can't be made const because it's used
-      // to return a mutable reference to a stored value
-      // NOLINTNEXTLINE (readability-make-member-function-const)
-      constexpr Block & index(Vector3<std::size_t> idx, block_vector & block_vec) {
-        return block_vec[idx.z * count_.y * count_.x + idx.y * count_.x + idx.x];
+      [[nodiscard]] constexpr std::size_t index(Vector3<std::size_t> idx) const {
+        return idx.z * count_.y * count_.x + idx.y * count_.x + idx.x;
       }
 
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
@@ -120,7 +114,7 @@ namespace Fluid {
         Vector3<double> const pos_{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
         Vector3<std::size_t> const idx{
             static_cast<Vector3<std::size_t>>((pos_ - Constants::b_min) / sizes_)};
-        return index(idx, block_vec);
+        return block_vec[index(idx)];
       }
 
       /// Calcula la interacción de una partícula con el borde dado
@@ -198,7 +192,7 @@ namespace Fluid {
         for (; idx.get<A>() < count_A; ++idx.set<A>()) {
           for (idx.set<B>() = 0; idx.get<B>() < count_B; ++idx.set<B>()) {
             // Itera por las partículas del bloque y les aplica la función
-            Block & block = index(idx, front_);
+            Block & block = front_[index(idx)];
             for (std::size_t i{0}; i < block.size(); ++i) { Proc::template run<Side, C>(block, i); }
           }
         }
@@ -292,13 +286,13 @@ namespace Fluid {
       {
         // Itera por los bloques de la malla
         iter_blocks([&](Vector3<std::size_t> const & blockI_idx) {
-          Block & blockI = index(blockI_idx, front_);
+          Block & blockI = front_[index(blockI_idx)];
           // Si no tiene partículas, no hay que hacer nada y se pueden saltar el resto de
           // comprobaciones
           if (blockI.size() == 0) { return; }
           // Itera por los bloques adyacentes
           adjacent_blocks(blockI_idx, [&](Vector3<std::size_t> const & blockJ_idx) {
-            Block & blockJ = index(blockJ_idx, front_);
+            Block & blockJ = front_[index(blockJ_idx)];
             // Itera por todos los pares de partículas y les aplica la función
             for (std::size_t i{0}; i < blockI.size(); ++i) {
               for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI, blockJ, i, j); }
@@ -358,7 +352,7 @@ namespace Fluid {
       /// Mueve las partículas
       constexpr void particle_movement() {
         iter_blocks([this](Vector3<size_t> const & block_idx) {
-          auto & block{index(block_idx, front_)};
+          auto & block = front_[index(block_idx)];
           for (std::size_t i{0}; i < block.size(); ++i) {
             block.pos_dens(i).pos += block.gradient(i) * Constants::delta_time +
                                      block.vel_acc(i).acc * std::pow(Constants::delta_time, 2);
