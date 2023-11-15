@@ -14,8 +14,7 @@ int main(int argc, char const ** argv) {
   Fluid::ArgumentParser argp{
       {argv, static_cast<std::size_t>(argc)}
   };
-  Fluid::FileIO file;
-  file.open(argp.in(), argp.out());
+  Fluid::FileIO file{argp.in(), argp.out()};
   Fluid::Grid grid{file.np(), file.ppm()};
   // Carga el archivo de entrada
   file.load(grid);

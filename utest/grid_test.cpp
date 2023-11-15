@@ -16,8 +16,7 @@ namespace GridTest {
   // Test para asegurar que los calculos realizados son los correctos dentro de la clase
   // "Fluid::Grid" cuando se importan los datos de eun archivo.
   TEST_F(GridTestClass, ImportOK) {
-    Fluid::FileIO iotest{};
-    iotest.open("NpTrue.fld", "out.fld");
+    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
 
     Fluid::Grid test_grid{iotest.np(), iotest.ppm()};
     iotest.load(test_grid);
@@ -38,8 +37,7 @@ namespace GridTest {
   // Test de la funcionalidad de añadir una partícula a la malla.
   // Se prueba que el número de particulas aumenta cuando se añaden particulas manualmente.
   TEST_F(GridTestClass, InsertParticle) {
-    Fluid::FileIO iotest{};
-    iotest.open("NpTrue.fld", "out.fld");
+    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
 
     Fluid::Grid test_grid{iotest.np(), iotest.ppm()};
     iotest.load(test_grid);

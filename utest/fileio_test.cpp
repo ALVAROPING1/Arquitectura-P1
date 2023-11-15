@@ -12,6 +12,7 @@ namespace FileIOTest {
   using FileIOTestClassDeathTest = FileIOTestClass;
   constexpr int DoubleFormatPrecision{8};
 
+  // Comprueba si 2 archivos son idénticos byte a byte
   [[nodiscard]] testing::AssertionResult compare_files(std::string const & left,
                                                        std::string const & right) {
     std::ifstream left_file{left};
@@ -37,24 +38,21 @@ namespace FileIOTest {
 
   // Test con archivo de np < 0.
   TEST_F(FileIOTestClassDeathTest, npNegative) {
-    Fluid::FileIO iotest1{};
-    ASSERT_EXIT(iotest1.open("NpNegative.fld", "out.fld"),
+    ASSERT_EXIT(Fluid::FileIO("NpNegative.fld", "out.fld"),
                 testing::ExitedWithCode((unsigned char) -5),
                 "Error: Invalid number of particles: " + std::to_string(Const::np_negative) + "\n");
   }
 
   // Test con archivo de np == 0.
   TEST_F(FileIOTestClassDeathTest, npEqualZero) {
-    Fluid::FileIO iotest{};
-    ASSERT_EXIT(iotest.open("NpEqualZero.fld", "out.fld"),
+    ASSERT_EXIT(Fluid::FileIO("NpEqualZero.fld", "out.fld"),
                 testing::ExitedWithCode((unsigned char) -5),
                 "Error: Invalid number of particles: " + std::to_string(Const::np_zero) + "\n");
   }
 
   // Test con archivo de np positivo y mismo número de partículas.
   TEST_F(FileIOTestClass, npTrue) {
-    Fluid::FileIO iotest{};
-    iotest.open("NpTrue.fld", "out.fld");
+    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
     // Redirige std::cout a un buffer para poder leerlo y comprobar que es correcto
     std::stringstream buffer;
@@ -82,8 +80,7 @@ namespace FileIOTest {
 
   // Test con archivo de np positivo y menor número de partículas que las requeridas.
   TEST_F(FileIOTestClassDeathTest, npLowerFalse) {
-    Fluid::FileIO iotest{};
-    iotest.open("NpLowerFalse.fld", "out.fld");
+    Fluid::FileIO iotest{"NpLowerFalse.fld", "out.fld"};
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
     ASSERT_EXIT(
         iotest.load(testGrid), testing::ExitedWithCode((unsigned char) -5),
@@ -93,8 +90,7 @@ namespace FileIOTest {
 
   // Test con archivo de np positivo y mayor número de particulas de las requeridas.
   TEST_F(FileIOTestClassDeathTest, npGraterFalse) {
-    Fluid::FileIO iotest{};
-    iotest.open("NpGreaterFalse.fld", "out.fld");
+    Fluid::FileIO iotest{"NpGreaterFalse.fld", "out.fld"};
     Fluid::Grid testGrid{Const::np_greater_false, Const::ppm};
 
     ASSERT_EXIT(
@@ -105,15 +101,14 @@ namespace FileIOTest {
 
   // Test con archivo de datos no válido. (Archivo no existe).
   TEST_F(FileIOTestClassDeathTest, BadInputFile) {
-    Fluid::FileIO iotest{};
-    ASSERT_EXIT(iotest.open("entrada.fld", "out.fld"), testing::ExitedWithCode((unsigned char) -3),
+    ASSERT_EXIT(Fluid::FileIO("entrada.fld", "out.fld"),
+                testing::ExitedWithCode((unsigned char) -3),
                 "Error: Cannot open entrada.fld for reading");
   }
 
   // Test con archivo de salida de solo lectura.
   TEST_F(FileIOTestClassDeathTest, BadOutputFile) {
-    Fluid::FileIO iotest{};
-    ASSERT_EXIT(iotest.open("NpTrue.fld", "r.fld"), testing::ExitedWithCode((unsigned char) -4),
+    ASSERT_EXIT(Fluid::FileIO("NpTrue.fld", "r.fld"), testing::ExitedWithCode((unsigned char) -4),
                 "Error: Cannot open r.fld for writing");
   }
 }  // namespace FileIOTest

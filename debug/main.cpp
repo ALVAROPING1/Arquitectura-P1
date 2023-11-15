@@ -187,8 +187,7 @@ int main(int argc, char const ** argv) {
   // Inicializa el programa
   std::span<gsl::czstring> const args{argv, static_cast<std::size_t>(argc)};
   Fluid::ArgumentParser argp{args};
-  Fluid::FileIO file;
-  file.open(argp.in(), argp.out());
+  Fluid::FileIO file{argp.in(), argp.out()};
   Fluid::Grid grid{file.np(), file.ppm()};
   // Carga el archivo de entrada
   file.load(grid);
@@ -201,8 +200,7 @@ int main(int argc, char const ** argv) {
     compare_iteration(grid, model, i);
     // Escribe el archivo de salida y comprueba que es correcto. Se vuelve a abrir el archivo para
     // sobreescribirlo
-    Fluid::FileIO file;
-    file.open(args[2], args[3]);
+    Fluid::FileIO file{args[2], args[3]};
     file.dump(grid);
     compare_result(std::ifstream{args[3]}, model, i);
   }

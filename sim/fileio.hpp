@@ -21,13 +21,13 @@ namespace Fluid {
   // Objeto que gestiona los archivos de IO
   class FileIO {
     public:
-      /// Abre los archivos de IO
+      /// Crea el objeto y abre los archivos de IO
       /// @param input_name
       /// Nombre del archivo de entrada
       /// @param output_name
       /// Nombre del archivo de salida
       template <FileNameType S1, FileNameType S2>
-      void open(S1 input_name, S2 output_name) {
+      FileIO(S1 input_name, S2 output_name) {
         // Input file
         input_file_.open(input_name, std::ios::binary);
         if (not input_file_) {
