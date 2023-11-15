@@ -44,98 +44,74 @@ namespace FileIOTest {
   // en los archivos. En cada función preparatoria, se comprueba que el archivo se ha creado
   // correctamente. Sino, se notifica de que los archivos no se han creado.
   class FileIOTestClass : public testing::Test {
-      // creación de un archivo con un número de particulas negativas.
-      static bool prepare_np_negative(std::string const & name) {
-        std::ofstream file{name, std::ios::binary | std::ios::out};
+      static std::ofstream prepare_file(std::string const & name) {
+        std::ofstream file{name, std::ios::binary};
 
         if (!file) {
           std::cout << "El archivo" << name << " no se ha podido crear\n";
-          return false;
+        } else {
+          Fluid::IO::write(file, Const::ppm);
         }
 
-        Fluid::IO::write(file, Const::ppm);
-        Fluid::IO::write(file, Const::np_negative);
+        return file;
+      }
 
-        file.close();
+      // creación de un archivo con un número de particulas negativas.
+      static bool prepare_np_negative(std::string const & name) {
+        std::ofstream file = prepare_file(name);
+        if (!file) { return false; }
+        Fluid::IO::write(file, Const::np_negative);
         return true;
       };
 
       // creación de un archivo con indicador de número de paratículas nulo.
       static bool prepare_np_zero(std::string const & name) {
-        std::ofstream file{name, std::ios::binary};
-
-        if (!file) {
-          std::cout << "El archivo" << name << " no se ha podido crear\n";
-          return false;
-        }
-
-        Fluid::IO::write(file, Const::ppm);
+        std::ofstream file = prepare_file(name);
+        if (!file) { return false; }
         Fluid::IO::write(file, Const::np_zero);
 
-        file.close();
         return true;
       };
 
       // creación de un archivo con número de partículas positivo y coincide con las partículas
       // introducidas en el propio archivo.
       static bool prepare_np_true(std::string const & name) {
-        std::ofstream file{name, std::ios::binary};
-
-        if (!file) {
-          std::cout << "El archivo" << name << " no se ha podido crear\n";
-          return false;
-        }
-
-        Fluid::IO::write(file, Const::ppm);
+        std::ofstream file = prepare_file(name);
+        if (!file) { return false; }
         Fluid::IO::write(file, Const::np_true);
 
         for (int i = 0; i < Const::it_np_true; i++) {
           Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
-        file.close();
         return true;
       };
 
       // creación de un archivo con número de partículas positivo pero hay menos particulas de las
       // indicadas.
       static bool prepare_np_lower_false(std::string const & name) {
-        std::ofstream file{name, std::ios::binary};
-
-        if (!file) {
-          std::cout << "El archivo" << name << " no se ha podido crear\n";
-          return false;
-        }
-
-        Fluid::IO::write(file, Const::ppm);
+        std::ofstream file = prepare_file(name);
+        if (!file) { return false; }
         Fluid::IO::write(file, Const::np_lower_false);
 
         for (int i = 0; i < Const::it_np_lower_false; i++) {
           Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
-        file.close();
         return true;
       };
 
       // creación de un archivo con número de partículas positivo pero hay mas particulas de las
       // indicadas.
       static bool prepare_np_greater_false(std::string const & name) {
-        std::ofstream file{name, std::ios::binary};
-
-        if (!file) {
-          std::cout << "El archivo" << name << " no se ha podido crear\n";
-          return false;
-        }
-
-        Fluid::IO::write(file, Const::ppm);
+        std::ofstream file = prepare_file(name);
+        if (!file) { return false; }
         Fluid::IO::write(file, Const::np_greater_false);
 
         for (int i = 0; i < Const::it_np_greater_false; i++) {
           Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
-        file.close();
         return true;
       };
 
@@ -147,7 +123,6 @@ namespace FileIOTest {
           return false;
         }
 
-        file.close();
         return true;
       };
 
@@ -182,9 +157,7 @@ namespace FileIOTest {
         if (!result_1 || !result_2 || !result_3 || !result_4 || !result_5 || !result_out ||
             !result_read_out) {
           std::cout << "Las pruebas no se prepararon correctamente: \n";
-        } else {
-          std::cout << "Los archivos se crearon correctamente!!\n";
-        };
+        }
       };
 
       // Función que borra los archivos después de cada prueba y destruye el entorno para pruebas.
@@ -200,9 +173,7 @@ namespace FileIOTest {
         if (rem1 != 0 || rem2 != 0 || rem3 != 0 || rem4 != 0 || rem5 != 0 || remout != 0 ||
             remlectout != 0) {
           std::cout << "Los archivos de tests FileIO no se han podido borrar!!\n";
-        } else {
-          std::cout << "Los archivos se borraron correctamente!!\n";
-        };
+        }
       };
   };
 

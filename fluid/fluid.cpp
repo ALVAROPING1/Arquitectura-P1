@@ -14,12 +14,10 @@ int main(int argc, char const ** argv) {
   Fluid::ArgumentParser argp{
       {argv, static_cast<std::size_t>(argc)}
   };
-  if (!argp) { return argp.error(); }
   Fluid::FileIO & file = argp.file();
   Fluid::Grid grid{file.np(), file.ppm()};
   // Carga el archivo de entrada
   file.load(grid);
-  if (!file) { return file.error(); }
   // Realiza las iteraciones
   for (int i = 0; i < argp.step_count(); ++i) { grid.step(); }
   file.dump(grid);

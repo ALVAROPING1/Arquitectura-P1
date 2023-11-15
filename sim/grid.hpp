@@ -58,6 +58,18 @@ namespace Fluid {
         back_.resize(count, Block{approx});
       }
 
+      /// Devuelve la longitud de suavizado
+      [[nodiscard]] double const & h() const { return h_; }
+
+      /// Devuelve la masa de las partículas
+      [[nodiscard]] double const & mass() const { return m_; }
+
+      /// Devuelve la cantidad de bloques en cada eje
+      [[nodiscard]] Vector3<std::size_t> const & count() const { return count_; }
+
+      /// Devuelve el tamaño de los bloques en cada eje
+      [[nodiscard]] Vector3<double> const & sizes() const { return sizes_; }
+
       /// Añade una partícula a la malla.
       /// @param p
       /// La posición de la partícula

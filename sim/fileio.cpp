@@ -20,10 +20,19 @@ namespace Fluid {
     for (; IO::read(input_file_, pos, hvel, vel); ++idx) { grid.add(pos, hvel, vel); }
     // Comprueba que el número de partículas leídas sea el especificado en la cabecera
     if (idx != np_) {
-      error_ = particle_count_error;
       IO::put_line(std::cerr, "Error: Number of particles mismatch. Header: ", np_,
                    " Found: ", idx);
+      std::exit(particle_count_error);
     }
+    std::cout.setf(std::ios::fixed);
+    std::cout.precision(1);
+    std::cout << "Number of particles: " << np_ << "\nParticles per meter: " << ppm_
+              << "\nSmoothing length: " << grid.h() << "\nParticle mass: " << grid.mass()
+              << "\nGrid size: " << grid.count().x << " x " << grid.count().y << " x "
+              << grid.count().z
+              << "\nNumber of blocks: " << grid.count().x * grid.count().y * grid.count().z
+              << "\nBlock size: " << grid.sizes().x << " x " << grid.sizes().y << " x "
+              << grid.sizes().z << "\n";
   }
 
   void FileIO::dump(Grid const & grid) {
@@ -44,8 +53,8 @@ namespace Fluid {
     IO::read(input_file_, ppm, np_);
     // Comprueba que el número de partículas sea válido
     if (np_ <= 0) {
-      error_ = particle_count_error;
       IO::put_line(std::cerr, "Error: Invalid number of particles: ", np_);
+      std::exit(particle_count_error);
     }
     ppm_ = static_cast<double>(ppm);
   }

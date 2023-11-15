@@ -3,6 +3,7 @@
 #define FILE_IO_HPP
 
 #include "grid.hpp"
+#include "sim/io.hpp"
 
 #include <concepts>
 #include <fstream>
@@ -30,24 +31,18 @@ namespace Fluid {
         // Input file
         input_file_.open(input_name, std::ios::binary);
         if (not input_file_) {
-          error_ = -3;
-          return;
+          IO::put_line(std::cerr, "Error: Cannot open ", input_name, " for reading");
+          std::exit(-3);
         }
         // Output file
         output_file_.open(output_name, std::ios::binary);
         if (not output_file_) {
-          error_ = -4;
-          return;
+          IO::put_line(std::cerr, "Error: Cannot open ", output_name, " for writing");
+          std::exit(-4);
         }
         // Parses the header
         load_header();
       }
-
-      /// Devuelve el código de error
-      constexpr int error() const { return error_; }
-
-      /// Devuelve si ha habido algún error
-      constexpr operator bool() const { return error_ == 0; }
 
       /// Carga el archivo de entrada en la malla
       void load(Grid & grid);
@@ -61,7 +56,6 @@ namespace Fluid {
       constexpr std::size_t np() const { return np_; }
 
     private:
-      int error_{};                // Código de error
       std::ifstream input_file_;   // Archivo de entrada
       std::ofstream output_file_;  // Archivo de salida
       int np_{};                   // Número de partículas

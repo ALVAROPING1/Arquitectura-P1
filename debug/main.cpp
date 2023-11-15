@@ -187,12 +187,10 @@ int main(int argc, char const ** argv) {
   // Inicializa el programa
   std::span<gsl::czstring> const args{argv, static_cast<std::size_t>(argc)};
   Fluid::ArgumentParser argp{args};
-  if (!argp) { return argp.error(); }
   Fluid::FileIO & file = argp.file();
   Fluid::Grid grid{file.np(), file.ppm()};
   // Carga el archivo de entrada
   file.load(grid);
-  if (!file) { return file.error(); }
   // Obtiene el nombre del modelo a usar del nombre del archivo de entrada
   std::string const model_file_name{args[2]};
   std::string const model{model_file_name.substr(model_file_name.size() - 3L * 3L, 5)};
