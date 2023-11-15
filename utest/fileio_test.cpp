@@ -1,6 +1,6 @@
 // funcion main customizada para tests
 
-#include "FileIO_test.hpp"
+#include "fileio_test.hpp"
 
 #include "sim/fileio.hpp"
 #include "sim/grid.hpp"

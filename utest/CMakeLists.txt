@@ -1,10 +1,10 @@
 # Enable Google Test Library
 
 add_executable(file_io
-FileIO_test.cpp
+fileio_test.cpp
 )
 
-add_executable(progargs progargs_test.cpp)
+add_executable(argumentparser argumentparser_test.cpp)
 
 add_executable(vector3
     vector3_test.cpp)
@@ -21,7 +21,7 @@ gtest
 Microsoft.GSL::GSL)
 
 # Library dependencies
-target_link_libraries (progargs PRIVATE
+target_link_libraries (argumentparser PRIVATE
 sim
 gtest
 Microsoft.GSL::GSL)
