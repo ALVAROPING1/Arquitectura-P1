@@ -10,6 +10,7 @@
 
 namespace FileIOTest {
   using FileIOTestClassDeathTest = FileIOTestClass;
+  constexpr int DoubleFormatPrecision{8};
 
   [[nodiscard]] testing::AssertionResult compare_files(std::string const & left,
                                                        std::string const & right) {
@@ -66,7 +67,7 @@ namespace FileIOTest {
     // Crea la salida esperada y la compara
     std::stringstream expected;
     expected.setf(std::ios::fixed);
-    expected.precision(1);
+    expected.precision(DoubleFormatPrecision);
     expected << "Number of particles: " << Const::it_np_true
              << "\nParticles per meter: " << Const::ppm << "\nSmoothing length: " << testGrid.h()
              << "\nParticle mass: " << testGrid.mass() << "\nGrid size: " << testGrid.count().x

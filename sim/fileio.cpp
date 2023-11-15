@@ -9,6 +9,7 @@
 namespace Fluid {
 
   constexpr int particle_count_error = -5;
+  constexpr int DoubleFormatPrecision{8};
 
   void FileIO::load(Grid & grid) {
     Vector3<float> pos;
@@ -25,7 +26,7 @@ namespace Fluid {
       std::exit(particle_count_error);
     }
     std::cout.setf(std::ios::fixed);
-    std::cout.precision(1);
+    std::cout.precision(DoubleFormatPrecision);
     std::cout << "Number of particles: " << np_ << "\nParticles per meter: " << ppm_
               << "\nSmoothing length: " << grid.h() << "\nParticle mass: " << grid.mass()
               << "\nGrid size: " << grid.count().x << " x " << grid.count().y << " x "
