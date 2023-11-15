@@ -13,7 +13,7 @@ namespace Fluid {
 
       friend std::ostream & operator<<(std::ostream & out, Vector3 const & c) {
         return out << "("
-                   << "x: " << c.x << ",y: " << c.y << ",z: " << c.z << ")";
+                   << "x: " << c.x << ", y: " << c.y << ", z: " << c.z << ")";
       }
 
       constexpr Vector3 operator+(Vector3 const & other) const {

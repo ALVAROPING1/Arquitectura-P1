@@ -18,6 +18,29 @@ namespace Vector3Test {
   constexpr Fluid::Vector3<double> double_suma{4.5, 1.5, 2.5};
   constexpr Fluid::Vector3<double> double_resta{-2.5, -0.5, 1.5};
 
+  // pruebas de std::ostream <<
+  // clases de equivalencia
+  // enteros
+  TEST(Vector3Test, out_int_1) {
+    std::stringstream out{};
+    out << int_1;
+    ASSERT_EQ(out.str(), "(x: 10, y: 15, z: 20)");
+  }
+
+  // floats
+  TEST(Vector3Test, out_float_1) {
+    std::stringstream out{};
+    out << float_1;
+    ASSERT_EQ(out.str(), "(x: 1, y: 0.5, z: 2)");
+  }
+
+  // doubles
+  TEST(Vector3Test, out_double_1) {
+    std::stringstream out{};
+    out << double_1;
+    ASSERT_EQ(out.str(), "(x: 1, y: 0.5, z: 2)");
+  }
+
   // pruebas de suma
   // clases de equivalencia
   // enteros
