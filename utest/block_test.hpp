@@ -1,7 +1,7 @@
 #ifndef BLOCK_TEST_HPP
 #define BLOCK_TEST_HPP
 
-#include "../sim/block.hpp"
+#include "sim/block.hpp"
 
 #include <cstdio>
 #include <cstdlib>

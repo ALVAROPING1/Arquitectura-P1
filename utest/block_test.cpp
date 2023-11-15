@@ -1,7 +1,7 @@
 // Pruebas unitarias para block
 #include "block_test.hpp"
 
-#include "../sim/block.hpp"
+#include "sim/block.hpp"
 
 #include <gtest/gtest.h>
 #include <iostream>

@@ -3,7 +3,7 @@
 #define FILE_IO_HPP
 
 #include "grid.hpp"
-#include "sim/io.hpp"
+#include "io.hpp"
 
 #include <concepts>
 #include <fstream>

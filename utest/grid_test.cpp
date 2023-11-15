@@ -1,9 +1,9 @@
 // Pruebas unitarias para grid
 #include "grid_test.hpp"
 
-#include "../sim/fileio.hpp"
-#include "../sim/grid.hpp"
 #include "sim/constants.hpp"
+#include "sim/fileio.hpp"
+#include "sim/grid.hpp"
 #include "sim/vector3.hpp"
 
 #include <cmath>

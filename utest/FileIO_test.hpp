@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../sim/io.hpp"
+#include "sim/io.hpp"
 
 #include <cstdio>
 #include <cstdlib>

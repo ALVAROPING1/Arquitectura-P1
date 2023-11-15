@@ -1,8 +1,8 @@
 // Pruebas unitarias para progargs
 //
-#include "../sim/argumentparser.hpp"
-#include "../sim/io.hpp"
 #include "FileIO_test.hpp"
+#include "sim/argumentparser.hpp"
+#include "sim/io.hpp"
 
 #include <array>
 #include <cstdio>

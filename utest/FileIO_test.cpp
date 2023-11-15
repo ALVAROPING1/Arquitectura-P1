@@ -2,8 +2,8 @@
 
 #include "FileIO_test.hpp"
 
-#include "../sim/fileio.hpp"
-#include "../sim/grid.hpp"
+#include "sim/fileio.hpp"
+#include "sim/grid.hpp"
 
 #include <gtest/gtest.h>
 #include <iostream>

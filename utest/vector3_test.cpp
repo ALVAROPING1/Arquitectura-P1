@@ -1,4 +1,4 @@
-#include "../sim/vector3.hpp"
+#include "sim/vector3.hpp"
 
 #include <gtest/gtest.h>
 
