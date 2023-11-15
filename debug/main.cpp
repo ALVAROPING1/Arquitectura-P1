@@ -187,7 +187,8 @@ int main(int argc, char const ** argv) {
   // Inicializa el programa
   std::span<gsl::czstring> const args{argv, static_cast<std::size_t>(argc)};
   Fluid::ArgumentParser argp{args};
-  Fluid::FileIO & file = argp.file();
+  Fluid::FileIO file;
+  file.open(argp.in(), argp.out());
   Fluid::Grid grid{file.np(), file.ppm()};
   // Carga el archivo de entrada
   file.load(grid);

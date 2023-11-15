@@ -21,14 +21,17 @@ namespace Fluid {
       ArgumentParser(std::span<gsl::czstring> args);
 
       /// Devuelve el número de pasos de tiempo a ejecutar
-      constexpr int step_count() const { return steps_; }
+      [[nodiscard]] constexpr int step_count() const { return steps_; }
 
-      /// Devuelve el objeto de archivos de IO
-      FileIO & file() { return file_; }
+      /// Devuelve el nombre del archivo de entrada
+      gsl::czstring & in() { return in_; }
+
+      /// Devuelve el nombre del archivo de entrada
+      gsl::czstring & out() { return out_; }
 
     private:
-      int steps_;    // Número de pasos de tiempo a ejecutar
-      FileIO file_;  // Objeto de archivos de IO
+      int steps_;               // Número de pasos de tiempo a ejecutar
+      gsl::czstring in_, out_;  // Nombre de los archivos de IO
   };
 
 }  // namespace Fluid

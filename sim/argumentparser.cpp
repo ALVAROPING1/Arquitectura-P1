@@ -21,8 +21,8 @@ namespace Fluid {
       IO::put_line(std::cerr, "Error: Invalid number of time steps.");
       std::exit(-2);
     }
-    // Tries opening and parsing the IO files, checking for errors
-    file_.open(args[2], args[3]);
+    in_  = args[2];
+    out_ = args[3];
   }
 
 }  // namespace Fluid
