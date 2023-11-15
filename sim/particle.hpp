@@ -42,6 +42,11 @@ namespace Fluid {
                    << "\n\tVelocity: " << c.vel << "\n\tAccelera: " << c.acc
                    << "\n\tGradient: " << c.gradient << "\n\tDensity : " << c.density << "\n";
       }
+
+      constexpr bool operator==(Particle const & other) const {
+        return pos == other.pos && density == other.density and gradient == other.gradient &&
+               vel == other.vel && acc == other.acc && id == other.id;
+      }
   };
 
 }  // namespace Fluid
