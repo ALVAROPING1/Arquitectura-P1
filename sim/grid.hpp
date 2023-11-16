@@ -29,8 +29,8 @@ namespace Fluid {
       double h_;                              // Longitud de suavizado
       double m_;                              // Masa de las partículas
       double density_transform_factor_;       // Factor de transformación de la densidad
-      double acceleration_transform_factor_;  // Factor de transformación de la aceleración
       double reset_density_;                  // Densidad inicial de las partículas
+      double acceleration_transform_factor_;  // Factor de transformación de la aceleración
       int amount_{};                          // Número de partículas
 
       Vector3<std::size_t> count_;  // Cantidad de bloques en cada eje
@@ -48,8 +48,8 @@ namespace Fluid {
       Grid(std::size_t pc, double ppm)
         : h_{Constants::radius / ppm}, m_{Constants::density / (ppm * ppm * ppm)},
           density_transform_factor_{density_factor / std::pow(h_, 3 * 3) * m_},
-          acceleration_transform_factor_{m_ / std::pow(h_, 2 * 3)},
           reset_density_{density_factor / std::pow(h_, 3) * m_},
+          acceleration_transform_factor_{m_ / std::pow(h_, 2 * 3)},
           count_{static_cast<Vector3<std::size_t>>((Constants::b_max - Constants::b_min) / h_)},
           sizes_{(Constants::b_max - Constants::b_min) / static_cast<Vector3<double>>(count_)} {
         std::size_t const count  = count_.x * count_.y * count_.z;
@@ -82,7 +82,7 @@ namespace Fluid {
             {p, hv, v},
             amount_++, reset_density_
         };
-        find_block(particle.pos, front_).add(particle);
+        front_[index(particle.pos)].add(particle);
       }
 
       /// Ejecuta una iteración (paso) de la simulación.
@@ -122,11 +122,9 @@ namespace Fluid {
       /// Dada una posición devuelve el bloque donde se encuentra la partícula.
       /// @param pos
       /// La posición de la partícula
-      constexpr Block & find_block(Vector3<double> pos, block_vector & block_vec) {
-        Vector3<double> const pos_{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
-        Vector3<std::size_t> const idx{
-            static_cast<Vector3<std::size_t>>((pos_ - Constants::b_min) / sizes_)};
-        return block_vec[index(idx)];
+      constexpr std::size_t index(Vector3<double> pos) {
+        Vector3<double> const clamped_pos{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
+        return index(static_cast<Vector3<std::size_t>>((clamped_pos - Constants::b_min) / sizes_));
       }
 
       /// Calcula la interacción de una partícula con el borde dado
@@ -396,7 +394,7 @@ namespace Fluid {
             particle.gradient = block.gradient(i);
             particle.id       = block.id(i);
             particle.density  = reset_density_;
-            find_block(particle.pos, back_).add(particle);
+            back_[index(particle.pos)].add(particle);
           }
         }
         swap_buffers();
