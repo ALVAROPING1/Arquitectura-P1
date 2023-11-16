@@ -112,8 +112,3 @@ namespace FileIOTest {
                 "Error: Cannot open r.fld for writing");
   }
 }  // namespace FileIOTest
-
-int main(int argc, char ** argv) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
