@@ -6,6 +6,7 @@ add_executable(main
     block_test.cpp
     fileio_test.cpp
     grid_test.cpp
+    io_test.cpp
     vector3_test.cpp
 )
 
