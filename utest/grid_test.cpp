@@ -45,7 +45,7 @@ namespace GridTest {
     grid.add(Const::pos, Const::hvel, Const::vel);
 
     EXPECT_EQ(grid.get_all().size(), 1);
-    Fluid::Vector3<double> const pos{static_cast<Fluid::Vector3<double>>(Const::pos)};
+    Fluid::Vector3<double> constexpr pos{static_cast<Fluid::Vector3<double>>(Const::pos)};
 
     Fluid::Vector3<double> const clamped_pos{
         pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid.sizes())};

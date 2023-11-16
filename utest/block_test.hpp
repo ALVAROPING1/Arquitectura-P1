@@ -14,7 +14,7 @@
 namespace BlockTest {
   namespace Const {
     // constante con el numero estimado de particulas en un bloque
-    unsigned long const estimated_amount = 5;
+    unsigned long constexpr estimated_amount = 5;
     constexpr double density{2.0};
     constexpr Fluid::Vector3<double> pos{1.0, 1.5, 2.0};
     constexpr Fluid::Vector3<double> vel{0.5, -3.5, -3.0};

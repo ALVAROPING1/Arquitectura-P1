@@ -19,22 +19,22 @@ namespace FileIOTest {
   // partícula.
   namespace Const {
     // constantes de pruebas.
-    float const ppm            = 75;
-    int const np_negative      = -50;
-    int const np_zero          = 0;
-    int const np_true          = 5;
-    int const np_lower_false   = 5;
-    int const np_greater_false = 5;
+    float constexpr ppm            = 75;
+    int constexpr np_negative      = -50;
+    int constexpr np_zero          = 0;
+    int constexpr np_true          = 5;
+    int constexpr np_lower_false   = 5;
+    int constexpr np_greater_false = 5;
 
     // vectores de ejemplo para las partículas de prueba.
-    Fluid::Vector3<float> const vel{1, 1, 1};
-    Fluid::Vector3<float> const pos{1, 1, 1};
-    Fluid::Vector3<float> const hvel{1, 1, 1};
+    Fluid::Vector3<float> constexpr vel{1, 1, 1};
+    Fluid::Vector3<float> constexpr pos{1, 1, 1};
+    Fluid::Vector3<float> constexpr hvel{1, 1, 1};
 
     // iteraciones a realizar para agregar particulas de cada prueba.
-    int const it_np_true          = 5;
-    int const it_np_lower_false   = 3;
-    int const it_np_greater_false = 10;
+    int constexpr it_np_true          = 5;
+    int constexpr it_np_lower_false   = 3;
+    int constexpr it_np_greater_false = 10;
 
   };  // namespace Const
 

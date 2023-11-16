@@ -36,7 +36,7 @@ namespace BlockTest {
   // prueba size
   // clases de equivalencia
   TEST_F(BlockTestClass, numero_elementos) {
-    int const expected_answer = 10;
+    int constexpr expected_answer = 10;
     for (int i = 0; i < expected_answer; i++) { add_particle(i); }
     ASSERT_EQ(get_block().size(), expected_answer);
   }
@@ -45,7 +45,7 @@ namespace BlockTest {
   // clases de equivalencia
   TEST_F(BlockTestClass, obtener_particulas) {
     std::vector<Fluid::Particle> expected_answer;
-    int const count = 5;
+    int constexpr count = 5;
     for (int i = 0; i < count; i++) {
       Fluid::Particle const particula = add_particle(i);
       expected_answer.push_back(particula);

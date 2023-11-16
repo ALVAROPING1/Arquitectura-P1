@@ -12,7 +12,7 @@
 #include <span>
 
 namespace ArgumentParserTest {
-  int const items_args = 4;
+  int constexpr items_args = 4;
 
   // Resultado correcto
   TEST(ArgumentParserDeathTest, OK) {

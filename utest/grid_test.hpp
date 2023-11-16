@@ -20,14 +20,14 @@ namespace GridTest {
   // partícula.
   namespace Const {
     // constantes de pruebas.
-    float const ppm = 75;
+    float constexpr ppm = 75;
+    int constexpr num   = 5;
 
     // vectores de ejemplo para las partículas de prueba.
-    Fluid::Vector3<float> const vel{1, 1, 1};
-    Fluid::Vector3<float> const pos{1, 1, 1};
-    Fluid::Vector3<float> const hvel{1, 1, 1};
+    Fluid::Vector3<float> constexpr vel{1, 1, 1};
+    Fluid::Vector3<float> constexpr pos{1, 1, 1};
+    Fluid::Vector3<float> constexpr hvel{1, 1, 1};
 
-    int const num = 5;
   };  // namespace Const
 
   class GridTestClass : public testing::Test {
