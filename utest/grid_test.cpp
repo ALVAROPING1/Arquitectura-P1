@@ -10,43 +10,51 @@
 #include <fstream>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <numbers>
 
 namespace GridTest {
 
   // Test para asegurar que los calculos realizados son los correctos dentro de la clase
   // "Fluid::Grid" cuando se importan los datos de eun archivo.
-  TEST_F(GridTestClass, ImportOK) {
-    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
+  TEST_F(GridTestClass, InitOK) {
+    Fluid::Grid grid{Const::num, Const::ppm};
 
-    Fluid::Grid test_grid{iotest.np(), iotest.ppm()};
-    iotest.load(test_grid);
-
-    EXPECT_EQ(test_grid.h(), Fluid::Constants::radius / iotest.ppm());
-    EXPECT_EQ(test_grid.mass(),
-              Fluid::Constants::density / (iotest.ppm() * iotest.ppm() * iotest.ppm()));
-    EXPECT_EQ(test_grid.acceleration_transform_factor_,
-              test_grid.mass() / std::pow(test_grid.h(), 2 * 3));
-    EXPECT_EQ(test_grid.count(),
-              static_cast<Fluid::Vector3<std::size_t>>(
-                  (Fluid::Constants::b_max - Fluid::Constants::b_min) / test_grid.h()));
-    EXPECT_EQ(test_grid.sizes(), (Fluid::Constants::b_max - Fluid::Constants::b_min) /
-                                     static_cast<Fluid::Vector3<double>>(test_grid.count()));
-    ASSERT_EQ(test_grid.get_all().size(), Const::it_np_true);
+    EXPECT_DOUBLE_EQ(grid.h(), Fluid::Constants::radius / Const::ppm);
+    EXPECT_DOUBLE_EQ(grid.mass(),
+                     Fluid::Constants::density / (Const::ppm * Const::ppm * Const::ppm));
+    EXPECT_DOUBLE_EQ(grid.density_transform_factor_,
+                     315 / (64 * std::numbers::pi * std::pow(grid.h(), 9)) * grid.mass());
+    EXPECT_DOUBLE_EQ(grid.reset_density_, std::pow(grid.h(), 6) * 315 /
+                                              (64 * std::numbers::pi * std::pow(grid.h(), 9)) *
+                                              grid.mass());
+    EXPECT_DOUBLE_EQ(grid.acceleration_transform_factor_, grid.mass() / std::pow(grid.h(), 6));
+    EXPECT_EQ(grid.count(), static_cast<Fluid::Vector3<std::size_t>>(
+                                (Fluid::Constants::b_max - Fluid::Constants::b_min) / grid.h()));
+    EXPECT_EQ(grid.sizes(), (Fluid::Constants::b_max - Fluid::Constants::b_min) /
+                                static_cast<Fluid::Vector3<double>>(grid.count()));
+    ASSERT_EQ(grid.front_.size(), grid.count().x * grid.count().y * grid.count().z);
+    ASSERT_EQ(grid.back_.size(), grid.count().x * grid.count().y * grid.count().z);
+    ASSERT_EQ(grid.get_all().size(), 0);
   }
 
   // Test de la funcionalidad de añadir una partícula a la malla.
   // Se prueba que el número de particulas aumenta cuando se añaden particulas manualmente.
   TEST_F(GridTestClass, InsertParticle) {
-    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
+    Fluid::Grid grid{Const::num, Const::ppm};
 
-    Fluid::Grid test_grid{iotest.np(), iotest.ppm()};
-    iotest.load(test_grid);
+    grid.add(Const::pos, Const::hvel, Const::vel);
 
-    EXPECT_EQ(test_grid.get_all().size(), Const::it_np_true);
+    EXPECT_EQ(grid.get_all().size(), 1);
+    Fluid::Vector3<double> const pos{static_cast<Fluid::Vector3<double>>(Const::pos)};
 
-    for (int i = 0; i < 4; i++) { test_grid.add(Const::pos, Const::hvel, Const::vel); }
-
-    EXPECT_EQ(test_grid.get_all().size(), Const::it_np_true + 4);
+    Fluid::Vector3<double> const clamped_pos{
+        pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid.sizes())};
+    Fluid::Vector3<std::size_t> block_idx{static_cast<Fluid::Vector3<std::size_t>>(
+        (clamped_pos - Fluid::Constants::b_min) / grid.sizes())};
+    std::size_t idx{block_idx.z * grid.count().y * grid.count().x + block_idx.y * grid.count().x +
+                    block_idx.x};
+    EXPECT_EQ(grid.front_[idx].size(), 1);
+    EXPECT_EQ(grid.back_[idx].size(), 0);
   }
 
 };  // namespace GridTest
