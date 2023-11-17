@@ -80,21 +80,21 @@ namespace Vector3Test {
   // enteros
   TEST(Vector3Test, suma_igual_int_1) {
     Fluid::Vector3<int> actual_answer  = int_1;
-    actual_answer                     += int_2;
+    ASSERT_EQ(actual_answer += int_2, int_suma);
     ASSERT_EQ(actual_answer, int_suma);
   }
 
   // floats
   TEST(Vector3Test, suma_igual_float_1) {
     Fluid::Vector3<float> actual_answer  = float_1;
-    actual_answer                       += float_2;
+    ASSERT_EQ(actual_answer += float_2, float_suma);
     ASSERT_EQ(actual_answer, float_suma);
   }
 
   // doubles
   TEST(Vector3Test, suma_igual_double_1) {
     Fluid::Vector3<double> actual_answer  = double_1;
-    actual_answer                        += double_2;
+    ASSERT_EQ(actual_answer += double_2, double_suma);
     ASSERT_EQ(actual_answer, double_suma);
   }
 
@@ -103,21 +103,21 @@ namespace Vector3Test {
   // enteros
   TEST(Vector3Test, resta_igual_int_1) {
     Fluid::Vector3<int> actual_answer  = int_1;
-    actual_answer                     -= int_2;
+    ASSERT_EQ(actual_answer -= int_2, int_resta);
     ASSERT_EQ(actual_answer, int_resta);
   }
 
   // floats
   TEST(Vector3Test, resta_igual_float_1) {
     Fluid::Vector3<float> actual_answer  = float_1;
-    actual_answer                       -= float_2;
+    ASSERT_EQ(actual_answer -= float_2, float_resta);
     ASSERT_EQ(actual_answer, float_resta);
   }
 
   // doubles
   TEST(Vector3Test, resta_igual_double_1) {
     Fluid::Vector3<double> actual_answer  = double_1;
-    actual_answer                        -= double_2;
+    ASSERT_EQ(actual_answer -= double_2, double_resta);
     ASSERT_EQ(actual_answer, double_resta);
   }
 
@@ -187,6 +187,13 @@ namespace Vector3Test {
     ASSERT_EQ(double_1 / double_2, expected_answer);
   }
 
+  // Static cast
+  // clases de equivalencia
+  // floats a doubles
+  TEST(Vector3Test, static_cast) {
+    ASSERT_EQ(static_cast<Fluid::Vector3<double>>(float_1), double_1);
+  }
+
   // square norm
   // clases de equivalencia
   // enteros
@@ -238,30 +245,18 @@ namespace Vector3Test {
   // enteros
   TEST(Vector3Test, igual_que_int_1) {
     ASSERT_EQ(int_1 == int_1, true);
+    ASSERT_EQ(int_1 == int_2, false);
   }
 
   // floats
   TEST(Vector3Test, igual_que_float_1) {
     ASSERT_EQ(float_1 == float_1, true);
+    ASSERT_EQ(float_1 == float_2, false);
   }
 
   // doubles
   TEST(Vector3Test, igual_que_double_1) {
     ASSERT_EQ(double_1 == double_1, true);
-  }
-
-  // enteros
-  TEST(Vector3Test, igual_que_int_2) {
-    ASSERT_EQ(int_1 == int_2, false);
-  }
-
-  // floats
-  TEST(Vector3Test, igual_que_float_2) {
-    ASSERT_EQ(float_1 == float_2, false);
-  }
-
-  // doubles
-  TEST(Vector3Test, igual_que_double_2) {
     ASSERT_EQ(double_1 == double_2, false);
   }
 

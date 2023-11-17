@@ -49,4 +49,20 @@ namespace ParticleTest {
     particle2.id = 2;
     ASSERT_EQ(particle1 == particle2, false);
   }
+
+  // Operador <<
+  TEST(ParticleTest, print) {
+    Fluid::Particle particle{
+        {pos, grad, vel},
+        3, dens
+    };
+    std::stringstream out;
+    std::stringstream expected;
+    out << particle;
+    expected << "Particle n: " << particle.id << "\n\tPosition: " << particle.pos
+             << "\n\tVelocity: " << particle.vel << "\n\tAccelera: " << particle.acc
+             << "\n\tGradient: " << particle.gradient << "\n\tDensity : " << particle.density
+             << "\n";
+    ASSERT_EQ(out.str(), expected.str());
+  }
 }  // namespace ParticleTest

@@ -77,4 +77,15 @@ namespace ArgumentParserTest {
                 "Error: Invalid number of time steps.");
   }
 
+  // Getters
+  TEST(ArgumentParserTest, Getters) {
+    // Lista de argumentos para el test de ok.
+    std::array<gsl::czstring, items_args> args = {
+        static_cast<gsl::czstring>("fluid"), static_cast<gsl::czstring>("3"),
+        static_cast<gsl::czstring>("in.fld"), static_cast<gsl::czstring>("out.fld")};
+    Fluid::ArgumentParser const parser{args};
+    ASSERT_EQ(parser.step_count(), 3);
+    ASSERT_EQ(parser.in(), "in.fld");
+    ASSERT_EQ(parser.out(), "out.fld");
+  }
 };  // namespace ArgumentParserTest

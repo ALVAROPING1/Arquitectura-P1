@@ -85,4 +85,15 @@ namespace BlockTest {
     ASSERT_EQ(get_block().pos_dens(0).dens, particula.density);
   }
 
+  // Operador <<
+  // clases de equivalencia
+  TEST_F(BlockTestClass, operador_print_1) {
+    Fluid::Particle const particula = add_particle(4);
+    std::stringstream out;
+    std::stringstream expected;
+    out << get_block();
+    expected << "Block[" << particula << "]";
+    ASSERT_EQ(out.str(), expected.str());
+  }
+
 }  // namespace BlockTest

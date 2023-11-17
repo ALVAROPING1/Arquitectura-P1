@@ -4,6 +4,7 @@
 
 #include "sim/fileio.hpp"
 #include "sim/grid.hpp"
+#include "sim/particle.hpp"
 
 #include <gtest/gtest.h>
 #include <iostream>
@@ -51,31 +52,13 @@ namespace FileIOTest {
   }
 
   // Test con archivo de np positivo y mismo número de partículas.
-  TEST_F(FileIOTestClass, npTrue) {
-    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
-    Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
-    // Redirige std::cout a un buffer para poder leerlo y comprobar que es correcto
-    std::stringstream buffer;
-    std::streambuf * sbuf = std::cout.rdbuf();
-    std::cout.rdbuf(buffer.rdbuf());
-    // Ejecuta la prueba
-    iotest.load(testGrid);
-    // Restaura std::cout
-    std::cout.rdbuf(sbuf);
-    // Crea la salida esperada y la compara
-    std::stringstream expected;
-    expected.setf(std::ios::fixed);
-    expected.precision(DoubleFormatPrecision);
-    expected << "Number of particles: " << Const::it_np_true
-             << "\nParticles per meter: " << Const::ppm << "\nSmoothing length: " << testGrid.h()
-             << "\nParticle mass: " << testGrid.mass() << "\nGrid size: " << testGrid.count().x
-             << " x " << testGrid.count().y << " x " << testGrid.count().z << "\nNumber of blocks: "
-             << testGrid.count().x * testGrid.count().y * testGrid.count().z
-             << "\nBlock size: " << testGrid.sizes().x << " x " << testGrid.sizes().y << " x "
-             << testGrid.sizes().z << "\n";
-    EXPECT_EQ(buffer.str(), expected.str());
-    iotest.dump(testGrid);
-    EXPECT_TRUE(compare_files("NpTrue.fld", "out.fld"));
+  TEST_F(FileIOTestClassDeathTest, npTrue) {
+    ASSERT_EXIT(
+        {
+          Fluid::FileIO("NpTrue.fld", "out.fld");
+          std::exit(0);
+        },
+        testing::ExitedWithCode(0), "");
   }
 
   // Test con archivo de np positivo y menor número de partículas que las requeridas.
@@ -110,5 +93,60 @@ namespace FileIOTest {
   TEST_F(FileIOTestClassDeathTest, BadOutputFile) {
     ASSERT_EXIT(Fluid::FileIO("NpTrue.fld", "r.fld"), testing::ExitedWithCode((unsigned char) -4),
                 "Error: Cannot open r.fld for writing");
+  }
+
+  // Test correcto getters
+  TEST_F(FileIOTestClass, getters) {
+    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
+    ASSERT_EQ(iotest.np(), Const::np_true);
+    ASSERT_EQ(iotest.ppm(), Const::ppm);
+  }
+
+  // Comprueba que los valores cargados son los escritos en el archivo
+  void check_loaded_data(Fluid::Grid & grid) {
+    for (auto particle : grid.get_all()) {
+      EXPECT_EQ(particle.pos, static_cast<Fluid::Vector3<double>>(Const::pos));
+      EXPECT_EQ(particle.gradient, static_cast<Fluid::Vector3<double>>(Const::hvel));
+      EXPECT_EQ(particle.vel, static_cast<Fluid::Vector3<double>>(Const::vel));
+    }
+  }
+
+  // Test load
+  TEST_F(FileIOTestClass, load) {
+    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
+    Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
+    // Redirige std::cout a un buffer para poder leerlo y comprobar que es correcto
+    std::stringstream buffer;
+    std::streambuf * sbuf = std::cout.rdbuf();
+    std::cout.rdbuf(buffer.rdbuf());
+    // Ejecuta la prueba
+    iotest.load(testGrid);
+    // Restaura std::cout
+    std::cout.rdbuf(sbuf);
+    // Crea la salida esperada y la compara
+    std::stringstream expected;
+    expected.setf(std::ios::fixed);
+    expected.precision(DoubleFormatPrecision);
+    expected << "Number of particles: " << Const::it_np_true
+             << "\nParticles per meter: " << Const::ppm << "\nSmoothing length: " << testGrid.h()
+             << "\nParticle mass: " << testGrid.mass() << "\nGrid size: " << testGrid.count().x
+             << " x " << testGrid.count().y << " x " << testGrid.count().z << "\nNumber of blocks: "
+             << testGrid.count().x * testGrid.count().y * testGrid.count().z
+             << "\nBlock size: " << testGrid.sizes().x << " x " << testGrid.sizes().y << " x "
+             << testGrid.sizes().z << "\n";
+    EXPECT_EQ(buffer.str(), expected.str());
+    check_loaded_data(testGrid);
+  }
+
+  // Test dump
+  TEST_F(FileIOTestClass, npTrue) {
+    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
+    Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
+    // Desactiva temporalmente std::cout para no mostrar la salida de load en la ejecución del test
+    std::cout.setstate(std::ios_base::failbit);
+    iotest.load(testGrid);
+    std::cout.clear();
+    iotest.dump(testGrid);
+    EXPECT_TRUE(compare_files("NpTrue.fld", "out.fld"));
   }
 }  // namespace FileIOTest
