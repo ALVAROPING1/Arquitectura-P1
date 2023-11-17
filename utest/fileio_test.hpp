@@ -16,9 +16,9 @@ namespace FileIOTest {
   namespace Const {
     // constantes de pruebas.
     float constexpr ppm            = 75;
-    int constexpr np_negative      = -50;
+    int constexpr np_negative      = -1;
     int constexpr np_zero          = 0;
-    int constexpr np_true          = 5;
+    int constexpr np_true          = 1;
     int constexpr np_lower_false   = 5;
     int constexpr np_greater_false = 5;
 
@@ -26,12 +26,6 @@ namespace FileIOTest {
     Fluid::Vector3<float> constexpr vel{1, 1, 1};
     Fluid::Vector3<float> constexpr pos{1, 1, 1};
     Fluid::Vector3<float> constexpr hvel{1, 1, 1};
-
-    // iteraciones a realizar para agregar particulas de cada prueba.
-    int constexpr it_np_true          = 5;
-    int constexpr it_np_lower_false   = 3;
-    int constexpr it_np_greater_false = 10;
-
   };  // namespace Const
 
   // Clase utilizada como preparatoria para los archivos utilizados en los tests.
@@ -76,7 +70,7 @@ namespace FileIOTest {
         if (!file) { return false; }
         Fluid::IO::write(file, Const::np_true);
 
-        for (int i = 0; i < Const::it_np_true; i++) {
+        for (int i = 0; i < Const::np_true; i++) {
           Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
@@ -90,7 +84,7 @@ namespace FileIOTest {
         if (!file) { return false; }
         Fluid::IO::write(file, Const::np_lower_false);
 
-        for (int i = 0; i < Const::it_np_lower_false; i++) {
+        for (int i = 0; i < Const::np_lower_false - 1; i++) {
           Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 
@@ -104,7 +98,7 @@ namespace FileIOTest {
         if (!file) { return false; }
         Fluid::IO::write(file, Const::np_greater_false);
 
-        for (int i = 0; i < Const::it_np_greater_false; i++) {
+        for (int i = 0; i < Const::np_greater_false + 1; i++) {
           Fluid::IO::write(file, Const::pos, Const::hvel, Const::vel);
         }
 

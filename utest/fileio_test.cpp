@@ -67,7 +67,7 @@ namespace FileIOTest {
     ASSERT_EXIT(
         iotest.load(testGrid), testing::ExitedWithCode((unsigned char) -5),
         "Error: Number of particles mismatch. Header: " + std::to_string(Const::np_lower_false) +
-            " Found: " + std::to_string(Const::it_np_lower_false) + "\n");
+            " Found: " + std::to_string(Const::np_lower_false - 1) + "\n");
   }
 
   // Test con archivo de np positivo y mayor número de particulas de las requeridas.
@@ -78,7 +78,7 @@ namespace FileIOTest {
     ASSERT_EXIT(
         iotest.load(testGrid), testing::ExitedWithCode((unsigned char) -5),
         "Error: Number of particles mismatch. Header: " + std::to_string(Const::np_greater_false) +
-            " Found: " + std::to_string(Const::it_np_greater_false) + "\n");
+            " Found: " + std::to_string(Const::np_greater_false + 1) + "\n");
   }
 
   // Test con archivo de datos no válido. (Archivo no existe).
@@ -126,10 +126,10 @@ namespace FileIOTest {
     std::stringstream expected;
     expected.setf(std::ios::fixed);
     expected.precision(DoubleFormatPrecision);
-    expected << "Number of particles: " << Const::it_np_true
-             << "\nParticles per meter: " << Const::ppm << "\nSmoothing length: " << testGrid.h()
-             << "\nParticle mass: " << testGrid.mass() << "\nGrid size: " << testGrid.count().x
-             << " x " << testGrid.count().y << " x " << testGrid.count().z << "\nNumber of blocks: "
+    expected << "Number of particles: " << Const::np_true << "\nParticles per meter: " << Const::ppm
+             << "\nSmoothing length: " << testGrid.h() << "\nParticle mass: " << testGrid.mass()
+             << "\nGrid size: " << testGrid.count().x << " x " << testGrid.count().y << " x "
+             << testGrid.count().z << "\nNumber of blocks: "
              << testGrid.count().x * testGrid.count().y * testGrid.count().z
              << "\nBlock size: " << testGrid.sizes().x << " x " << testGrid.sizes().y << " x "
              << testGrid.sizes().z << "\n";
