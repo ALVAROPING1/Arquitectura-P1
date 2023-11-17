@@ -37,7 +37,7 @@ namespace Fluid {
       Vector3<double> sizes_;       // Tamaño de los bloques en cada eje
 
       block_vector front_;  // Búfer de bloques en la iteración actual
-      block_vector back_;   // Búfer de bloques en la siguiente iteración
+      block_vector back_;   // Búfer de bloques en la iteración anterior
 
     public:
       /// Construye una nueva malla vacía.
@@ -119,7 +119,7 @@ namespace Fluid {
         return idx.z * count_.y * count_.x + idx.y * count_.x + idx.x;
       }
 
-      /// Calcula el bloque al que pertenecería una partícula con la posición dada
+      /// Calcula el índice del bloque al que pertenecería una partícula con la posición dada
       /// @param pos
       /// La posición de la partícula
       constexpr std::size_t index(Vector3<double> pos) {
