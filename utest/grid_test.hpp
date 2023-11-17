@@ -1,15 +1,9 @@
 #pragma once
 
 #define FLUID_DEBUG
-#include "sim/io.hpp"
+#include "sim/vector3.hpp"
 
-#include <cstdio>
-#include <cstdlib>
-#include <fcntl.h>
-#include <fstream>
 #include <gtest/gtest.h>
-#include <iostream>
-#include <sys/stat.h>
 
 namespace GridTest {
 

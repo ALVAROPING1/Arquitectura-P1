@@ -4,12 +4,8 @@
 #include "sim/block.hpp"
 #include "sim/vector3.hpp"
 
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
 #include <gtest/gtest.h>
 #include <iostream>
-#include <vector>
 
 namespace BlockTest {
   namespace Const {

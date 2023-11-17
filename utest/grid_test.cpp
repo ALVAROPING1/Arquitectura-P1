@@ -2,14 +2,11 @@
 #include "grid_test.hpp"
 
 #include "sim/constants.hpp"
-#include "sim/fileio.hpp"
 #include "sim/grid.hpp"
 #include "sim/vector3.hpp"
 
 #include <cmath>
-#include <fstream>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <numbers>
 
 namespace GridTest {

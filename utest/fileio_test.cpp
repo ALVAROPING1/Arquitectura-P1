@@ -4,7 +4,6 @@
 
 #include "sim/fileio.hpp"
 #include "sim/grid.hpp"
-#include "sim/particle.hpp"
 
 #include <gtest/gtest.h>
 #include <iostream>

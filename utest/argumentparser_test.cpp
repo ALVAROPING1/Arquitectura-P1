@@ -3,13 +3,9 @@
 #include "sim/argumentparser.hpp"
 #include "sim/io.hpp"
 
-#include <array>
-#include <cstdio>
-#include <cstdlib>
 #include <gsl/gsl>
 #include <gtest/gtest.h>
 #include <iostream>
-#include <span>
 
 namespace ArgumentParserTest {
   int constexpr items_args = 4;
