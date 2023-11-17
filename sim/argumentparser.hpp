@@ -24,10 +24,10 @@ namespace Fluid {
       [[nodiscard]] constexpr int step_count() const { return steps_; }
 
       /// Devuelve el nombre del archivo de entrada
-      gsl::czstring & in() { return in_; }
+      [[nodiscard]] gsl::czstring const & in() const { return in_; }
 
       /// Devuelve el nombre del archivo de entrada
-      gsl::czstring & out() { return out_; }
+      [[nodiscard]] gsl::czstring const & out() const { return out_; }
 
     private:
       int steps_;               // Número de pasos de tiempo a ejecutar
