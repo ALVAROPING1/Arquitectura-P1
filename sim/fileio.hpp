@@ -40,7 +40,7 @@ namespace Fluid {
           IO::put_line(std::cerr, "Error: Cannot open ", output_name, " for writing");
           std::exit(-4);
         }
-        // Parses the header
+        // Parses the input file header
         load_header();
       }
 

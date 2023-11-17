@@ -60,7 +60,9 @@ namespace Fluid {
       // Calcula la norma al cuadrado del vector
       [[nodiscard]] constexpr T square_norm() const { return x * x + y * y + z * z; }
 
-      // Limita las coordenadas del vector al rango definido por los vectores
+      /// Limita las coordenadas del vector al rango definido por los vectores.
+      /// Da comportamiento indefinido si el valor de alguna coordenada
+      /// de min es mayor que la respectiva coordenada de max
       /// @param min
       /// Vector con los valores mínimos de cada coordenada
       /// @param max

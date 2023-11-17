@@ -112,14 +112,14 @@ namespace Fluid {
       }
 
     private:
-      /// Indexa el vector de bloques según las coordendas de bloque dadas
+      /// Calcula el índice del bloque correspondiente a las coordendas de bloque dadas
       /// @param idx
       /// Índice de bloque
       [[nodiscard]] constexpr std::size_t index(Vector3<std::size_t> idx) const {
         return idx.z * count_.y * count_.x + idx.y * count_.x + idx.x;
       }
 
-      /// Dada una posición devuelve el bloque donde se encuentra la partícula.
+      /// Calcula el bloque al que pertenecería una partícula con la posición dada
       /// @param pos
       /// La posición de la partícula
       constexpr std::size_t index(Vector3<double> pos) {
