@@ -19,8 +19,16 @@ namespace GridTest {
 
     // vectores de ejemplo para las partículas de prueba.
     Fluid::Vector3<float> constexpr vel{1, 1, 1};
-    Fluid::Vector3<float> constexpr pos{1, 1, 1};
+    Fluid::Vector3<float> constexpr pos{0, 0, 0};
     Fluid::Vector3<float> constexpr hvel{1, 1, 1};
+
+    // vectores de posición fuera del recinto
+    Fluid::Vector3<float> constexpr pos_inf_x{-1, 0, 0};
+    Fluid::Vector3<float> constexpr pos_inf_y{0, -1, 0};
+    Fluid::Vector3<float> constexpr pos_inf_z{0, 0, -1};
+    Fluid::Vector3<float> constexpr pos_sup_x{1, 0, 0};
+    Fluid::Vector3<float> constexpr pos_sup_y{0, 1, 0};
+    Fluid::Vector3<float> constexpr pos_sup_z{0, 0, 1};
 
   };  // namespace Const
 

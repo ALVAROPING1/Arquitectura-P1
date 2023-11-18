@@ -11,6 +11,16 @@
 
 namespace GridTest {
 
+  [[nodiscard]] std::size_t get_index(Fluid::Vector3<double> const & pos,
+                                      Fluid::Vector3<double> const & grid_size,
+                                      Fluid::Vector3<std::size_t> const & grid_count) {
+    Fluid::Vector3<double> const clamped_pos{
+        pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid_size)};
+    Fluid::Vector3<std::size_t> block_idx{static_cast<Fluid::Vector3<std::size_t>>(
+        (clamped_pos - Fluid::Constants::b_min) / grid_size)};
+    return block_idx.z * grid_count.y * grid_count.x + block_idx.y * grid_count.x + block_idx.x;
+  }
+
   // Test para asegurar que los calculos realizados son los correctos dentro de la clase
   // "Fluid::Grid" cuando se importan los datos de eun archivo.
   TEST_F(GridTestClass, InitOK) {
@@ -35,23 +45,26 @@ namespace GridTest {
   }
 
   // Test de la funcionalidad de añadir una partícula a la malla.
-  // Se prueba que el número de particulas aumenta cuando se añaden particulas manualmente.
-  TEST_F(GridTestClass, InsertParticle) {
+  // Se prueba que el número de particulas aumenta cuando se añaden
+  // particulas manualmente, y que se añaden al bloque correcto
+  void test_add_particle(Fluid::Vector3<float> pos) {
     Fluid::Grid grid{Const::num, Const::ppm};
-
-    grid.add(Const::pos, Const::hvel, Const::vel);
-
+    grid.add(pos, Const::hvel, Const::vel);
     EXPECT_EQ(grid.get_all().size(), 1);
-    Fluid::Vector3<double> constexpr pos{static_cast<Fluid::Vector3<double>>(Const::pos)};
-
-    Fluid::Vector3<double> const clamped_pos{
-        pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid.sizes())};
-    Fluid::Vector3<std::size_t> block_idx{static_cast<Fluid::Vector3<std::size_t>>(
-        (clamped_pos - Fluid::Constants::b_min) / grid.sizes())};
-    std::size_t idx{block_idx.z * grid.count().y * grid.count().x + block_idx.y * grid.count().x +
-                    block_idx.x};
+    std::size_t idx =
+        get_index(static_cast<Fluid::Vector3<double>>(pos), grid.sizes(), grid.count());
     EXPECT_EQ(grid.front_[idx].size(), 1);
     EXPECT_EQ(grid.back_[idx].size(), 0);
+  }
+
+  TEST_F(GridTestClass, InsertParticle) {
+    test_add_particle(Const::pos);
+    test_add_particle(Const::pos_inf_x);
+    test_add_particle(Const::pos_inf_y);
+    test_add_particle(Const::pos_inf_z);
+    test_add_particle(Const::pos_sup_x);
+    test_add_particle(Const::pos_sup_y);
+    test_add_particle(Const::pos_sup_z);
   }
 
 };  // namespace GridTest
