@@ -55,21 +55,21 @@ namespace BlockTest {
     ASSERT_EQ(actual_answer, expected_answer);
   }
 
-  // funcion id
+  // getter id
   // clases de equivalencia
   TEST_F(BlockTestClass, id_particula) {
     Fluid::Particle const particula = add_particle(4);
     ASSERT_EQ(get_block().id(0), particula.id);
   }
 
-  // funcion gradient
+  // getter gradient
   // clases de equivalencia
   TEST_F(BlockTestClass, funcion_gradient) {
     Fluid::Particle const particula = add_particle(4);
     ASSERT_EQ(get_block().gradient(0), particula.gradient);
   }
 
-  // funcion vel_acc
+  // getter vel_acc
   // clases de equivalencia
   TEST_F(BlockTestClass, funcion_vel_acc_1) {
     Fluid::Particle const particula = add_particle(4);
@@ -77,7 +77,7 @@ namespace BlockTest {
     ASSERT_EQ(get_block().vel_acc(0).acc, particula.acc);
   }
 
-  // funcion pos_dens
+  // getter pos_dens
   // clases de equivalencia
   TEST_F(BlockTestClass, funcion_pos_dens_1) {
     Fluid::Particle const particula = add_particle(4);

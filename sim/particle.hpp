@@ -12,11 +12,9 @@ namespace Fluid {
 
   struct Particle {
       // Parámetros que no cambian
-      int id{};
+      int id{};  // Identificador de la partícula
 
       // Parámetros que cambian en cada iteración.
-      // Es preferible en este caso nombres más cortos para que sea más fácil
-      // escribir las fórmulas.
       Vector3<double> pos;                      // Posición
       double density{0};                        // Densidad
       Vector3<double> gradient;                 // Gradiente de la velocidad
@@ -30,7 +28,7 @@ namespace Fluid {
       /// @param id
       /// ID de la partícula
       /// @param density
-      /// densidad de la partícula
+      /// Densidad de la partícula
       constexpr Particle(Vector3<Vector3<float>> const & data, int id, double density)
         : id{id}, pos{static_cast<Vector3<double>>(data.x)}, density{density},
           gradient{static_cast<Vector3<double>>(data.y)},
