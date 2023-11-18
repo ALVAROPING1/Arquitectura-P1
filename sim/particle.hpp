@@ -36,7 +36,7 @@ namespace Fluid {
           gradient{static_cast<Vector3<double>>(data.y)},
           vel{static_cast<Vector3<double>>(data.z)} { }
 
-      // Operator '<<' para imprimar la partícula (depurado).
+      // Operador '<<' para imprimar la partícula (depurado).
       friend std::ostream & operator<<(std::ostream & out, Particle const & c) {
         return out << "Particle n: " << c.id << "\n\tPosition: " << c.pos
                    << "\n\tVelocity: " << c.vel << "\n\tAccelera: " << c.acc
