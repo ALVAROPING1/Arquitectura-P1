@@ -11,7 +11,7 @@ namespace BlockTest {
   // clases de equivalencia
   TEST_F(BlockTestClass, agregar_particula) {
     Fluid::Particle const expected = add_particle(1);
-    ASSERT_EQ(get_block()[0], expected);
+    EXPECT_EQ(get_block()[0], expected);
   }
 
   // prueba clear
@@ -30,7 +30,7 @@ namespace BlockTest {
   TEST_F(BlockTestClass, operador_indexar) {
     add_particle(2);
     Fluid::Particle const expected = add_particle(2);
-    ASSERT_EQ(get_block()[1], expected);
+    EXPECT_EQ(get_block()[1], expected);
   }
 
   // prueba size
@@ -38,7 +38,7 @@ namespace BlockTest {
   TEST_F(BlockTestClass, numero_elementos) {
     int constexpr expected_answer = 10;
     for (int i = 0; i < expected_answer; i++) { add_particle(i); }
-    ASSERT_EQ(get_block().size(), expected_answer);
+    EXPECT_EQ(get_block().size(), expected_answer);
   }
 
   // get particles
@@ -52,37 +52,37 @@ namespace BlockTest {
     }
     // comparar vectores
     std::vector<Fluid::Particle> const actual_answer = get_block().get_particles();
-    ASSERT_EQ(actual_answer, expected_answer);
+    EXPECT_EQ(actual_answer, expected_answer);
   }
 
   // getter id
   // clases de equivalencia
   TEST_F(BlockTestClass, id_particula) {
     Fluid::Particle const particula = add_particle(4);
-    ASSERT_EQ(get_block().id(0), particula.id);
+    EXPECT_EQ(get_block().id(0), particula.id);
   }
 
   // getter gradient
   // clases de equivalencia
   TEST_F(BlockTestClass, funcion_gradient) {
     Fluid::Particle const particula = add_particle(4);
-    ASSERT_EQ(get_block().gradient(0), particula.gradient);
+    EXPECT_EQ(get_block().gradient(0), particula.gradient);
   }
 
   // getter vel_acc
   // clases de equivalencia
   TEST_F(BlockTestClass, funcion_vel_acc_1) {
     Fluid::Particle const particula = add_particle(4);
-    ASSERT_EQ(get_block().vel_acc(0).vel, particula.vel);
-    ASSERT_EQ(get_block().vel_acc(0).acc, particula.acc);
+    EXPECT_EQ(get_block().vel_acc(0).vel, particula.vel);
+    EXPECT_EQ(get_block().vel_acc(0).acc, particula.acc);
   }
 
   // getter pos_dens
   // clases de equivalencia
   TEST_F(BlockTestClass, funcion_pos_dens_1) {
     Fluid::Particle const particula = add_particle(4);
-    ASSERT_EQ(get_block().pos_dens(0).pos, particula.pos);
-    ASSERT_EQ(get_block().pos_dens(0).dens, particula.density);
+    EXPECT_EQ(get_block().pos_dens(0).pos, particula.pos);
+    EXPECT_EQ(get_block().pos_dens(0).dens, particula.density);
   }
 
   // Operador <<
@@ -93,7 +93,7 @@ namespace BlockTest {
     std::stringstream expected;
     out << get_block();
     expected << "Block[" << particula << "]";
-    ASSERT_EQ(out.str(), expected.str());
+    EXPECT_EQ(out.str(), expected.str());
   }
 
 }  // namespace BlockTest

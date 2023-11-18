@@ -94,8 +94,8 @@ namespace ArgumentParserTest {
         static_cast<gsl::czstring>("fluid"), static_cast<gsl::czstring>("3"),
         static_cast<gsl::czstring>("in.fld"), static_cast<gsl::czstring>("out.fld")};
     Fluid::ArgumentParser const parser{args};
-    ASSERT_EQ(parser.step_count(), 3);
-    ASSERT_EQ(parser.in(), "in.fld");
-    ASSERT_EQ(parser.out(), "out.fld");
+    EXPECT_EQ(parser.step_count(), 3);
+    EXPECT_EQ(parser.in(), "in.fld");
+    EXPECT_EQ(parser.out(), "out.fld");
   }
 };  // namespace ArgumentParserTest

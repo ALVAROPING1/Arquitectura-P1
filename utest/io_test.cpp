@@ -13,34 +13,34 @@ namespace IOTest {
   TEST(IOTest, put_string_1) {
     std::stringstream out{};
     Fluid::IO::put(out, "test");
-    ASSERT_EQ(out.str(), "test");
+    EXPECT_EQ(out.str(), "test");
   }
 
   TEST(IOTest, put_string_2) {
     std::stringstream out{};
     Fluid::IO::put(out, "test", "test2");
-    ASSERT_EQ(out.str(), "testtest2");
+    EXPECT_EQ(out.str(), "testtest2");
   }
 
   // enteros
   TEST(IOTest, put_int) {
     std::stringstream out{};
     Fluid::IO::put(out, 1);
-    ASSERT_EQ(out.str(), "1");
+    EXPECT_EQ(out.str(), "1");
   }
 
   // doubles
   TEST(IOTest, put_double) {
     std::stringstream out{};
     Fluid::IO::put(out, double_val);
-    ASSERT_EQ(out.str(), "1.5");
+    EXPECT_EQ(out.str(), "1.5");
   }
 
   // mezclas
   TEST(IOTest, put_mix) {
     std::stringstream out{};
     Fluid::IO::put(out, "int: ", 2, " double: ", double_val);
-    ASSERT_EQ(out.str(), "int: 2 double: 1.5");
+    EXPECT_EQ(out.str(), "int: 2 double: 1.5");
   }
 
   // pruebas de put_line
@@ -48,34 +48,34 @@ namespace IOTest {
   TEST(IOTest, put_line_string_1) {
     std::stringstream out{};
     Fluid::IO::put_line(out, "test");
-    ASSERT_EQ(out.str(), "test\n");
+    EXPECT_EQ(out.str(), "test\n");
   }
 
   TEST(IOTest, put_line_string_2) {
     std::stringstream out{};
     Fluid::IO::put_line(out, "test", "test2");
-    ASSERT_EQ(out.str(), "testtest2\n");
+    EXPECT_EQ(out.str(), "testtest2\n");
   }
 
   // enteros
   TEST(IOTest, put_line_int) {
     std::stringstream out{};
     Fluid::IO::put_line(out, 1);
-    ASSERT_EQ(out.str(), "1\n");
+    EXPECT_EQ(out.str(), "1\n");
   }
 
   // doubles
   TEST(IOTest, put_line_double) {
     std::stringstream out{};
     Fluid::IO::put_line(out, double_val);
-    ASSERT_EQ(out.str(), "1.5\n");
+    EXPECT_EQ(out.str(), "1.5\n");
   }
 
   // mezclas
   TEST(IOTest, put_line_mix) {
     std::stringstream out{};
     Fluid::IO::put_line(out, "int: ", 2, " double: ", double_val);
-    ASSERT_EQ(out.str(), "int: 2 double: 1.5\n");
+    EXPECT_EQ(out.str(), "int: 2 double: 1.5\n");
   }
 
   template <typename T>
@@ -99,8 +99,8 @@ namespace IOTest {
     write(buf, 2);
     int result{};
     ASSERT_EQ(Fluid::IO::read(buf, result), true);
-    ASSERT_EQ(result, 2);
-    ASSERT_EQ(Fluid::IO::read(buf, result), false);
+    EXPECT_EQ(result, 2);
+    EXPECT_EQ(Fluid::IO::read(buf, result), false);
   }
 
   TEST(IOTest, read_int_2) {
@@ -110,9 +110,9 @@ namespace IOTest {
     int result1{};
     int result2{};
     ASSERT_EQ(Fluid::IO::read(buf, result1, result2), true);
-    ASSERT_EQ(result1, 2);
-    ASSERT_EQ(result2, 4);
-    ASSERT_EQ(Fluid::IO::read(buf, result1), false);
+    EXPECT_EQ(result1, 2);
+    EXPECT_EQ(result2, 4);
+    EXPECT_EQ(Fluid::IO::read(buf, result1), false);
   }
 
   // floats
@@ -121,8 +121,8 @@ namespace IOTest {
     write(buf, float_val);
     float result{};
     ASSERT_EQ(Fluid::IO::read(buf, result), true);
-    ASSERT_EQ(result, float_val);
-    ASSERT_EQ(Fluid::IO::read(buf, result), false);
+    EXPECT_EQ(result, float_val);
+    EXPECT_EQ(Fluid::IO::read(buf, result), false);
   }
 
   // vectores de floats
@@ -131,8 +131,8 @@ namespace IOTest {
     write(buf, vec_val);
     Fluid::Vector3<float> result{};
     ASSERT_EQ(Fluid::IO::read(buf, result), true);
-    ASSERT_EQ(result, vec_val);
-    ASSERT_EQ(Fluid::IO::read(buf, result), false);
+    EXPECT_EQ(result, vec_val);
+    EXPECT_EQ(Fluid::IO::read(buf, result), false);
   }
 
   // mezclas
@@ -145,10 +145,10 @@ namespace IOTest {
     int result_int{};
     Fluid::Vector3<float> result_vec{};
     ASSERT_EQ(Fluid::IO::read(buf, result_float, result_int, result_vec), true);
-    ASSERT_EQ(result_float, float_val);
-    ASSERT_EQ(result_int, 3);
-    ASSERT_EQ(result_vec, vec_val);
-    ASSERT_EQ(Fluid::IO::read(buf, result_int), false);
+    EXPECT_EQ(result_float, float_val);
+    EXPECT_EQ(result_int, 3);
+    EXPECT_EQ(result_vec, vec_val);
+    EXPECT_EQ(Fluid::IO::read(buf, result_int), false);
   }
 
   // Sobran datos de tamaño insuficiente para un valor pedido
@@ -158,8 +158,8 @@ namespace IOTest {
     write(buf, 'A');
     int result{};
     ASSERT_EQ(Fluid::IO::read(buf, result), true);
-    ASSERT_EQ(result, 2);
-    ASSERT_EQ(Fluid::IO::read(buf, result), false);
+    EXPECT_EQ(result, 2);
+    EXPECT_EQ(Fluid::IO::read(buf, result), false);
   }
 
   // pruebas de write
@@ -169,8 +169,8 @@ namespace IOTest {
     Fluid::IO::write(buf, 2);
     int result{};
     ASSERT_EQ(read(buf, result), true);
-    ASSERT_EQ(result, 2);
-    ASSERT_EQ(read(buf, result), false);
+    EXPECT_EQ(result, 2);
+    EXPECT_EQ(read(buf, result), false);
   }
 
   TEST(IOTest, write_int_2) {
@@ -178,10 +178,10 @@ namespace IOTest {
     Fluid::IO::write(buf, 2, 4);
     int result{};
     ASSERT_EQ(read(buf, result), true);
-    ASSERT_EQ(result, 2);
+    EXPECT_EQ(result, 2);
     ASSERT_EQ(read(buf, result), true);
-    ASSERT_EQ(result, 4);
-    ASSERT_EQ(read(buf, result), false);
+    EXPECT_EQ(result, 4);
+    EXPECT_EQ(read(buf, result), false);
   }
 
   // floats
@@ -190,8 +190,8 @@ namespace IOTest {
     Fluid::IO::write(buf, float_val);
     float result{};
     ASSERT_EQ(read(buf, result), true);
-    ASSERT_EQ(result, float_val);
-    ASSERT_EQ(read(buf, result), false);
+    EXPECT_EQ(result, float_val);
+    EXPECT_EQ(read(buf, result), false);
   }
 
   // vectores de floats
@@ -200,8 +200,8 @@ namespace IOTest {
     Fluid::IO::write(buf, vec_val);
     Fluid::Vector3<float> result{};
     ASSERT_EQ(read(buf, result), true);
-    ASSERT_EQ(result, vec_val);
-    ASSERT_EQ(read(buf, result), false);
+    EXPECT_EQ(result, vec_val);
+    EXPECT_EQ(read(buf, result), false);
   }
 
   // mezclas
@@ -212,11 +212,11 @@ namespace IOTest {
     int result_int{};
     Fluid::Vector3<float> result_vec{};
     ASSERT_EQ(read(buf, result_float), true);
-    ASSERT_EQ(result_float, float_val);
+    EXPECT_EQ(result_float, float_val);
     ASSERT_EQ(read(buf, result_int), true);
-    ASSERT_EQ(result_int, 3);
+    EXPECT_EQ(result_int, 3);
     ASSERT_EQ(read(buf, result_vec), true);
-    ASSERT_EQ(result_vec, vec_val);
-    ASSERT_EQ(read(buf, result_int), false);
+    EXPECT_EQ(result_vec, vec_val);
+    EXPECT_EQ(read(buf, result_int), false);
   }
 }  // namespace IOTest

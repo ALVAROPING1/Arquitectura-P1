@@ -97,8 +97,8 @@ namespace FileIOTest {
   // Test correcto getters
   TEST_F(FileIOTestClass, getters) {
     Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
-    ASSERT_EQ(iotest.np(), Const::np_true);
-    ASSERT_EQ(iotest.ppm(), Const::ppm);
+    EXPECT_EQ(iotest.np(), Const::np_true);
+    EXPECT_EQ(iotest.ppm(), Const::ppm);
   }
 
   // Comprueba que los valores cargados son los escritos en el archivo

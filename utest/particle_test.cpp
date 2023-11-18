@@ -13,12 +13,12 @@ namespace ParticleTest {
   // Valor por defecto
   TEST(ParticleTest, default) {
     Fluid::Particle particle;
-    ASSERT_EQ(particle.id, 0);
-    ASSERT_EQ(particle.pos, vec_default_double);
-    ASSERT_EQ(particle.gradient, vec_default_double);
-    ASSERT_EQ(particle.vel, vec_default_double);
-    ASSERT_EQ(particle.acc, Fluid::Constants::gravity);
-    ASSERT_EQ(particle.density, 0.0);
+    EXPECT_EQ(particle.id, 0);
+    EXPECT_EQ(particle.pos, vec_default_double);
+    EXPECT_EQ(particle.gradient, vec_default_double);
+    EXPECT_EQ(particle.vel, vec_default_double);
+    EXPECT_EQ(particle.acc, Fluid::Constants::gravity);
+    EXPECT_EQ(particle.density, 0.0);
   }
 
   // Constructor
@@ -27,12 +27,12 @@ namespace ParticleTest {
         {pos, grad, vel},
         3, dens
     };
-    ASSERT_EQ(particle.id, 3);
-    ASSERT_EQ(particle.pos, static_cast<Fluid::Vector3<double>>(pos));
-    ASSERT_EQ(particle.gradient, static_cast<Fluid::Vector3<double>>(grad));
-    ASSERT_EQ(particle.vel, static_cast<Fluid::Vector3<double>>(vel));
-    ASSERT_EQ(particle.acc, Fluid::Constants::gravity);
-    ASSERT_EQ(particle.density, dens);
+    EXPECT_EQ(particle.id, 3);
+    EXPECT_EQ(particle.pos, static_cast<Fluid::Vector3<double>>(pos));
+    EXPECT_EQ(particle.gradient, static_cast<Fluid::Vector3<double>>(grad));
+    EXPECT_EQ(particle.vel, static_cast<Fluid::Vector3<double>>(vel));
+    EXPECT_EQ(particle.acc, Fluid::Constants::gravity);
+    EXPECT_EQ(particle.density, dens);
   }
 
   // Operador igual
@@ -45,9 +45,9 @@ namespace ParticleTest {
         {pos, grad, vel},
         3, dens
     };
-    ASSERT_EQ(particle1 == particle2, true);
+    EXPECT_EQ(particle1 == particle2, true);
     particle2.id = 2;
-    ASSERT_EQ(particle1 == particle2, false);
+    EXPECT_EQ(particle1 == particle2, false);
   }
 
   // Operador <<
@@ -63,6 +63,6 @@ namespace ParticleTest {
              << "\n\tVelocity: " << particle.vel << "\n\tAccelera: " << particle.acc
              << "\n\tGradient: " << particle.gradient << "\n\tDensity : " << particle.density
              << "\n";
-    ASSERT_EQ(out.str(), expected.str());
+    EXPECT_EQ(out.str(), expected.str());
   }
 }  // namespace ParticleTest
