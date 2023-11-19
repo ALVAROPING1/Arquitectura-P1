@@ -1,5 +1,4 @@
 // NOLINTBEGIN
-#define FLUID_DEBUG
 #include "sim/argumentparser.hpp"
 #include "sim/fileio.hpp"
 #include "sim/grid.hpp"

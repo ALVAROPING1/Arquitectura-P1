@@ -1,4 +1,3 @@
-#define FLUID_DEBUG
 #include "sim/argumentparser.hpp"
 #include "sim/fileio.hpp"
 #include "sim/grid.hpp"
@@ -160,7 +159,7 @@ void compare_iteration(Fluid::Grid & grid, std::string const & model, int i) {
 void compare_result(std::ifstream result_file, std::string const & model, int i) {
   put(std::cout, "   \033[33mTesting result file (", i + 1, ")", "\033[0m... \t");
   // Abre el archivo de salida de referencia
-  std::string correct_name{"correct/" + model + "-" + std::to_string(i + 1) + ".fld"};
+  std::string const correct_name{"correct/" + model + "-" + std::to_string(i + 1) + ".fld"};
   std::ifstream correct_file{correct_name};
   if (not correct_file) {
     put_line(std::cout,
@@ -186,7 +185,7 @@ void compare_result(std::ifstream result_file, std::string const & model, int i)
 int main(int argc, char const ** argv) {
   // Inicializa el programa
   std::span<gsl::czstring> const args{argv, static_cast<std::size_t>(argc)};
-  Fluid::ArgumentParser argp{args};
+  Fluid::ArgumentParser const argp{args};
   Fluid::FileIO file{argp.in(), argp.out()};
   Fluid::Grid grid{file.np(), file.ppm()};
   // Carga el archivo de entrada

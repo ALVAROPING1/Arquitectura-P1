@@ -107,7 +107,7 @@ namespace FileIOTest {
 
       // creación de un archivo en binario de salida para las pruebas.
       static bool prepare_out(std::string const & name) {
-        std::ofstream file{name, std::ios::binary};
+        std::ofstream const file{name, std::ios::binary};
         if (!file) {
           std::cout << "El archivo de salida no se pudo crear\n";
           return false;

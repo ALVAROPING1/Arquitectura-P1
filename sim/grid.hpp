@@ -16,13 +16,7 @@ namespace Fluid {
 
   // Objeto representando la malla de la simulación
   class Grid {
-#ifdef FLUID_DEBUG
-
     public:
-#else
-
-    private:
-#endif
 
       using block_vector = std::vector<Block>;
 
@@ -39,7 +33,6 @@ namespace Fluid {
       block_vector front_;  // Búfer de bloques en la iteración actual
       block_vector back_;   // Búfer de bloques en la iteración anterior
 
-    public:
       /// Construye una nueva malla vacía.
       /// @param pc
       /// Número de partículas
@@ -111,7 +104,6 @@ namespace Fluid {
         return result;
       }
 
-    private:
       /// Calcula el índice del bloque correspondiente a las coordendas de bloque dadas
       /// @param idx
       /// Índice de bloque
@@ -122,7 +114,7 @@ namespace Fluid {
       /// Calcula el índice del bloque al que pertenecería una partícula con la posición dada
       /// @param pos
       /// La posición de la partícula
-      constexpr std::size_t index(Vector3<double> pos) {
+      [[nodiscard]] constexpr std::size_t index(Vector3<double> pos) const {
         Vector3<double> const clamped_pos{pos.clamp(Constants::b_min, Constants::b_max - sizes_)};
         return index(static_cast<Vector3<std::size_t>>((clamped_pos - Constants::b_min) / sizes_));
       }
@@ -315,13 +307,6 @@ namespace Fluid {
         });
       }
 
-#ifdef FLUID_DEBUG
-
-    public:
-#else
-
-    private:
-#endif
       /// Calcula la densidad de las partículas
       constexpr void increment_densities() {
         iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {

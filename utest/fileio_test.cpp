@@ -96,7 +96,7 @@ namespace FileIOTest {
 
   // Test correcto getters
   TEST_F(FileIOTestClass, getters) {
-    Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
+    Fluid::FileIO const iotest{"NpTrue.fld", "out.fld"};
     EXPECT_EQ(iotest.np(), Const::np_true);
     EXPECT_EQ(iotest.ppm(), Const::ppm);
   }
@@ -115,7 +115,7 @@ namespace FileIOTest {
     Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
     // Redirige std::cout a un buffer para poder leerlo y comprobar que es correcto
-    std::stringstream buffer;
+    std::stringstream const buffer;
     std::streambuf * sbuf = std::cout.rdbuf();
     std::cout.rdbuf(buffer.rdbuf());
     // Ejecuta la prueba

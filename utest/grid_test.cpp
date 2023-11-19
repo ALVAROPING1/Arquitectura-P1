@@ -16,7 +16,7 @@ namespace GridTest {
                                       Fluid::Vector3<std::size_t> const & grid_count) {
     Fluid::Vector3<double> const clamped_pos{
         pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid_size)};
-    Fluid::Vector3<std::size_t> block_idx{static_cast<Fluid::Vector3<std::size_t>>(
+    Fluid::Vector3<std::size_t> const block_idx{static_cast<Fluid::Vector3<std::size_t>>(
         (clamped_pos - Fluid::Constants::b_min) / grid_size)};
     return block_idx.z * grid_count.y * grid_count.x + block_idx.y * grid_count.x + block_idx.x;
   }
@@ -24,7 +24,7 @@ namespace GridTest {
   // Test para asegurar que los calculos realizados son los correctos dentro de la clase
   // "Fluid::Grid" cuando se importan los datos de eun archivo.
   TEST_F(GridTestClass, InitOK) {
-    Fluid::Grid grid{Const::num, Const::ppm};
+    Fluid::Grid const grid{Const::num, Const::ppm};
 
     ASSERT_DOUBLE_EQ(grid.h(), Fluid::Constants::radius / Const::ppm);
     ASSERT_DOUBLE_EQ(grid.mass(),
@@ -51,7 +51,7 @@ namespace GridTest {
     Fluid::Grid grid{Const::num, Const::ppm};
     grid.add(pos, Const::hvel, Const::vel);
     ASSERT_EQ(grid.get_all().size(), 1);
-    std::size_t idx =
+    std::size_t const idx =
         get_index(static_cast<Fluid::Vector3<double>>(pos), grid.sizes(), grid.count());
     EXPECT_EQ(grid.front_[idx].size(), 1);
     EXPECT_EQ(grid.back_[idx].size(), 0);

@@ -11,7 +11,7 @@
 
 int main(int argc, char const ** argv) {
   // Inicializa el programa
-  Fluid::ArgumentParser argp{
+  Fluid::ArgumentParser const argp{
       {argv, static_cast<std::size_t>(argc)}
   };
   Fluid::FileIO file{argp.in(), argp.out()};

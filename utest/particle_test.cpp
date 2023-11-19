@@ -12,7 +12,7 @@ namespace ParticleTest {
 
   // Valor por defecto
   TEST(ParticleTest, default) {
-    Fluid::Particle particle;
+    Fluid::Particle const particle;
     EXPECT_EQ(particle.id, 0);
     EXPECT_EQ(particle.pos, vec_default_double);
     EXPECT_EQ(particle.gradient, vec_default_double);
@@ -23,7 +23,7 @@ namespace ParticleTest {
 
   // Constructor
   TEST(ParticleTest, constructor) {
-    Fluid::Particle particle{
+    Fluid::Particle const particle{
         {pos, grad, vel},
         3, dens
     };
@@ -37,7 +37,7 @@ namespace ParticleTest {
 
   // Operador igual
   TEST(ParticleTest, equals) {
-    Fluid::Particle particle1{
+    Fluid::Particle const particle1{
         {pos, grad, vel},
         3, dens
     };
@@ -52,7 +52,7 @@ namespace ParticleTest {
 
   // Operador <<
   TEST(ParticleTest, print) {
-    Fluid::Particle particle{
+    Fluid::Particle const particle{
         {pos, grad, vel},
         3, dens
     };

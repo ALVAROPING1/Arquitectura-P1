@@ -1,6 +1,5 @@
 #pragma once
 
-#define FLUID_DEBUG
 #include "sim/vector3.hpp"
 
 #include <gtest/gtest.h>

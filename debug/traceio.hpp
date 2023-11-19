@@ -1,16 +1,15 @@
-#define FLUID_DEBUG
 #ifndef TRACEIO_HPP
-  #define TRACEIO_HPP
+#define TRACEIO_HPP
 
-  #include "sim/block.hpp"
-  #include "sim/io.hpp"
-  #include "sim/vector3.hpp"
+#include "sim/block.hpp"
+#include "sim/io.hpp"
+#include "sim/vector3.hpp"
 
-  #include <cstdint>
-  #include <exception>
-  #include <fstream>
-  #include <utility>
-  #include <vector>
+#include <cstdint>
+#include <exception>
+#include <fstream>
+#include <utility>
+#include <vector>
 
 // Parser de un archivo de trazas
 class TraceIO {
