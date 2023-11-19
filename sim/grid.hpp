@@ -16,8 +16,6 @@ namespace Fluid {
 
   // Objeto representando la malla de la simulación
   class Grid {
-    public:
-
       using block_vector = std::vector<Block>;
 
       double h_;                              // Longitud de suavizado
@@ -33,6 +31,7 @@ namespace Fluid {
       block_vector front_;  // Búfer de bloques en la iteración actual
       block_vector back_;   // Búfer de bloques en la iteración anterior
 
+    public:
       /// Construye una nueva malla vacía.
       /// @param pc
       /// Número de partículas
@@ -180,7 +179,9 @@ namespace Fluid {
       /// @tparam C
       /// Coordena fija de los bloques por los que iterar
       /// @tparam Proc
-      /// Struct con la función a aplicar a cada partícula
+      /// Struct con la función a aplicar a cada partícula. Debe tener
+      /// un método `run` con parámetros de template `Side` y `C`,
+      /// y parámetros bloque e índice en el bloque de la partícula
       /// @param i
       /// Índice de la partícula en el bloque
       template <bool Side, Axis A, Axis B, Axis C, typename Proc>
@@ -202,7 +203,9 @@ namespace Fluid {
 
       /// Aplica una función a las partículas de cada borde
       /// @tparam Proc
-      /// Struct con la función a aplicar a cada partícula
+      /// Struct con la función a aplicar a cada partícula. Debe tener
+      /// un método `run` con parámetros de template `Side` y `C`,
+      /// y parámetros bloque e índice en el bloque de la partícula
       template <typename Proc>
       constexpr void wall_action() {
         wall_iterate<true, Axis::y, Axis::x, Axis::z, Proc>();
