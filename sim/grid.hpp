@@ -62,6 +62,32 @@ namespace Fluid {
       /// Devuelve el tamaño de los bloques en cada eje
       [[nodiscard]] Vector3<double> const & sizes() const { return sizes_; }
 
+      /// Devuelve todas las partículas de la malla
+      [[nodiscard]] std::vector<Particle> get_all() const {
+        std::vector<Particle> result(amount_);  // Inicializa todas las Partículas
+        // Itera por todas las partículas
+        for (auto const & block : front_) {
+          for (std::size_t i{0}; i < block.size(); ++i) {
+            // Lee todos los atributos de la particula, y la almacena en su posición correspondiente
+            // según el ID
+            auto const particle{block[i]};
+            result[particle.id] = particle;
+          }
+        }
+        return result;
+      }
+
+      /// Devuelve los bloqus en la iteración actual
+      [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
+
+      /// Establece los bloques en la iteración actual a los dados (debug)
+      void set_blocks(std::vector<Block> const & blocks) {
+        front_ = blocks;
+        // Recalculates the amount of particles
+        amount_ = 0;
+        for (Block const & block : front_) { amount_ += static_cast<int>(block.size()); }
+      }
+
       /// Añade una partícula a la malla.
       /// @param p
       /// La posición de la partícula
@@ -88,21 +114,6 @@ namespace Fluid {
         particle_repositioning();
       }
 
-      /// Devuelve todas las partículas de la malla
-      [[nodiscard]] std::vector<Particle> get_all() const {
-        std::vector<Particle> result(amount_);  // Inicializa todas las Partículas
-        // Itera por todas las partículas
-        for (auto const & block : front_) {
-          for (std::size_t i{0}; i < block.size(); ++i) {
-            // Lee todos los atributos de la particula, y la almacena en su posición correspondiente
-            // según el ID
-            auto const particle{block[i]};
-            result[particle.id] = particle;
-          }
-        }
-        return result;
-      }
-
       /// Calcula el índice del bloque correspondiente a las coordendas de bloque dadas
       /// @param idx
       /// Índice de bloque
@@ -118,6 +129,7 @@ namespace Fluid {
         return index(static_cast<Vector3<std::size_t>>((clamped_pos - Constants::b_min) / sizes_));
       }
 
+    private:
       /// Calcula la interacción de una partícula con el borde dado
       struct interact_particle {
           /// Ejecuta el cálculo
@@ -310,6 +322,10 @@ namespace Fluid {
         });
       }
 
+      /// Intercambia los buffers de bloques
+      constexpr void swap_buffers() { std::swap(front_, back_); }
+
+    public:
       /// Calcula la densidad de las partículas
       constexpr void increment_densities() {
         iter_pairs([&](Block & blockI, Block & blockJ, std::size_t i, std::size_t j) {
@@ -347,6 +363,9 @@ namespace Fluid {
         });
       }
 
+      /// Calcula las interacciones de las partículas con las paredes
+      constexpr void wall_interactions() { wall_action<interact_particle>(); }
+
       /// Mueve las partículas
       constexpr void particle_movement() {
         iter_blocks([this](Vector3<size_t> const & block_idx) {
@@ -360,9 +379,6 @@ namespace Fluid {
           }
         });
       }
-
-      /// Calcula las interacciones de las partículas con las paredes
-      constexpr void wall_interactions() { wall_action<interact_particle>(); }
 
       /// Calcula las colisiones de las partículas con las paredes
       constexpr void wall_collisions() { wall_action<collide_particle>(); }
@@ -387,15 +403,6 @@ namespace Fluid {
         }
         swap_buffers();
       }
-
-      /// Intercambia los buffers de bloques
-      constexpr void swap_buffers() { std::swap(front_, back_); }
-
-      /// Devuelve los bloqus en la iteración actual
-      [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
-
-      /// Establece los bloques en la iteración actual a los dados (debug)
-      void set_blocks(std::vector<Block> const & blocks) { front_ = blocks; }
   };
 
 }  // namespace Fluid
