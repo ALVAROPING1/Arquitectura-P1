@@ -8,6 +8,7 @@ add_executable(main
     grid_test.cpp
     io_test.cpp
     particle_test.cpp
+    simulation_test.cpp
     vector3_test.cpp
 )
 
