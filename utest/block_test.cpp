@@ -95,5 +95,4 @@ namespace BlockTest {
     expected << "Block[" << particula << "]";
     EXPECT_EQ(out.str(), expected.str());
   }
-
 }  // namespace BlockTest

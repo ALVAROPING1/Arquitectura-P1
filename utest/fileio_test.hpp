@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FILEIO_TEST_HPP
+#define FILEIO_TEST_HPP
 
 #include "sim/io.hpp"
 
@@ -166,5 +167,5 @@ namespace FileIOTest {
         }
       };
   };
-
 }  // namespace FileIOTest
+#endif  // GRID_TEST_HPP

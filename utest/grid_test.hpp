@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GRID_TEST_HPP
+#define GRID_TEST_HPP
 
 #include "sim/vector3.hpp"
 
@@ -38,5 +39,5 @@ namespace GridTest {
       // Función que destruye el entorno para pruebas.
       void TearDown() override{};
   };
-
 }  // namespace GridTest
+#endif  // GRID_TEST_HPP

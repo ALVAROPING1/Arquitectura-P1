@@ -41,6 +41,5 @@ namespace BlockTest {
       // bloque de prueba
       Fluid::Block bloque_prueba{BlockTest::Const::estimated_amount};
   };
-
 }  // namespace BlockTest
 #endif  // BLOCK_TEST_HPP

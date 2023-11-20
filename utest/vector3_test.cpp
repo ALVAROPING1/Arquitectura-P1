@@ -311,5 +311,4 @@ namespace Vector3Test {
     actual_answer.set<Fluid::Axis::z>() = double_1.z;
     EXPECT_EQ(actual_answer, double_1);
   }
-
 }  // namespace Vector3Test
