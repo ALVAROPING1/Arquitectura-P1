@@ -81,6 +81,8 @@ namespace Fluid {
       [[nodiscard]] std::vector<Block> get_blocks() const { return front_; }
 
       /// Establece los bloques en la iteración actual a los dados (debug)
+      /// Da comportamiento indefinido si hay varias partículas con el mismo ID
+      /// o un ID mayor o igual que la cantidad de partículas
       void set_blocks(std::vector<Block> const & blocks) {
         front_ = blocks;
         // Recalculates the amount of particles
