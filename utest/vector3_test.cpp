@@ -3,10 +3,10 @@
 #include <gtest/gtest.h>
 
 namespace Vector3Test {
-  constexpr Fluid::Vector3<int> int_1{10, 15, 20};
-  constexpr Fluid::Vector3<int> int_2{5, 10, 15};
-  constexpr Fluid::Vector3<int> int_suma{15, 25, 35};
-  constexpr Fluid::Vector3<int> int_resta{5, 5, 5};
+  constexpr Fluid::Vector3<std::size_t> int_1{10, 15, 20};
+  constexpr Fluid::Vector3<std::size_t> int_2{5, 10, 15};
+  constexpr Fluid::Vector3<std::size_t> int_suma{15, 25, 35};
+  constexpr Fluid::Vector3<std::size_t> int_resta{5, 5, 5};
 
   constexpr Fluid::Vector3<float> float_1{1.0, 0.5, 2.0};
   constexpr Fluid::Vector3<float> float_2{3.5, 1.0, 0.5};
@@ -79,7 +79,7 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, suma_igual_int_1) {
-    Fluid::Vector3<int> actual_answer = int_1;
+    Fluid::Vector3<std::size_t> actual_answer = int_1;
     EXPECT_EQ(actual_answer += int_2, int_suma);
     EXPECT_EQ(actual_answer, int_suma);
   }
@@ -102,7 +102,7 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, resta_igual_int_1) {
-    Fluid::Vector3<int> actual_answer = int_1;
+    Fluid::Vector3<std::size_t> actual_answer = int_1;
     EXPECT_EQ(actual_answer -= int_2, int_resta);
     EXPECT_EQ(actual_answer, int_resta);
   }
@@ -125,7 +125,7 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, multiplicar_constante_int_1) {
-    Fluid::Vector3<int> constexpr expected_answer = {50, 75, 100};
+    Fluid::Vector3<std::size_t> constexpr expected_answer = {50, 75, 100};
     EXPECT_EQ(int_1 * 5, expected_answer);
   }
 
@@ -148,7 +148,7 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, dividir_constante_int_1) {
-    Fluid::Vector3<int> constexpr expected_answer = {2, 3, 4};
+    Fluid::Vector3<std::size_t> constexpr expected_answer = {2, 3, 4};
     EXPECT_EQ(int_1 / 5, expected_answer);
   }
 
@@ -171,7 +171,7 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, dividir_vector_int_1) {
-    Fluid::Vector3<int> constexpr expected_answer = {2, 1, 1};
+    Fluid::Vector3<std::size_t> constexpr expected_answer = {2, 1, 1};
     EXPECT_EQ(int_1 / int_2, expected_answer);
   }
 
@@ -198,7 +198,7 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, square_norm_int_1) {
-    int constexpr expected_answer = 10 * 10 + 15 * 15 + 20 * 20;
+    std::size_t constexpr expected_answer = 10 * 10 + 15 * 15 + 20 * 20;
     EXPECT_EQ(int_1.square_norm(), expected_answer);
   }
 
@@ -218,9 +218,9 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, clamp_int_1) {
-    Fluid::Vector3<int> constexpr low             = {11, 9, 14};
-    Fluid::Vector3<int> constexpr high            = {15, 11, 28};
-    Fluid::Vector3<int> constexpr expected_answer = {11, 11, 20};
+    Fluid::Vector3<std::size_t> constexpr low             = {11, 9, 14};
+    Fluid::Vector3<std::size_t> constexpr high            = {15, 11, 28};
+    Fluid::Vector3<std::size_t> constexpr expected_answer = {11, 11, 20};
     EXPECT_EQ(int_1.clamp(low, high), expected_answer);
   }
 
@@ -287,7 +287,7 @@ namespace Vector3Test {
   // clases de equivalencia
   // enteros
   TEST(Vector3Test, set_W_int_1) {
-    Fluid::Vector3<int> actual_answer;
+    Fluid::Vector3<std::size_t> actual_answer;
     actual_answer.set<Fluid::Axis::x>() = int_1.x;
     actual_answer.set<Fluid::Axis::y>() = int_1.y;
     actual_answer.set<Fluid::Axis::z>() = int_1.z;
