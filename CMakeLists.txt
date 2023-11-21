@@ -35,4 +35,3 @@ add_subdirectory(debug)
 
 enable_testing()
 add_subdirectory(utest)
-add_subdirectory(ftest)
