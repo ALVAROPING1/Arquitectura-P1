@@ -9,7 +9,6 @@
 namespace Fluid {
 
   constexpr int particle_count_error = -5;
-  constexpr int DoubleFormatPrecision{8};
 
   void FileIO::load(Grid & grid) {
     Vector3<float> pos;
@@ -22,11 +21,9 @@ namespace Fluid {
     // Comprueba que el número de partículas leídas sea el especificado en la cabecera
     if (idx != np_) {
       IO::put_line(std::cerr, "Error: Number of particles mismatch. Header: ", np_,
-                   " Found: ", idx);
+                   ", Found: ", idx, ".");
       std::exit(particle_count_error);
     }
-    std::cout.setf(std::ios::fixed);
-    std::cout.precision(DoubleFormatPrecision);
     std::cout << "Number of particles: " << np_ << "\nParticles per meter: " << ppm_
               << "\nSmoothing length: " << grid.h() << "\nParticle mass: " << grid.mass()
               << "\nGrid size: " << grid.count().x << " x " << grid.count().y << " x "
@@ -54,7 +51,7 @@ namespace Fluid {
     IO::read(input_file_, ppm, np_);
     // Comprueba que el número de partículas sea válido
     if (np_ <= 0) {
-      IO::put_line(std::cerr, "Error: Invalid number of particles: ", np_);
+      IO::put_line(std::cerr, "Error: Invalid number of particles: ", np_, ".");
       std::exit(particle_count_error);
     }
     ppm_ = static_cast<double>(ppm);

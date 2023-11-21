@@ -34,7 +34,7 @@ namespace ArgumentParserTest {
 
     ASSERT_EXIT(Fluid::ArgumentParser const parser{args},
                 testing::ExitedWithCode((unsigned char) -1),
-                "Error: Invalid number of arguments: 2");
+                "Error: Invalid number of arguments: 2\\.");
   }
 
   // Más argumentos
@@ -47,7 +47,7 @@ namespace ArgumentParserTest {
 
     ASSERT_EXIT(Fluid::ArgumentParser const parser{args},
                 testing::ExitedWithCode((unsigned char) -1),
-                "Error: Invalid number of arguments: 4");
+                "Error: Invalid number of arguments: 4\\.");
   }
 
   // Parámetro de iteraciones no digitos
@@ -70,7 +70,7 @@ namespace ArgumentParserTest {
 
     ASSERT_EXIT(Fluid::ArgumentParser const parser{args},
                 testing::ExitedWithCode((unsigned char) -2),
-                "Error: Invalid number of time steps.");
+                "Error: Invalid number of time steps\\.");
   }
 
   // Iteraciones 0

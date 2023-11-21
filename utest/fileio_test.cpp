@@ -10,7 +10,6 @@
 
 namespace FileIOTest {
   using FileIOTestClassDeathTest = FileIOTestClass;
-  constexpr int DoubleFormatPrecision{8};
 
   // Comprueba si 2 archivos son idénticos byte a byte
   [[nodiscard]] testing::AssertionResult compare_files(std::string const & left,
@@ -38,16 +37,16 @@ namespace FileIOTest {
 
   // Test con archivo de np < 0.
   TEST_F(FileIOTestClassDeathTest, npNegative) {
-    ASSERT_EXIT(Fluid::FileIO("NpNegative.fld", "out.fld"),
-                testing::ExitedWithCode((unsigned char) -5),
-                "Error: Invalid number of particles: " + std::to_string(Const::np_negative) + "\n");
+    ASSERT_EXIT(
+        Fluid::FileIO("NpNegative.fld", "out.fld"), testing::ExitedWithCode((unsigned char) -5),
+        "Error: Invalid number of particles: " + std::to_string(Const::np_negative) + "\\.\n");
   }
 
   // Test con archivo de np == 0.
   TEST_F(FileIOTestClassDeathTest, npEqualZero) {
     ASSERT_EXIT(Fluid::FileIO("NpEqualZero.fld", "out.fld"),
                 testing::ExitedWithCode((unsigned char) -5),
-                "Error: Invalid number of particles: " + std::to_string(Const::np_zero) + "\n");
+                "Error: Invalid number of particles: " + std::to_string(Const::np_zero) + "\\.\n");
   }
 
   // Test con archivo de np positivo y mismo número de partículas.
@@ -67,7 +66,7 @@ namespace FileIOTest {
     ASSERT_EXIT(
         iotest.load(testGrid), testing::ExitedWithCode((unsigned char) -5),
         "Error: Number of particles mismatch. Header: " + std::to_string(Const::np_lower_false) +
-            " Found: " + std::to_string(Const::np_lower_false - 1) + "\n");
+            ", Found: " + std::to_string(Const::np_lower_false - 1) + "\\.\n");
   }
 
   // Test con archivo de np positivo y mayor número de particulas de las requeridas.
@@ -78,7 +77,7 @@ namespace FileIOTest {
     ASSERT_EXIT(
         iotest.load(testGrid), testing::ExitedWithCode((unsigned char) -5),
         "Error: Number of particles mismatch. Header: " + std::to_string(Const::np_greater_false) +
-            " Found: " + std::to_string(Const::np_greater_false + 1) + "\n");
+            ", Found: " + std::to_string(Const::np_greater_false + 1) + "\\.\n");
   }
 
   // Test con archivo de datos no válido. (Archivo no existe).
@@ -124,8 +123,6 @@ namespace FileIOTest {
     std::cout.rdbuf(sbuf);
     // Crea la salida esperada y la compara
     std::stringstream expected;
-    expected.setf(std::ios::fixed);
-    expected.precision(DoubleFormatPrecision);
     expected << "Number of particles: " << Const::np_true << "\nParticles per meter: " << Const::ppm
              << "\nSmoothing length: " << testGrid.h() << "\nParticle mass: " << testGrid.mass()
              << "\nGrid size: " << testGrid.count().x << " x " << testGrid.count().y << " x "
