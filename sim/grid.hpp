@@ -236,12 +236,9 @@ namespace Fluid {
       template <typename F>
       void adjacent_blocks(Vector3<size_t> block, F f)
         requires std::invocable<F, Vector3<std::size_t> const &>
-      // Para seleccionar cada par de bloques adyacentes exactamente 1 vez, se usa un conjunto
-      // de bloques seleccionado cuidadosamente. Este conjunto debe cumplir 2 propiedades:
-      // - Se deben seleccionar exactamente la mitad de los bloques adyacentes. En este caso:
-      //   n = (3^3 - 1)/2 = 13
-      // - Si se selecciona un bloque con desplazamiento (a, b, c) respecto del actual,
-      //   el bloque con desplazamiento (-a, -b, -c) no se puede seleccionar
+      // Para seleccionar cada par de bloques adyacentes exactamente 1 vez, se necesita
+      // un conjunto S de desplazamientos a bloques adyacentes tal que:
+      //   (x, y, z) ∈ S <=> (-x, -y, -z) ∉ S
       //
       // El conjunto elegido que cumple estas propiedades es el siguiente:
       // (-1, -1, -1)
