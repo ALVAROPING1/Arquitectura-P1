@@ -169,7 +169,7 @@ namespace SimulationTest {
 
   void test_simulation(std::string const & model) {
     // Inicializa el programa
-    Fluid::FileIO file{"input/" + model + ".fld", "out.fld"};
+    Fluid::FileIO file{"in/" + model + ".fld", "out.fld"};
     Fluid::Grid grid{file.np(), file.ppm()};
     // Desactiva temporalmente std::cout para no mostrar la salida de load en la ejecución del test
     std::cout.setstate(std::ios_base::failbit);
@@ -183,7 +183,7 @@ namespace SimulationTest {
       compare_iteration(grid, model, i);
       // Escribe el archivo de salida y comprueba que es correcto. Se vuelve a abrir el archivo para
       // sobreescribirlo
-      Fluid::FileIO file{"input/" + model + ".fld", "out.fld"};
+      Fluid::FileIO file{"in/" + model + ".fld", "out.fld"};
       file.dump(grid);
       compare_result(std::ifstream{"out.fld"}, model, i);
     }
