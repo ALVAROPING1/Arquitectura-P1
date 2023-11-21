@@ -78,13 +78,32 @@ namespace GridTest {
     test_add_particle(Const::pos_sup_z);
   }
 
-  TEST_F(GridTestClass, index) {
+  // Test de indexar la malla con las coordenadas de un bloque
+  TEST_F(GridTestClass, index_block_coordinate) {
     Fluid::Grid grid{Const::num, Const::ppm};
     Fluid::Vector3<std::size_t> idx{1, 2, 3};
     ASSERT_EQ(grid.index(idx),
               idx.z * grid.count().y * grid.count().x + idx.y * grid.count().x + idx.x);
-    Fluid::Vector3<double> pos{static_cast<Fluid::Vector3<double>>(Const::pos)};
+  }
+
+  // Test de indexar la malla con la posición de una partícula
+  void test_index_pos(Fluid::Vector3<double> pos) {
+    Fluid::Grid grid{Const::num, Const::ppm};
+    Fluid::Vector3<double> const clamped_pos{
+        pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid.sizes())};
     EXPECT_EQ(grid.index(pos), grid.index(static_cast<Fluid::Vector3<std::size_t>>(
-                                   (pos - Fluid::Constants::b_min) / grid.sizes())));
+                                   (clamped_pos - Fluid::Constants::b_min) / grid.sizes())));
+  }
+
+  // Test de indexar la malla con posiciones de partículas en cada
+  // uno de los posibles casos en relación a los bordes de la malla
+  TEST_F(GridTestClass, index_particle_position) {
+    test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos));
+    test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_inf_x));
+    test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_inf_y));
+    test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_inf_z));
+    test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_sup_x));
+    test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_sup_y));
+    test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_sup_z));
   }
 };  // namespace GridTest
