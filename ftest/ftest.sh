@@ -1,5 +1,5 @@
 # File paths used
-INPUT="build/input"
+INPUT="build/in"
 CORRECT="build/correct"
 ATTEMPT="build/attempt"
 FLUID="build/fluid/fluid"
