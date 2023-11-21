@@ -1,6 +1,6 @@
 # Enable Google Test Library
 
-add_executable(main
+add_executable(utest
     main.cpp
     argumentparser_test.cpp
     block_test.cpp
@@ -12,7 +12,7 @@ add_executable(main
     vector3_test.cpp
 )
 
-target_link_libraries (main PRIVATE
+target_link_libraries (utest PRIVATE
 sim
 gtest
 Microsoft.GSL::GSL)
