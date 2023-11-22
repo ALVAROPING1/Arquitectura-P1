@@ -1,7 +1,7 @@
 # File paths used
-INPUT="build/in"
-CORRECT="build/correct"
-ATTEMPT="build/attempt"
+INPUT="in"
+CORRECT="out"
+ATTEMPT="attempt"
 FLUID="build/fluid/fluid"
 
 # Checks that the output/exit code of the program is the expected
