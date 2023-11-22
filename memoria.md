@@ -1,7 +1,7 @@
 ---
 title: |
   ![](Logo_UC3M.png){width=25em}  
-  Memoria Proyecto de Programación Orientada Al Rendimiento
+  Memoria Proyecto de Programación Orientada al Rendimiento
 author: |
   | Grupo 81 Equipo 01
   | Álvaro Guerrero Espinosa - 100472294
@@ -37,7 +37,7 @@ header-includes: |
 
 ## 1 Diseño
 
-En esta sección se discutirán las decisiones tomadas más importantes para el diseño de cada uno de los componentes de este proyecto.
+En esta sección se discutirá la estructura del proyecto, así como las decisiones de diseño más importantes que se han tomado.  A continuación se describirán los componentes que conforman el proyecto.
 
 ### 1.1 `sim`
 
@@ -45,58 +45,58 @@ Este componente contiene la biblioteca de la simulación, la cual está dividida
 
 #### 1.1.1 `ArgumentParser`
 
-Este módulo se encarga de leer e interpretar los argumentos pasados al programa, realizando su validación. En caso de haber algún problema, termina la ejecución del programa. En caso de no haber ningún problema, devuelve los valores leídos. Se decidió que terminase la ejecución del programa en caso de error ya que esto facilita la realización de las pruebas unitarias relacionadas con estos casos.
+Este módulo se encarga de lee, valida e interpretar los argumentos pasados al programa por línea de comandos. En caso de encontrar algún problema, se termina la ejecución del programa. En caso contrario, devuelve los valores leídos. Se decidió que se terminase la ejecución del programa en caso de error, ya que esto facilitaría la realización de las pruebas unitarias y simplificaría el flujo de código.
 
 #### 1.1.2 `FileIO`
 
-Este módulo se encarga de gestionar los archivos de entrada y salida. Inicialmente comprueba que sus rutas sean válidas y se puedan abrir en el respectivo modo, lee el archivo de entrada, y valida que su cabecera sea válida. Tras esto, permite cargar el contenido de este archivo en la malla de la simulación, validando que los datos leídos sean correctos. Además, al finalizar la simulación, también se encarga de escribir el resultado en el archivo de salida. Si alguna de las validaciones falla, termina la ejecución del programa, lo cual se decidió porque facilita la realización de las pruebas unitarias relacionadas con estos casos.
+Este módulo se encarga de cargar y volcar archivos con formato `.fld`. Comprueba que tanto la ruta de entrada y como la de salida sean válidas y que se puedan abrir en sus respectivos modos. A continuación, lee el archivo de entrada: valida la cabecera y carga el su contenido en la malla de la simulación, validando los datos que se van leyendo en el proceso. Cuando termina la simulación, vuelca el estado final de las partículas en el archivo de salida. Si alguna de las validaciones falla, se termina la ejecución del programa. De nuevo, esta decisión se toma para facilitar la creación pruebas unitarias relacionadas con estos casos.
 
 #### 1.1.3 `Constants`
 
-Este módulo únicamente contiene la definición de las constantes usadas en la simulación que se conocen en tiempo de compilación.
+Este módulo contiene, únicamente, la definición de las constantes usadas en la simulación que se conocen en tiempo de compilación.
 
 #### 1.1.4 `IO`
 
-Este módulo contiene utilidades para leer y escribir archivos, y mostrar mensajes por pantalla de una manera más simple. Estas utilidades usan templetización variádica para permitir indicar en la misma llamada todos los datos a leer/escribir, con una interfaz similar al print de python.
+Este módulo contiene utilidades para leer y escribir archivos, y para simplificar la impresión de mensajes por pantalla. Estas utilidades usan templetización variádica para permitir indicar en la misma llamada todos los datos a leer/escribir, con una interfaz similar a la función `print` de python.
 
-En este módulo se necesitan desactivar un aviso de `clang-tidy` en 2 líneas del código: `pro-type-reinterpret-cast`. Esto es necesario porque las funciones de leer y escribir archivos usan secuencias de bytes, por lo que es necesario usar `reinterpret_cast()` para convertir los bytes leídos a los tipos de datos que codifican, y para convertir los datos a escribir a bytes.
+En dos líneas de código de este módulo es necesario desactivar un aviso de `clang-tidy`: `pro-type-reinterpret-cast`. Esto se debe a que las funciones de lectura y escritura funcionan sobre secuencias de _bytes_ (`char*`), por lo que es necesario usar `reinterpret_cast()` para serializar y deserializar datos utilizando su representación binaria. Añadimos como restricción adicional, que el tipo sea aritmético, pues usar otro tipos puede convertirse en comportamiento no definido.
 
 #### 1.1.5 `Vector3`
 
-Este módulo contiene la definición de un vector de 3 dimensiones de un tipo genérico. Además, también define los operadores de este tipo de objetos usados por el programa (suma/resta, multiplicación/división por un escalar, división por otro vector coordenada a coordenada, normal al cuadrado, limitación de los valores a unos rangos y comparación de igualdad). Este se decidió crear ya que hay muchas operaciones en el programa que usan operaciones vectoriales.
+Este módulo contiene la definición de un vector genérico de 3 dimensiones. Además de la definición de operadores que se aplican a este tipo (suma/resta, multiplicación/división por un escalar, división por otro vector coordenada a coordenada, norma al cuadrado, limitación de los valores a unos rangos y comparación de igualdad). Su existencia se debe a que hay un gran número de operaciones en el programa que usan operaciones vectoriales.
 
 #### 1.1.6 `Particle`
 
-Este módulo contiene la definición de las partículas del sistema, almacenando la información variable de cada una de ellas, así como su identificador.
+Este módulo contiene la definición de las partículas de la malla: su estado (posición, densidad, gradiente de la velocidad, velocidad y aceleración) junto a un identificador único que nos permite más adelante almacenarlas en el orden en que fueron leídas.
 
 #### 1.1.7 `Block`
 
-Este módulo contiene la definición de los bloques de la malla de la simulación. Cada uno de estos contiene un vector con las partículas asignadas a él, así como los métodos para añadir partículas, y obtener el número de partículas almacenadas y la información de una partícula. Inicialmente se eligió usar una implementación de array de estructuras por simplicidad.
+Este módulo contiene la definición de los bloques de la malla de la simulación. Cada uno de estos contiene un vector que las partículas que allí se encuentran, así como funciones miembro para añadir partículas, para obtener el número de partículas almacenadas y para obtener la información de una partícula. Inicialmente se eligió usar una implementación de _array_ de estructuras por simplicidad.
 
 #### 1.1.8 `Grid`
 
-Este módulo contiene la definición de la malla de la simulación y constantes desconocidas en tiempo de compilación, así como los métodos necesarios para añadir partículas (añadiéndolas al bloque correspondiente según su posición), leer todas las partículas en orden según su identificador, y ejecutar un paso de tiempo de la simulación. Se decidió implementar estos pasos aquí ya que modifican el estado interno de la malla de la simulación.
+Este módulo contiene la definición de la malla de la simulación y constantes desconocidas en tiempo de compilación, así como las funciones miembro necesarias para añadir partículas (añadiéndolas al bloque correspondiente según su posición), leer todas las partículas en orden según su identificador, y hacer que transcurra un paso de tiempo en la simulación. Todos los pasos se realizan aquí, ya que modifican el estado interno de la malla de la simulación.
 
-La malla contiene un vector de bloques que se puede indexar con un `Vector3` de las coordenadas de un bloque. De esta forma, se puede implementar una matriz de 3 dimensiones con un vector unidimensional, evitando indirecciones innecesarias y estableciendo de manera clara el orden de almacenamiento de los elementos. Además, también se incluye un método para indexar estos vectores según las coordenadas de una posición en la simulación, calculando primero las coordenadas del bloque y usando luego la anterior funcionalidad.
+La malla contiene un vector de bloques que se puede indexar con un `Vector3` de las coordenadas de un bloque. De esta forma, se puede implementar una matriz tridimensional con un vector unidimensional, evitando así indirecciones innecesarias y estableciendo de manera clara el orden de almacenamiento de los elementos. Además, también se incluye un método para indexar estos vectores según las coordenadas de una posición en la simulación, calculando primero las coordenadas del bloque y usando luego la anterior funcionalidad.
 
-En cuanto a la ejecución de un paso de tiempo de la simulación, este se divide en 8 pasos:
+Cada instante de tiempo que transcurre en la simulación se divide en ocho pasos:
 
-1) Iniciación de densidades y aceleraciones: en este paso se establece el valor inicial de estos atributos para todas las partículas.
-2) Incremento de densidades: en este paso se itera por todos los pares de partículas en bloques adyacentes para calcular su densidad.
-3) Transformación de densidad: en este paso se transforma la densidad de cada partícula sumando una constante y multiplicando el resultado por otra.
-4) Transferencia de la aceleración: en este paso se itera por todos los pares de partículas en bloques adyacentes para calcular su aceleración.
-5) Interacciones con las paredes: en este paso se itera por las partículas en los bloques de los bordes y se actualiza su aceleración.
-6) Movimiento de las partículas: en este paso se itera por todas las partículas y se actualiza la posición, velocidad, y gradiente de la velocidad de cada una.
-7) Colisiones con con las paredes: en este paso se itera por todas las partículas en los bloques de los bordes, y se actualiza la posición, velocidad, y gradiente de la velocidad de las partículas fuera del recinto de la simulación.
-8) Reposicionamiento de las partículas: en este paso se crea un nuevo vector de bloques, se reasignan las partículas a los bloques de este vector según su posición, y se reemplaza el vector de bloques de la malla con este. Se usa un nuevo vector para hacer esto ya que si esto se hiciese sobre el vector original podría haber problemas al reordenar los datos de una estructura de datos a la vez que se recorre.
+1) **Iniciación de densidades y aceleraciones**: establece el valor inicial de estas variable miembro para todas las partículas.
+2) **Incremento de densidades**: itera por todos los pares de partículas en bloques adyacentes para calcular sus densidades.
+3) **Transformación de densidad**: transforma la densidad de cada partícula sumando una constante y multiplicando el resultado por otra.
+4) **Transferencia de la aceleración**: itera por todos los pares de partículas en bloques adyacentes para calcular sus aceleraciones.
+5) **Interacciones con las paredes**: itera por las partículas en los bloques de los bordes y se actualizan sus aceleraciones.
+6) **Movimiento de las partículas**: itera por todas las partículas y se actualizan su posición, velocidad y gradiente de la velocidad.
+7) **Colisiones con con las paredes**: itera por todas las partículas en los bloques de los bordes, y se actualizan la posición, velocidad y gradiente de la velocidad de las partículas fuera del recinto de la simulación.
+8) **Reposicionamiento de las partículas**: crea un nuevo vector de bloques, se reasignan las partículas a los bloques de este vector según su posición, y se reemplaza el vector de bloques de la malla con este. Se usa un nuevo vector para hacer esto ya que si esto se hiciese sobre el vector original podría haber problemas al reordenar los datos de una estructura de datos a la vez que se recorre.
 
 Para realizar estas operaciones, se han generalizado los procesos repetidos en métodos auxiliares:
 
 - Iteración por los bloques de la malla: este método itera por las coordenadas de cada bloque de la malla, y aplica una función pasada como parámetro a cada una.
 
-- Iteración por bloques adyacentes a uno dado: este método itera por las coordenadas de cada bloque adyacente a uno dado (excluyendo el bloque dado), comprobando que sean válidas y aplicando una función pasada como parámetro a cada una de ellas. Inicialmente se decidió calcular los bloques adyacentes en cada ejecución en vez de almacenar los resultados al inicio por simplicidad, pero haciendo pruebas también nos dimos cuenta de que almacenar el resultado era más lento, Teniendo esto en cuenta, decidimos mantener la implementación original.
+- Iteración por bloques adyacentes a uno dado: este método itera por las coordenadas de cada bloque adyacente a uno dado (excluyendo el bloque dado), comprobando que sean válidas y aplicando una función pasada como parámetro a cada una de ellas. Inicialmente se decidió calcular los bloques adyacentes en cada ejecución en vez de almacenar los resultados al inicio, por simplicidad; pero haciendo pruebas también nos dimos cuenta de que almacenar el resultado era más lento, Teniendo esto en cuenta, decidimos mantener la implementación original.
 
-  Además, desde el inicio se decidió que, por simplicidad y rendimiento, esto se haría de tal forma que tras iterar por todos los bloques y seleccionar sus adyacentes, se hubiesen seleccionado todos los pares de bloques adyacentes exactamente una vez (optimización conocida como frente de onda). De esta forma se evita tener que comprobar si un par se ha seleccionado ya o no en cada iteración, ya que este caso no se llega a dar nunca.
+  Además, desde el inicio se decidió que, por simplicidad y rendimiento, esto se haría de tal forma que tras iterar por todos los bloques y seleccionar sus adyacentes, se hubiesen seleccionado todos los pares de bloques adyacentes exactamente una vez (optimización conocida como **frente de onda**). De esta forma se evita tener que comprobar si un par se ha seleccionado ya o no en cada iteración, ya que este caso no se llega a dar nunca.
 
   Para conseguir esto, se tienen que cumplir una propiedad sobre el conjunto de bloques adyacentes usado. Si el conjunto de desplazamientos $(x, y, z)$ respecto del bloque dado a considerar como adyacentes para cualquier bloque es $S$, entonces:
   $$(x, y, z) \in S \Leftrightarrow (-x, -y, -z) \notin S$$
@@ -110,12 +110,12 @@ Para realizar estas operaciones, se han generalizado los procesos repetidos en m
 
 ### 1.2 `fluid`
 
-Este componente contiene la función `main` del programa principal. Simplemente se encarga de pasar los argumentos a `ArgumentParser`, inicializa la malla de la simulación, carga el archivo de entrada en esta usando `FileIO`, y ejecuta el número de pasos de tiempo pedido. Finalmente, usa `FileIO` para escribir el resultado en el archivo de salida.
+Este componente contiene únicamente un archivo `main.cpp` que contiene la función principal (`main`). Simplemente se encarga de pasar los argumentos a `ArgumentParser`, inicializa la malla de la simulación, carga el archivo de entrada en esta usando `FileIO`, y ejecuta el número de pasos de tiempo pedido. Finalmente, usa `FileIO` para escribir el resultado en el archivo de salida.
 
 
 ### 1.3 `utest`
 
-Este componente contiene todas las pruebas unitarias de la biblioteca de la simulación, con un archivo `.cpp` por componente a probar. Se escribieron pruebas para todos los módulos excepto para el de constantes, ya que este módulo no contiene código ejecutable. Para realizar dichas pruebas se usa el framework de pruebas GoogleTest. Estas pruebas se describen más adelante en la sección de pruebas realizadas. Todas las pruebas se pueden ejecutar con el programa compilado `./utest/utest` sin argumentos.
+Este componente contiene todas las pruebas unitarias de la biblioteca de la simulación, con un archivo `.cpp` por componente a probar. Se escribieron pruebas para todos los módulos excepto para el de constantes, ya que este módulo no contiene código ejecutable. Para realizar dichas pruebas se usa el _framework_ de pruebas _GoogleTest_. Estas pruebas se describen más adelante en la sección de pruebas realizadas. Todas las pruebas se pueden ejecutar con el programa compilado `./utest/utest` sin argumentos.
 
 ### 1.4 `ftest`
 
@@ -125,7 +125,7 @@ Este componente contiene las pruebas funcionales de la simulación, implementada
 
 ## 2 Optimización
 
-El tiempo de ejecución del diseño original es de una media de $14.876$s para realizar 1000 pasos de tiempo con el modelo grande en avignon, calculada usando 20 repeticiones. Esta será la métrica a usar para evaluar los resultados de las optimizaciones. Tras analizar el problema, nos dimos cuenta de que las operaciones más costosas son aquellas que requieren iterar por pares de partículas (incremento de densidades y transferencia de la aceleración), por lo que las principales optimizaciones estarán en este área.
+El tiempo de ejecución del diseño original es de una media de $14.876$s para realizar 1000 pasos de tiempo con el modelo grande en avignon, calculada usando 20 repeticiones. Esta será la métrica a usar para evaluar los resultados de las optimizaciones. Tras analizar el problema, nos dimos cuenta de que las operaciones más costosas son aquellas que requieren iterar por pares de partículas (incremento de densidades y transferencia de la aceleración), por lo que las principales optimizaciones estarán en esta área.
 
 ### 2.1 Optimizaciones de `Grid`
 
@@ -516,8 +516,8 @@ En cuanto a la potencia, se puede observar que inicialmente cambia mucho, pero t
 
 ## 6 Conclusión
 
-Tras la realización de esta práctica, nos ha resultado bastante entretenida debido a la grande carga de aprendizaje sobre el lenguaje de programación C++. Otro aspecto importante a resaltar, es el contexto de realización de la práctica, el cual nos ha parecido muy realista y útil. De la siguiente manera, se han adquirido las siguientes competencias:
+La práctica nos ha resultado bastante entretenida debido a la grande carga de aprendizaje sobre el lenguaje de programación C++. Otro aspecto importante a resaltar, es el contexto de realización de la práctica, el cual nos ha parecido muy realista y útil. De la siguiente manera, se han adquirido las siguientes competencias:
 
 - Mejora de eficiencia en el programa: Hemos aprendido a programar lo más eficiente posible en cuanto a mejoras del rendimiento. Por ejemplo, hemos podido mejorar la habilidad de encontrar defectos en el código orientados al rendimiento (utilizar los parámetros como referencias constantemente, valorar diferentes técnicas de implementación y escoger la que menos utiliza recursos, metaprogramación, optimizaciones relacionadas con el uso de la memoria caché, etc.).
-- Aprendizaje de programación en C++: Aunque contamos con una base sólida de C, programar en C++ ha requerido su tiempo de aprendizaje debido a las características nuevas que incorpora y otras maneras de abordar ciertos conceptos. Ej: aprender a utilizar `std::unique_ptr` o `std::shared_ptr` en vez de los punteros de C o aprender los nuevos métodos de paso por referencia en C++ versus el paso de punteros en C.
+- Aprendizaje de programación en C++: Aunque contamos con una base sólida de C, programar en C++ ha requerido su tiempo de aprendizaje debido a las majoras que incorpora y la forma en que aborda ciertos conceptos. Ej: aprender a utilizar `std::unique_ptr` o `std::shared_ptr` en vez de los punteros de C o aprender los nuevos métodos de paso por referencia en C++ versus el paso de punteros en C.
 - Aprendizaje de trabajo en grupo: Con esta práctica, hemos aprendido a organizar las tareas dentro de un equipo lo más eficazmente posible y a mejorar las relaciones y tratos entre miembros.
