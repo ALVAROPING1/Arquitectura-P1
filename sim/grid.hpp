@@ -113,7 +113,6 @@ namespace Fluid {
         wall_interactions();
         particle_movement();
         wall_collisions();
-        // TODO: skip on the last iteration
         particle_repositioning();
       }
 
@@ -390,7 +389,6 @@ namespace Fluid {
 
       /// Reasigna las partículas a bloques
       constexpr void particle_repositioning() {
-        // TODO: skip clear loop on the first iteration
         // Vacía todos los bloques en el búfer de la siguiente iteración
         for (auto & block : back_) { block.clear(); }
         // Itera por todas las partículas en el búfer de la iteración actual
