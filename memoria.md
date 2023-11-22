@@ -59,6 +59,8 @@ Este módulo únicamente contiene la definición de las constantes usadas en la 
 
 Este módulo contiene utilidades para leer y escribir archivos, y mostrar mensajes por pantalla de una manera más simple. Estas utilidades usan templetización variádica para permitir indicar en la misma llamada todos los datos a leer/escribir, con una interfaz similar al print de python.
 
+En este módulo se necesitan desactivar un aviso de `clang-tidy` en 2 líneas del código: `pro-type-reinterpret-cast`. Esto es necesario porque las funciones de leer y escribir archivos usan secuencias de bytes, por lo que es necesario usar `reinterpret_cast()` para convertir los bytes leídos a los tipos de datos que codifican, y para convertir los datos a escribir a bytes.
+
 #### 1.1.5 `Vector3`
 
 Este módulo contiene la definición de un vector de 3 dimensiones de un tipo genérico. Además, también define los operadores de este tipo de objetos usados por el programa (suma/resta, multiplicación/división por un escalar, división por otro vector coordenada a coordenada, normal al cuadrado, limitación de los valores a unos rangos y comparación de igualdad). Este se decidió crear ya que hay muchas operaciones en el programa que usan operaciones vectoriales.
@@ -92,7 +94,7 @@ Para realizar estas operaciones, se han generalizado los procesos repetidos en m
 
 - Iteración por los bloques de la malla: este método itera por las coordenadas de cada bloque de la malla, y aplica una función pasada como parámetro a cada una.
 
-- Iteración por bloques adyacentes a uno dado: este método itera por las coordenadas de cada bloque adyacente a uno dado (excluyendo el bloque dado), comprobando que sean válidas y aplicando una función pasada como parámetro a cada una de ellas.
+- Iteración por bloques adyacentes a uno dado: este método itera por las coordenadas de cada bloque adyacente a uno dado (excluyendo el bloque dado), comprobando que sean válidas y aplicando una función pasada como parámetro a cada una de ellas. Inicialmente se decidió calcular los bloques adyacentes en cada ejecución en vez de almacenar los resultados al inicio por simplicidad, pero haciendo pruebas también nos dimos cuenta de que almacenar el resultado era más lento, Teniendo esto en cuenta, decidimos mantener la implementación original.
 
   Además, desde el inicio se decidió que, por simplicidad y rendimiento, esto se haría de tal forma que tras iterar por todos los bloques y seleccionar sus adyacentes, se hubiesen seleccionado todos los pares de bloques adyacentes exactamente una vez (optimización conocida como frente de onda). De esta forma se evita tener que comprobar si un par se ha seleccionado ya o no en cada iteración, ya que este caso no se llega a dar nunca.
 
@@ -106,17 +108,18 @@ Para realizar estas operaciones, se han generalizado los procesos repetidos en m
 
 - Aplicación de una función a las partículas de cada borde: este método ejecuta el método anterior con una función pasada como parámetro para cada uno de los 6 bordes del recinto.
 
-### 1.2 `utest`
+### 1.2 `fluid`
+
+Este componente contiene la función `main` del programa principal. Simplemente se encarga de pasar los argumentos a `ArgumentParser`, inicializa la malla de la simulación, carga el archivo de entrada en esta usando `FileIO`, y ejecuta el número de pasos de tiempo pedido. Finalmente, usa `FileIO` para escribir el resultado en el archivo de salida.
+
+
+### 1.3 `utest`
 
 Este componente contiene todas las pruebas unitarias de la biblioteca de la simulación, con un archivo `.cpp` por componente a probar. Se escribieron pruebas para todos los módulos excepto para el de constantes, ya que este módulo no contiene código ejecutable. Para realizar dichas pruebas se usa el framework de pruebas GoogleTest. Estas pruebas se describen más adelante en la sección de pruebas realizadas. Todas las pruebas se pueden ejecutar con el programa compilado `./utest/utest` sin argumentos.
 
-### 1.3 `ftest`
+### 1.4 `ftest`
 
 Este componente contiene las pruebas funcionales de la simulación, implementadas como un script de `bash` que ejecuta el programa final con diferentes entradas y comprueba las salidas. Estas pruebas se describen en la sección de pruebas realizadas. Todas estas pruebas se pueden ejecutar con el script `./ftest/ftest.sh`, usando como primer y único argumento la ruta al ejecutable del programa (`fluid`)
-
-### 1.4 `fluid`
-
-Este componente contiene la función `main` del programa principal. Simplemente se encarga de pasar los argumentos a `ArgumentParser`, inicializa la malla de la simulación, carga el archivo de entrada en esta usando `FileIO`, y ejecuta el número de pasos de tiempo pedido. Finalmente, usa `FileIO` para escribir el resultado en el archivo de salida.
 
 \clearpage
 
@@ -164,6 +167,8 @@ Con respecto a la lectura del archivo de  entrada, los casos posibles son los si
 
 Para este componente, para cada una de las funciones definidas, se ha probado que su comportamiento es correcto para los tipos de datos usados en el programa (`string`, `int`, `float`, `double`, y `Vector3`). Además, como son funciones variádicas, también se ha probado que funcionan correctamente al recibir distintas cantidades de parámetros, incluso cuando no todos los parámetros tienen el mismo tipo. En el caso de la función de lectura de un archivo, también se ha probado que si sobran datos en el archivo de un tamaño menor al del tipo que se está intentando leer, no se lee nada y se indica que se ha llegado al final del archivo.
 
+Para realizar estas pruebas se ha tenido que desactivar el aviso `pro-type-reinterpret-cast` de `clang-tidy` en 2 líneas de las pruebas. El motivo de esto es el mismo que en la implementación de este módulo, ya que las pruebas necesitan leer/escribir archivos de forma independiente de `IO` al ser el código de este lo que se quiere probar.
+
 ### 3.4 `Vector3`
 
 Para este módulo, se probaron todas las operaciones definidas. Ya que este tipo de datos está definido de forma genérica, cada prueba se realizó con cada uno de los tipos de datos usados por nuestro programa: `size_t`, `float` y `doubles`. Además, en el caso de la multiplicación y división por un escalar, como este también es genérico, la prueba se repitió también para cada tipo compatible con el usado por el vector (`int` para vectores de `int`, `int` y `float` para vectores de `float`, y `int`, `float` y `double` para vectores de `double`). En todos los casos, se realiza la operación con vectores predefinidos y se comprueba que el resultado es el correcto.
@@ -204,7 +209,8 @@ Para realizar las mediciones, se ha ejecutado el programa con el modelo grande d
         %xmin=0, xmax=1,
         %ymin=0, ymax=1,
         %minor tick num=1,
-        grid=both
+        grid=both,
+        scaled x ticks=false,
     ]
         \addplot[mark=*] coordinates {(1,0.090056)(5,0.138804)(10,0.186967)(50,0.61144)(100,1.15938)(500,5.51373)(1000,10.8898)(1500,16.3751)(2000,21.8944)(2500,27.2754)(3000,32.77)(3500,38.1104)(4000,43.9964)(4500,49.3103)(5000,54.4866)(5500,59.835)(6000,65.552)(6500,71.395)(7000,76.354)(7500,82.043)(8000,87.088)(8500,93.064)(9000,98.0239)(9500,103.777)(10000,109.074)} node[above left, midway] {Tiempo};
     \end{axis}
@@ -218,7 +224,8 @@ Para realizar las mediciones, se ha ejecutado el programa con el modelo grande d
         %xmin=0, xmax=1,
         %ymin=0, ymax=1,
         %minor tick num=1,
-        grid=both
+        grid=both,
+        scaled x ticks=false,
     ]
         \addplot[color=blue, mark=*] coordinates {(1,0.11)(5,0.37)(10,0.61)(50,2.61)(100,5.12)(500,24.92)(1000,51.7)(1500,81.49)(2000,101.52)(2500,139.75)(3000,147.95)(3500,172.95)(4000,209.06)(4500,228.57)(5000,256.67)(5500,298.98)(6000,337.04)(6500,345.99)(7000,347.93)(7500,420.23)(8000,423.76)(8500,443.54)(9000,462.58)(9500,474.69)(10000,546.71)} node[above=0.25cm, midway] {Cores};
         \addplot[mark=] table[row sep=\\,y={create col/linear regression={y=Y}}] {
@@ -353,7 +360,8 @@ Para realizar las mediciones, se ha ejecutado el programa con el modelo grande d
         %xmin=0, xmax=1,
         %ymin=0, ymax=1,
         %minor tick num=1,
-        grid=both
+        grid=both,
+        scaled x ticks=false,
     ]
         \addplot[color=blue, mark=*] coordinates {(1,1.22146220129697)(5,2.66562923258696)(10,3.26260783988618)(50,4.26861180164857)(100,4.41615346133278)(500,4.51962645976499)(1000,4.74756193869493)(1500,4.97645815903414)(2000,4.63680210464776)(2500,5.12366454754101)(3000,4.51480012206286)(3500,4.53813132373315)(4000,4.75175241610677)(4500,4.63533987828101)(5000,4.71069951143951)(5500,4.9967410378541)(6000,5.14156700024408)(6500,4.84613768471182)(7000,4.55680121539147)(7500,5.12207013395415)(8000,4.86588278522873)(8500,4.76596750623227)(9000,4.71905321049254)(9500,4.57413492392341)(10000,5.01228523754515)} node[above, midway] {Cores};
         \addplot[mark=] table[row sep=\\,y={create col/linear regression={y=Y}}] {
@@ -463,7 +471,7 @@ Para realizar las mediciones, se ha ejecutado el programa con el modelo grande d
 
 Como se puede observar, el tiempo y energía requerido crece aproximadamente linealmente con el número de pasos de tiempo ejecutados. Esto es debido a que la cantidad de trabajo por paso de tiempo es aproximadamente constante a lo largo de la simulación. El consumo de energía de GPU es siempre aproximadamente $0$ ya que el programa no la utiliza.
 
-En cuanto a la potencia, se puede observar que inicialmente cambia mucho, pero tras unos pocos pasos de tiempo se estabiliza, con algunas oscilaciones respecto de la media. Esto es debido a que cuando el número de pasos de tiempo es bajo, una parte significativa del tiempo de ejecución es la lectura del archivo de entrada y escritura del archivo de salida, y durante este tiempo la CPU tiene muy poca carga. Sin embargo, al aumentar la cantidad de pasos de tiempo, este tiempo pasa a ser despreciable en comparación con el tiempo requerido para realizar la simulación, durante el cual la CPU tiene mucha más carga. La potencia se estabiliza porque la carga durante la ejecución de la simulación es aproximadamente constante. Esto también explica por qué el incremento es mucho mayor para los núcleos y pkg que para la RAM, ya que la RAM sí que está en uso durante la lectura del archivo de entrada (se escriben los datos leídos en ella) y la escritura del archivo de salida (se leen los datos de ella). Como estos casos iniciales no son representativos de la tendencia de la potencia a medida que aumenta la cantidad de pasos de tiempo, no se han tenido en cuenta los datos obtenidos con menos de 100 pasos de tiempo para calcular la regresión lineal.
+En cuanto a la potencia, se puede observar que inicialmente cambia mucho, pero tras unos pocos pasos de tiempo se estabiliza, con algunas oscilaciones respecto de la media. Esto es debido a que cuando el número de pasos de tiempo es bajo, una parte significativa del tiempo de ejecución es la lectura del archivo de entrada y escritura del archivo de salida, y durante este tiempo la CPU tiene muy poca carga. Sin embargo, al aumentar la cantidad de pasos de tiempo, este tiempo pasa a ser despreciable en comparación con el tiempo requerido para realizar la simulación, durante el cual la CPU tiene mucha más carga. La potencia se estabiliza porque la carga durante la ejecución de la simulación es aproximadamente constante. Esto también explica por qué el incremento es mucho mayor para los núcleos y pkg que para la RAM, ya que la RAM sí que está en uso durante la lectura del archivo de entrada (se escriben los datos leídos en ella) y la escritura del archivo de salida (se leen los datos de ella). Como estos casos iniciales no son representativos de la tendencia de la potencia a medida que aumenta la cantidad de pasos de tiempo, no se han tenido en cuenta los datos obtenidos con menos de 100 pasos de tiempo para calcular la regresión lineal de la potencia.
 
 \clearpage
 
@@ -474,22 +482,29 @@ En cuanto a la potencia, se puede observar que inicialmente cambia mucho, pero t
         \toprule
         Participante & Tareas & Tiempo Dedicado \\
         \midrule
-        \multirow[t]{4}{2cm}{Adrián Cortázar Lería} & Implementación de las clases \texttt{Particle} y \texttt{Vector3} & 2h \\
+        \multirow[t]{4}{2cm}{Adrián Cortázar Lería} & Implementación de las clases \texttt{Particle} & 1h \\
+         & Implementación de la clase \texttt{Vector3} & 3h \\
          & Pruebas Unitarias \texttt{FileIO} & 4h \\
          & Pruebas Unitarias \texttt{ArgumentParser} & 2h \\
          & Pruebas Unitarias \texttt{Grid} & 2h \\
         \midrule[0.03em]
-        \multirow[t]{5}{2cm}{Álvaro Guerrero Espinosa} & Implementación de la clase \texttt{Block} & 2h \\
-         & Implementación de los pasos "inicialización de la densidad y aceleración", "transformación de la densidad",  "movimiento de partículas" y "reposicionamiento de las partículas" & 2h \\
-         & Implementación de la iteración por pares de partículas en bloques adyacentes, y los pasos "incremento de la densidad" y "transferencia de la aceleración" & 2h \\
+        \multirow[t]{5}{2cm}{Álvaro Guerrero Espinosa} & Implementación de la clase \texttt{Block} & 1h \\
+         & Implementación de la iteración por pares de partículas en bloques adyacentes & 1h \\
+         & Implementación de las métodos de indexación de la clase \texttt{Grid} e iteración por todos los bloques de la malla & 2h \\
+         & Implementación de los pasos "incremento de la densidad" y "transferencia de la aceleración" & 1h \\
+         & Implementación de los pasos "inicialización de la densidad y aceleración", "transformación de la densidad", y "movimiento de partículas" & 1h \\
+         & Implementación del paso "reposicionamiento de las partículas" & 1h \\
          & Optimizaciones de la clase \texttt{Block} & 4h \\
+         & Optimizaciones finales & 1h \\
          & Pruebas Unitarias \texttt{IO} y \texttt{Particle} & 1h \\
         \midrule[0.03em]
-        \multirow[t]{6}{2cm}{José Antonio Verde Jiménez} & Implementación de las clases \texttt{ArgumentParser} e \texttt{IO}, módulo \texttt{Constants}, y función \texttt{main} & 2h \\
-         & Implementación de la malla de la simulación & 2h \\
+        \multirow[t]{6}{2cm}{José Antonio Verde Jiménez} & Implementación de las clases \texttt{ArgumentParser}, módulo \texttt{Constants}, y función \texttt{main} & 2h \\
+         & Implementación de la clase \texttt{IO} & 1h \\
+         & Implementación de la estructura interna de la clase \texttt{Grid}, métodos para añadir partículas y getters & 2h \\
          & Implementación de la iteración por partículas en los bordes de la malla & 2h \\
          & Implementación de los pasos "interacción con las paredes" y "colisiones con las paredes" & 1h \\
          & Pruebas funcionales & 2h \\
+         & Pruebas unitarias de los pasos de la simulación & 2h \\
          & Optimizaciones de la clase \texttt{Grid} & 1h \\
         \midrule[0.03em]
         \multirow[t]{3}{2cm}{Tomás Mendizábal} & Implementación de la clase \texttt{FileIO} & 4h \\
