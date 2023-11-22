@@ -2,7 +2,7 @@
 INPUT="in"
 CORRECT="out"
 ATTEMPT="attempt"
-FLUID="build/fluid/fluid"
+FLUID="$1"
 
 # Checks that the output/exit code of the program is the expected
 # $1: Test name
