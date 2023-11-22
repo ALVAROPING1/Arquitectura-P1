@@ -62,7 +62,7 @@ namespace GridTest {
     Fluid::Grid grid{Const::num, Const::ppm};
     grid.add(pos, Const::hvel, Const::vel);
     ASSERT_EQ(grid.get_all().size(), 1);
-    std::size_t idx = grid.index(static_cast<Fluid::Vector3<double>>(pos));
+    std::size_t const idx = grid.index(static_cast<Fluid::Vector3<double>>(pos));
     EXPECT_EQ(grid.get_blocks()[idx].size(), 1);
   }
 
@@ -80,15 +80,15 @@ namespace GridTest {
 
   // Test de indexar la malla con las coordenadas de un bloque
   TEST_F(GridTestClass, index_block_coordinate) {
-    Fluid::Grid grid{Const::num, Const::ppm};
-    Fluid::Vector3<std::size_t> idx{1, 2, 3};
+    Fluid::Grid const grid{Const::num, Const::ppm};
+    constexpr Fluid::Vector3<std::size_t> idx{1, 2, 3};
     ASSERT_EQ(grid.index(idx),
               idx.z * grid.count().y * grid.count().x + idx.y * grid.count().x + idx.x);
   }
 
   // Test de indexar la malla con la posición de una partícula
   void test_index_pos(Fluid::Vector3<double> pos) {
-    Fluid::Grid grid{Const::num, Const::ppm};
+    Fluid::Grid const grid{Const::num, Const::ppm};
     Fluid::Vector3<double> const clamped_pos{
         pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid.sizes())};
     EXPECT_EQ(grid.index(pos), grid.index(static_cast<Fluid::Vector3<std::size_t>>(
