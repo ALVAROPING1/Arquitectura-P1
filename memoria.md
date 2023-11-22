@@ -116,7 +116,7 @@ Este componente contiene únicamente un archivo `main.cpp` que contiene la funci
 
 ### 1.3 `utest`
 
-Este componente contiene todas las pruebas unitarias de la biblioteca de la simulación, con un archivo `.cpp` por módulo a probar. Se escribieron pruebas para todos los módulos excepto para el de constantes, ya que este módulo no contiene código ejecutable. Para realizar dichas pruebas se usa el _framework_ de pruebas _GoogleTest_. Estas pruebas se describen más adelante en la sección de pruebas realizadas. Todas las pruebas se pueden ejecutar con el programa compilado `./utest/utest` sin argumentos.
+Este componente contiene todas las pruebas unitarias de la biblioteca de la simulación, con un archivo `.cpp` por módulo a probar. Además, algunos de los ficheros `.cpp` tienen un fichero `.hpp` asociado con el mismo nombre, el cual contiene la definición de las funciones para crear y destruir el entorno de pruebas requerido por las pruebas asociadas, si esto es necesario. Se escribieron pruebas para todos los módulos excepto para el de constantes, ya que este módulo no contiene código ejecutable. Para realizar dichas pruebas se usa el _framework_ de pruebas _GoogleTest_. Estas pruebas se describen más adelante en la sección de pruebas realizadas. Todas las pruebas se pueden ejecutar con el programa compilado `./utest/utest` sin argumentos.
 
 ### 1.4 `ftest`
 
