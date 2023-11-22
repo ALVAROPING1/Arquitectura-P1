@@ -22,7 +22,8 @@ namespace Fluid {
       double m_;                              // Masa de las partículas
       double density_transform_factor_;       // Factor de transformación de la densidad
       double reset_density_;                  // Densidad inicial de las partículas
-      double acceleration_transform_factor_;  // Factor de transformación de la aceleración
+      double acceleration_transform_factor_;  // Factor de transformación de la
+                                              // aceleración
       int amount_{};                          // Número de partículas
 
       Vector3<std::size_t> count_;  // Cantidad de bloques en cada eje
@@ -68,8 +69,8 @@ namespace Fluid {
         // Itera por todas las partículas
         for (auto const & block : front_) {
           for (std::size_t i{0}; i < block.size(); ++i) {
-            // Lee todos los atributos de la particula, y la almacena en su posición correspondiente
-            // según el ID
+            // Lee todos los atributos de la particula, y la almacena en su posición
+            // correspondiente según el ID
             auto const particle{block[i]};
             result[particle.id] = particle;
           }
@@ -99,8 +100,8 @@ namespace Fluid {
       /// La velocidad de la partícula
       void add(Vector3<float> p, Vector3<float> hv, Vector3<float> v) {
         Particle const particle{
-            {p, hv, v},
-            amount_++, reset_density_
+          {p, hv, v},
+          amount_++, reset_density_
         };
         front_[index(particle.pos)].add(particle);
       }
@@ -116,14 +117,16 @@ namespace Fluid {
         particle_repositioning();
       }
 
-      /// Calcula el índice del bloque correspondiente a las coordendas de bloque dadas
+      /// Calcula el índice del bloque correspondiente a las coordendas de bloque
+      /// dadas
       /// @param idx
       /// Índice de bloque
       [[nodiscard]] constexpr std::size_t index(Vector3<std::size_t> idx) const {
         return idx.z * count_.y * count_.x + idx.y * count_.x + idx.x;
       }
 
-      /// Calcula el índice del bloque al que pertenecería una partícula con la posición dada
+      /// Calcula el índice del bloque al que pertenecería una partícula con la
+      /// posición dada
       /// @param pos
       /// La posición de la partícula
       [[nodiscard]] constexpr std::size_t index(Vector3<double> pos) const {
@@ -230,14 +233,15 @@ namespace Fluid {
         wall_iterate<false, Axis::z, Axis::y, Axis::x, Proc>();
       }
 
-      /// Itera por los bloques adyacentes a uno dado, aplicando una función a cada uno
+      /// Itera por los bloques adyacentes a uno dado, aplicando una función a cada
+      /// uno
       /// @param f
       /// Función a aplicar a cada bloque
       template <typename F>
       void adjacent_blocks(Vector3<size_t> block, F f)
         requires std::invocable<F, Vector3<std::size_t> const &>
-      // Para seleccionar cada par de bloques adyacentes exactamente 1 vez, se necesita
-      // un conjunto S de desplazamientos a bloques adyacentes tal que:
+      // Para seleccionar cada par de bloques adyacentes exactamente 1 vez, se
+      // necesita un conjunto S de desplazamientos a bloques adyacentes tal que:
       //   (x, y, z) ∈ S <=> (-x, -y, -z) ∉ S
       //
       // El conjunto elegido que cumple estas propiedades es el siguiente:
@@ -295,7 +299,8 @@ namespace Fluid {
         }
       }
 
-      /// Itera por pares de partículas en bloques adyacentes y les aplica una función
+      /// Itera por pares de partículas en bloques adyacentes y les aplica una
+      /// función
       template <typename F>
       constexpr void iter_pairs(F f)
         requires std::invocable<F, Block &, Block &, std::size_t, std::size_t>
@@ -303,8 +308,8 @@ namespace Fluid {
         // Itera por los bloques de la malla
         iter_blocks([&](Vector3<std::size_t> const & blockI_idx) {
           Block & blockI = front_[index(blockI_idx)];
-          // Si no tiene partículas, no hay que hacer nada y se pueden saltar el resto de
-          // comprobaciones
+          // Si no tiene partículas, no hay que hacer nada y se pueden saltar el
+          // resto de comprobaciones
           if (blockI.size() == 0) { return; }
           // Itera por los bloques adyacentes
           adjacent_blocks(blockI_idx, [&](Vector3<std::size_t> const & blockJ_idx) {
@@ -314,7 +319,8 @@ namespace Fluid {
               for (std::size_t j{0}; j < blockJ.size(); ++j) { f(blockI, blockJ, i, j); }
             }
           });
-          // Itera por todos los pares de partículas del bloque actual y les aplica la función
+          // Itera por todos los pares de partículas del bloque actual y les aplica
+          // la función
           for (std::size_t i{}; i < blockI.size(); ++i) {
             for (std::size_t j{i + 1}; j < blockI.size(); ++j) { f(blockI, blockI, i, j); }
           }
@@ -349,13 +355,13 @@ namespace Fluid {
           if (norm >= h_ * h_) { return; }
           double const dist_ij{std::sqrt(std::max(norm, const1))};
           Vector3<double> const acceleration{
-              // Clang-format doesn't know how to properly format this formula
-              // clang-format off
+            // Clang-format doesn't know how to properly format this formula
+            // clang-format off
               ( distance * (1.5 * Constants::pressure * (const2 / std::numbers::pi)) * (std::pow((h_ - dist_ij), 2) / dist_ij)
                 * (blockI.pos_dens(i).dens + blockJ.pos_dens(j).dens - 2 * Constants::density)
                 + (blockJ.vel_acc(j).vel - blockI.vel_acc(i).vel) * Constants::viscosity * (const3/const2) * (const2 / std::numbers::pi))
                * acceleration_transform_factor_ / (blockI.pos_dens(i).dens * blockJ.pos_dens(j).dens)
-              // clang-format on
+            // clang-format on
           };
           blockI.vel_acc(i).acc += acceleration;
           blockJ.vel_acc(j).acc -= acceleration;
@@ -390,7 +396,8 @@ namespace Fluid {
         // Itera por todas las partículas en el búfer de la iteración actual
         for (auto & block : front_) {
           for (std::size_t i{0}; i < block.size(); ++i) {
-            // Añade la partícula a su bloque correspondiente en el búfer de la siguiente iteración
+            // Añade la partícula a su bloque correspondiente en el búfer de la
+            // siguiente iteración
             Particle particle;
             particle.pos      = block.pos_dens(i).pos;
             particle.vel      = block.vel_acc(i).vel;

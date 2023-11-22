@@ -15,10 +15,11 @@ namespace Fluid {
     Vector3<float> hvel;
     Vector3<float> vel;
     int idx = 0;
-    // Hasta que se llegue al final del archivo, lee los atributos de cada partícula, y las añade a
-    // la malla
+    // Hasta que se llegue al final del archivo, lee los atributos de cada
+    // partícula, y las añade a la malla
     for (; IO::read(input_file_, pos, hvel, vel); ++idx) { grid.add(pos, hvel, vel); }
-    // Comprueba que el número de partículas leídas sea el especificado en la cabecera
+    // Comprueba que el número de partículas leídas sea el especificado en la
+    // cabecera
     if (idx != np_) {
       IO::put_line(std::cerr, "Error: Number of particles mismatch. Header: ", np_,
                    ", Found: ", idx, ".");

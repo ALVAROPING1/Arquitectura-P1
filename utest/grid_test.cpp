@@ -12,10 +12,10 @@
 
 namespace GridTest {
   // Espacio virtual de constantes para la creación de archivos custom.
-  // Incluye constantes para el número de partículas por metro y para los diferentes números de
-  // particulas a inyectar en los archivos custom. También, contiene unos vectores de la clase de
-  // "Fluid::Vector3<float>" que representan la posición, el gradiente y la velocidad de cada
-  // partícula.
+  // Incluye constantes para el número de partículas por metro y para los
+  // diferentes números de particulas a inyectar en los archivos custom. También,
+  // contiene unos vectores de la clase de "Fluid::Vector3<float>" que representan
+  // la posición, el gradiente y la velocidad de cada partícula.
   namespace Const {
     // constantes de pruebas.
     float constexpr ppm = 75;
@@ -112,7 +112,7 @@ namespace GridTest {
   void test_index_pos(Fluid::Vector3<double> pos) {
     Fluid::Grid const grid{Const::num, Const::ppm};
     Fluid::Vector3<double> const clamped_pos{
-        pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid.sizes())};
+      pos.clamp(Fluid::Constants::b_min, Fluid::Constants::b_max - grid.sizes())};
     EXPECT_EQ(grid.index(pos), grid.index(static_cast<Fluid::Vector3<std::size_t>>(
                                    (clamped_pos - Fluid::Constants::b_min) / grid.sizes())));
   }

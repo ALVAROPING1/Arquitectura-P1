@@ -16,8 +16,9 @@ namespace Fluid {
       // Uses struct of arrays to store the data so that individual attributes
       // can be accessed separately without having to load all of them into cache
       //
-      // Position/density and velocity/acceleration attributes are combined to reduce
-      // the amount of cache sets required as they are commonly accessed together
+      // Position/density and velocity/acceleration attributes are combined to
+      // reduce the amount of cache sets required as they are commonly accessed
+      // together
 
       // Type combining the position and density of a particle
       struct PositionDensity {
@@ -81,19 +82,23 @@ namespace Fluid {
       // These 2 getter functions would be better written if they were split into
       // returning individual fields. While this should result in the same code
       // after the definitions are inlined, for some reason, the compiler generates
-      // significantly slower code if we do that. Thus, it will have to stay like this
+      // significantly slower code if we do that. Thus, it will have to stay like
+      // this
 
-      /// Devuelve una referencia al par (posición, densidad) de la partícula indicada
+      /// Devuelve una referencia al par (posición, densidad) de la partícula
+      /// indicada
       /// @param i
       /// Índice de la partícula dentro del bloque
       constexpr PositionDensity & pos_dens(std::size_t i) { return position_density_[i]; }
 
-      /// Devuelve una referencia al par (velocidad, aceleración) de la partícula indicada
+      /// Devuelve una referencia al par (velocidad, aceleración) de la partícula
+      /// indicada
       /// @param i
       /// Índice de la partícula dentro del bloque
       constexpr VelocityAcceleration & vel_acc(std::size_t i) { return velocity_acceleration_[i]; }
 
-      /// Devuelve una referencia al gradiente de la velocidad de la partícula indicada
+      /// Devuelve una referencia al gradiente de la velocidad de la partícula
+      /// indicada
       /// @param i
       /// Índice de la partícula dentro del bloque
       constexpr Vector3<double> & gradient(std::size_t i) { return gradient_[i]; }

@@ -24,8 +24,8 @@ namespace ParticleTest {
   // Constructor
   TEST(ParticleTest, constructor) {
     Fluid::Particle const particle{
-        {pos, grad, vel},
-        3, dens
+      {pos, grad, vel},
+      3, dens
     };
     EXPECT_EQ(particle.id, 3);
     EXPECT_EQ(particle.pos, static_cast<Fluid::Vector3<double>>(pos));
@@ -38,12 +38,12 @@ namespace ParticleTest {
   // Operador igual
   TEST(ParticleTest, equals) {
     Fluid::Particle const particle1{
-        {pos, grad, vel},
-        3, dens
+      {pos, grad, vel},
+      3, dens
     };
     Fluid::Particle particle2{
-        {pos, grad, vel},
-        3, dens
+      {pos, grad, vel},
+      3, dens
     };
     EXPECT_EQ(particle1 == particle2, true);
     particle2.id = 2;
@@ -53,8 +53,8 @@ namespace ParticleTest {
   // Operador <<
   TEST(ParticleTest, print) {
     Fluid::Particle const particle{
-        {pos, grad, vel},
-        3, dens
+      {pos, grad, vel},
+      3, dens
     };
     std::stringstream out;
     std::stringstream expected;

@@ -10,10 +10,10 @@
 namespace FileIOTest {
 
   // Espacio virtual de constantes para la creación de archivos custom.
-  // Incluye constantes para el número de partículas por metro y para los diferentes números de
-  // particulas a inyectar en los archivos custom. También, contiene unos vectores de la clase de
-  // "Fluid::Vector3<float>" que representan la posición, el gradiente y la velocidad de cada
-  // partícula.
+  // Incluye constantes para el número de partículas por metro y para los
+  // diferentes números de particulas a inyectar en los archivos custom. También,
+  // contiene unos vectores de la clase de "Fluid::Vector3<float>" que representan
+  // la posición, el gradiente y la velocidad de cada partícula.
   namespace Const {
     // constantes de pruebas.
     float constexpr ppm            = 75;
@@ -30,10 +30,11 @@ namespace FileIOTest {
   };  // namespace Const
 
   // Clase utilizada como preparatoria para los archivos utilizados en los tests.
-  // También tene las funciones TearDown y SetUp que configuran el entorno antes y después de cada
-  // test. Esta clase utiliza las funciones de el header "sim/io.hpp" para escribir los parámetros
-  // en los archivos. En cada función preparatoria, se comprueba que el archivo se ha creado
-  // correctamente. Sino, se notifica de que los archivos no se han creado.
+  // También tene las funciones TearDown y SetUp que configuran el entorno antes y
+  // después de cada test. Esta clase utiliza las funciones de el header
+  // "sim/io.hpp" para escribir los parámetros en los archivos. En cada función
+  // preparatoria, se comprueba que el archivo se ha creado correctamente. Sino,
+  // se notifica de que los archivos no se han creado.
   class FileIOTestClass : public testing::Test {
       static std::ofstream prepare_file(std::string const & name) {
         std::ofstream file{name, std::ios::binary};
@@ -64,8 +65,8 @@ namespace FileIOTest {
         return true;
       };
 
-      // creación de un archivo con número de partículas positivo y coincide con las partículas
-      // introducidas en el propio archivo.
+      // creación de un archivo con número de partículas positivo y coincide con las
+      // partículas introducidas en el propio archivo.
       static bool prepare_np_true(std::string const & name) {
         std::ofstream file = prepare_file(name);
         if (!file) { return false; }
@@ -78,8 +79,8 @@ namespace FileIOTest {
         return true;
       };
 
-      // creación de un archivo con número de partículas positivo pero hay menos particulas de las
-      // indicadas.
+      // creación de un archivo con número de partículas positivo pero hay menos
+      // particulas de las indicadas.
       static bool prepare_np_lower_false(std::string const & name) {
         std::ofstream file = prepare_file(name);
         if (!file) { return false; }
@@ -92,8 +93,8 @@ namespace FileIOTest {
         return true;
       };
 
-      // creación de un archivo con número de partículas positivo pero hay mas particulas de las
-      // indicadas.
+      // creación de un archivo con número de partículas positivo pero hay mas
+      // particulas de las indicadas.
       static bool prepare_np_greater_false(std::string const & name) {
         std::ofstream file = prepare_file(name);
         if (!file) { return false; }
@@ -151,7 +152,8 @@ namespace FileIOTest {
         }
       };
 
-      // Función que borra los archivos después de cada prueba y destruye el entorno para pruebas.
+      // Función que borra los archivos después de cada prueba y destruye el entorno
+      // para pruebas.
       void TearDown() override {
         int const rem1       = std::remove("NpNegative.fld");
         int const rem2       = std::remove("NpEqualZero.fld");

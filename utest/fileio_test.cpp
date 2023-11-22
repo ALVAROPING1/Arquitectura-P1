@@ -59,7 +59,8 @@ namespace FileIOTest {
         testing::ExitedWithCode(0), "");
   }
 
-  // Test con archivo de np positivo y menor número de partículas que las requeridas.
+  // Test con archivo de np positivo y menor número de partículas que las
+  // requeridas.
   TEST_F(FileIOTestClassDeathTest, npLowerFalse) {
     Fluid::FileIO iotest{"NpLowerFalse.fld", "out.fld"};
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
@@ -69,7 +70,8 @@ namespace FileIOTest {
             ", Found: " + std::to_string(Const::np_lower_false - 1) + "\\.\n");
   }
 
-  // Test con archivo de np positivo y mayor número de particulas de las requeridas.
+  // Test con archivo de np positivo y mayor número de particulas de las
+  // requeridas.
   TEST_F(FileIOTestClassDeathTest, npGraterFalse) {
     Fluid::FileIO iotest{"NpGreaterFalse.fld", "out.fld"};
     Fluid::Grid testGrid{Const::np_greater_false, Const::ppm};
@@ -113,7 +115,8 @@ namespace FileIOTest {
   TEST_F(FileIOTestClass, load) {
     Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
-    // Redirige std::cout a un buffer para poder leerlo y comprobar que es correcto
+    // Redirige std::cout a un buffer para poder leerlo y comprobar que es
+    // correcto
     std::stringstream const buffer;
     std::streambuf * sbuf = std::cout.rdbuf();
     std::cout.rdbuf(buffer.rdbuf());
@@ -138,7 +141,8 @@ namespace FileIOTest {
   TEST_F(FileIOTestClass, npTrue) {
     Fluid::FileIO iotest{"NpTrue.fld", "out.fld"};
     Fluid::Grid testGrid{iotest.np(), iotest.ppm()};
-    // Desactiva temporalmente std::cout para no mostrar la salida de load en la ejecución del test
+    // Desactiva temporalmente std::cout para no mostrar la salida de load en la
+    // ejecución del test
     std::cout.setstate(std::ios_base::failbit);
     iotest.load(testGrid);
     std::cout.clear();

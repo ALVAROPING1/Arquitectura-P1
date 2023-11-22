@@ -98,7 +98,8 @@ namespace SimulationTest {
     }
   }
 
-  /// Compara el estado del programa con el del archivo de trazas `<name>-base-<i>.trz`
+  /// Compara el estado del programa con el del archivo de trazas
+  /// `<name>-base-<i>.trz`
   /// @param grid
   /// Malla de la simulación
   /// @param name
@@ -116,7 +117,8 @@ namespace SimulationTest {
         << "Simulation result doesn't match the trazes. Step: " << name << ", Iteration: " << i;
   }
 
-  /// Compara el estado del programa con el de los archivos de trazas para una iteración
+  /// Compara el estado del programa con el de los archivos de trazas para una
+  /// iteración
   /// @param grid
   /// Malla de la simulación
   /// @param model
@@ -128,8 +130,8 @@ namespace SimulationTest {
     trace_state(grid, model, "initacc", i);
 
     grid.increment_densities();
-    // Densinc step can't be tested since the densinc and denstransf steps are combined in the
-    // program for performance reasons.
+    // Densinc step can't be tested since the densinc and denstransf steps are
+    // combined in the program for performance reasons.
     trace_state(grid, model, "denstransf", i);
     grid.transfer_accelerations();
     trace_state(grid, model, "acctransf", i);
@@ -147,7 +149,8 @@ namespace SimulationTest {
     // Inicializa el programa
     Fluid::FileIO file{"in/" + model + ".fld", "out.fld"};
     Fluid::Grid grid{file.np(), file.ppm()};
-    // Desactiva temporalmente std::cout para no mostrar la salida de load en la ejecución del test
+    // Desactiva temporalmente std::cout para no mostrar la salida de load en la
+    // ejecución del test
     std::cout.setstate(std::ios_base::failbit);
     // Carga el archivo de entrada
     file.load(grid);

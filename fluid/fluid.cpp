@@ -12,7 +12,7 @@
 int main(int argc, char const ** argv) {
   // Inicializa el programa
   Fluid::ArgumentParser const argp{
-      {argv, static_cast<std::size_t>(argc)}
+    {argv, static_cast<std::size_t>(argc)}
   };
   Fluid::FileIO file{argp.in(), argp.out()};
   Fluid::Grid grid{file.np(), file.ppm()};
