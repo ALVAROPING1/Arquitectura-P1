@@ -1,7 +1,7 @@
 # Enable Google Test Library
 
 add_executable(utest
-    main.cpp
+    utest.cpp
     argumentparser_test.cpp
     block_test.cpp
     fileio_test.cpp
