@@ -18,13 +18,13 @@ namespace BlockTest {
     constexpr Fluid::Vector3<double> gradient{-2.0, 0, 1.0};
   }  // namespace Const
 
-  // clase de prueba para los bloques
+  // Clase de prueba para los bloques
   class BlockTestClass : public testing::Test {
     public:
-      // funcion que devuelve el bloque de prueba
+      // Función que devuelve el bloque de prueba
       [[nodiscard]] Fluid::Block & get_block() { return bloque_prueba; }
 
-      // funcion que agrega una particula genérica al bloque prueba, devolviendola
+      // Función que agrega una particula genérica al bloque prueba, devolviendola
       Fluid::Particle add_particle(int id) {
         Fluid::Particle particula{};
         particula.id       = id;

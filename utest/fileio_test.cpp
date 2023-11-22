@@ -1,5 +1,3 @@
-// funcion main customizada para tests
-
 #include "fileio_test.hpp"
 
 #include "sim/fileio.hpp"
