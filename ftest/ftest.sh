@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # File paths used
 INPUT="in"
 CORRECT="out"
