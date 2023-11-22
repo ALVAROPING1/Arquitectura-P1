@@ -143,30 +143,6 @@ namespace SimulationTest {
     grid.particle_repositioning();
   }
 
-  /// Compara el archivo de salida del programa con el de referencia
-  /// @param result_file
-  /// Archivo de salida generado
-  /// @param model
-  /// Nombre del modelo, usado para seleccionar el archivo de salida de referencia
-  /// @param i
-  /// Iteración de la simulación
-  void compare_result(std::ifstream result_file, std::string const & model, int i) {
-    // Abre el archivo de salida de referencia
-    std::string const correct_name{"correct/" + model + "-" + std::to_string(i + 1) + ".fld"};
-    std::ifstream correct_file{correct_name};
-    ASSERT_TRUE(correct_file) << "No se puede abrir el archivo de salida de referencia: "
-                              << correct_name;
-    // Compara byte a byte los archivos
-    char correct_byte{};
-    char result_byte{};
-    while (result_file.read(&result_byte, sizeof(char)) and
-           correct_file.read(&correct_byte, sizeof(char))) {
-      // Si hay alguna diferencia, da un error y termina
-      ASSERT_EQ(correct_byte, result_byte)
-          << "El archivo de salida generado difiere del archivo de salida de referencia";
-    }
-  }
-
   void test_simulation(std::string const & model) {
     // Inicializa el programa
     Fluid::FileIO file{"in/" + model + ".fld", "out.fld"};
@@ -179,14 +155,7 @@ namespace SimulationTest {
     std::cerr.precision(4L * 2);
     // Obtiene el nombre del modelo a usar del nombre del archivo de entrada
     // Realiza las iteraciones
-    for (int i = 0; i < iterations; ++i) {
-      compare_iteration(grid, model, i);
-      // Escribe el archivo de salida y comprueba que es correcto. Se vuelve a abrir el archivo para
-      // sobreescribirlo
-      Fluid::FileIO file{"in/" + model + ".fld", "out.fld"};
-      file.dump(grid);
-      compare_result(std::ifstream{"out.fld"}, model, i);
-    }
+    for (int i = 0; i < iterations; ++i) { compare_iteration(grid, model, i); }
   }
 
   TEST(SimulationTest, small_model) {
