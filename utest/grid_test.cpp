@@ -1,6 +1,4 @@
 // Pruebas unitarias para grid
-#include "grid_test.hpp"
-
 #include "sim/block.hpp"
 #include "sim/constants.hpp"
 #include "sim/grid.hpp"
@@ -13,9 +11,33 @@
 #include <numbers>
 
 namespace GridTest {
+  // Espacio virtual de constantes para la creación de archivos custom.
+  // Incluye constantes para el número de partículas por metro y para los diferentes números de
+  // particulas a inyectar en los archivos custom. También, contiene unos vectores de la clase de
+  // "Fluid::Vector3<float>" que representan la posición, el gradiente y la velocidad de cada
+  // partícula.
+  namespace Const {
+    // constantes de pruebas.
+    float constexpr ppm = 75;
+    int constexpr num   = 5;
+
+    // vectores de ejemplo para las partículas de prueba.
+    Fluid::Vector3<float> constexpr vel{1, 1, 1};
+    Fluid::Vector3<float> constexpr pos{0, 0, 0};
+    Fluid::Vector3<float> constexpr hvel{1, 1, 1};
+
+    // vectores de posición fuera del recinto
+    Fluid::Vector3<float> constexpr pos_inf_x{-1, 0, 0};
+    Fluid::Vector3<float> constexpr pos_inf_y{0, -1, 0};
+    Fluid::Vector3<float> constexpr pos_inf_z{0, 0, -1};
+    Fluid::Vector3<float> constexpr pos_sup_x{1, 0, 0};
+    Fluid::Vector3<float> constexpr pos_sup_y{0, 1, 0};
+    Fluid::Vector3<float> constexpr pos_sup_z{0, 0, 1};
+
+  };  // namespace Const
 
   // Test para la inicialización/getters de constantes
-  TEST_F(GridTestClass, InitOK) {
+  TEST(GridTest, InitOK) {
     Fluid::Grid const grid{Const::num, Const::ppm};
 
     ASSERT_DOUBLE_EQ(grid.h(), Fluid::Constants::radius / Const::ppm);
@@ -30,7 +52,7 @@ namespace GridTest {
   }
 
   // Test para get_all
-  TEST_F(GridTestClass, get_all) {
+  TEST(GridTest, get_all) {
     Fluid::Grid grid{Const::num, Const::ppm};
     std::vector<Fluid::Block> blocks;
     blocks.resize(3, Fluid::Block{1});
@@ -43,7 +65,7 @@ namespace GridTest {
   }
 
   // Test para get_blocks/set_blocks
-  TEST_F(GridTestClass, get_set_blocks) {
+  TEST(GridTest, get_set_blocks) {
     Fluid::Grid grid{Const::num, Const::ppm};
     std::vector<Fluid::Block> expected;
     expected.resize(3, Fluid::Block{1});
@@ -68,7 +90,7 @@ namespace GridTest {
 
   // Test de añadir partículas a la malla con cada uno de los posibles casos
   // de la posición de la partícula en relación a los bordes de la malla
-  TEST_F(GridTestClass, InsertParticle) {
+  TEST(GridTest, InsertParticle) {
     test_add_particle(Const::pos);
     test_add_particle(Const::pos_inf_x);
     test_add_particle(Const::pos_inf_y);
@@ -79,7 +101,7 @@ namespace GridTest {
   }
 
   // Test de indexar la malla con las coordenadas de un bloque
-  TEST_F(GridTestClass, index_block_coordinate) {
+  TEST(GridTest, index_block_coordinate) {
     Fluid::Grid const grid{Const::num, Const::ppm};
     constexpr Fluid::Vector3<std::size_t> idx{1, 2, 3};
     ASSERT_EQ(grid.index(idx),
@@ -97,7 +119,7 @@ namespace GridTest {
 
   // Test de indexar la malla con posiciones de partículas en cada
   // uno de los posibles casos en relación a los bordes de la malla
-  TEST_F(GridTestClass, index_particle_position) {
+  TEST(GridTest, index_particle_position) {
     test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos));
     test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_inf_x));
     test_index_pos(static_cast<Fluid::Vector3<double>>(Const::pos_inf_y));
