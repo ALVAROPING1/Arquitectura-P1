@@ -116,7 +116,7 @@ Este componente contiene únicamente un archivo `main.cpp` que contiene la funci
 
 ### 1.3 `utest`
 
-Este componente contiene todas las pruebas unitarias de la biblioteca de la simulación, con un archivo `.cpp` por componente a probar. Se escribieron pruebas para todos los módulos excepto para el de constantes, ya que este módulo no contiene código ejecutable. Para realizar dichas pruebas se usa el _framework_ de pruebas _GoogleTest_. Estas pruebas se describen más adelante en la sección de pruebas realizadas. Todas las pruebas se pueden ejecutar con el programa compilado `./utest/utest` sin argumentos.
+Este componente contiene todas las pruebas unitarias de la biblioteca de la simulación, con un archivo `.cpp` por módulo a probar. Se escribieron pruebas para todos los módulos excepto para el de constantes, ya que este módulo no contiene código ejecutable. Para realizar dichas pruebas se usa el _framework_ de pruebas _GoogleTest_. Estas pruebas se describen más adelante en la sección de pruebas realizadas. Todas las pruebas se pueden ejecutar con el programa compilado `./utest/utest` sin argumentos.
 
 ### 1.4 `ftest`
 
@@ -156,11 +156,11 @@ Con todo esto, consideramos que el rendimiento es óptimo ya que el tiempo total
 
 ### 3.1 `ArgumentParser`
 
-Para este componente se han probado todos los flujos de ejecución: argumentos válidos, más y menos argumentos de los requeridos, parámetro de pasos de tiempo no numérico, y parámetro de pasos de tiempo negativo o 0. Para los casos de error, se ha usado un "Death Test" para validar que el programa termina con el código y mensaje de error correctos. Además, se ha probado que tras leer argumentos válidos, los métodos getter para leer los argumentos funcionan correctamente.
+Para esta clase se han probado todos los flujos de ejecución: argumentos válidos, más y menos argumentos de los requeridos, parámetro de pasos de tiempo no numérico, y parámetro de pasos de tiempo negativo o 0. Para los casos de error, se ha usado un "Death Test" para validar que el programa termina con el código y mensaje de error correctos. Además, se ha probado que tras leer argumentos válidos, los métodos getter para leer los argumentos funcionan correctamente.
 
 ### 3.2 `FileIO`
 
-Para este componente se han probado todos los flujos de ejecución de la validación de las entradas y lectura del archivo de entrada, y la escritura del archivo de salida. En todos los casos de error se ha usado un "Death Test" para validar la finalización del programa con el mensaje y código de error correcto.
+Para esta clase se han probado todos los flujos de ejecución de la validación de las entradas y lectura del archivo de entrada, y la escritura del archivo de salida. En todos los casos de error se ha usado un "Death Test" para validar la finalización del programa con el mensaje y código de error correcto.
 
 Con respecto a la validación de las entradas, los casos posibles son los siguientes: el archivo de entrada no se puede abrir para lectura, el archivo de salida no se puede abrir para escritura, y el número de partículas en la cabecera del archivo de entrada es negativo, nulo o positivo. Además, se ha probado que los métodos getter devuelven los parámetros correctos leídos de la cabecera del archivo de entrada.
 
@@ -168,7 +168,7 @@ Con respecto a la lectura del archivo de  entrada, los casos posibles son los si
 
 ### 3.3 `IO`
 
-Para este componente, para cada una de las funciones definidas, se ha probado que su comportamiento es correcto para los tipos de datos usados en el programa (`string`, `int`, `float`, `double`, y `Vector3`). Además, como son funciones variádicas, también se ha probado que funcionan correctamente al recibir distintas cantidades de parámetros, incluso cuando no todos los parámetros tienen el mismo tipo o tamaño. En el caso de la función de lectura de un archivo, también se ha probado que si sobran datos en el archivo de un tamaño menor al del tipo que se está intentando leer, no se lee nada y se indica que se ha llegado al final del archivo.
+Para esta clase, para cada una de las funciones definidas, se ha probado que su comportamiento es correcto para los tipos de datos usados en el programa (`string`, `int`, `float`, `double`, y `Vector3`). Además, como son funciones variádicas, también se ha probado que funcionan correctamente al recibir distintas cantidades de parámetros, incluso cuando no todos los parámetros tienen el mismo tipo o tamaño. En el caso de la función de lectura de un archivo, también se ha probado que si sobran datos en el archivo de un tamaño menor al del tipo que se está intentando leer, no se lee nada y se indica que se ha llegado al final del archivo.
 
 Para realizar estas pruebas se ha tenido que desactivar el aviso `pro-type-reinterpret-cast` de `clang-tidy` en 2 líneas de las pruebas. El motivo de esto es el mismo que en la implementación de este módulo, ya que las pruebas necesitan leer/escribir archivos de forma independiente de `IO` al ser el código de este lo que se quiere probar.
 
